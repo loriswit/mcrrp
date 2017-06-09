@@ -1,28 +1,38 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{lang}">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../style.css">
-    <title>MCRRP - {title}</title>
+    <title>MCRRP - [{title}]</title>
 </head>
 <body>
 <header>
-    <h1>Minecraft RRP</h1>
+    <h1>MCRRP</h1>
 </header>
 <p><img src="https://crafatar.com/avatars/{uuid}?size=16&overlay"> {name}</p>
-<p>Code : {code}</p>
-<p>Rôle(s) : {roles}</p>
-<p>Solde : CHF {balance}</p>
-<p><a href="/?logout">Déconnexion</a></p>
+<p>[Code]: {code}</p>
+<p>[Role]: {role}</p>
+<p>[Balance]: CHF {balance}</p>
+<form action="/" method="post">
+    <button name="logout">[Log out]</button>
+</form>
 <table>
     <tr>
-        <td><a href="/">Actualité</a></td>
-        <td><a href="/">Messages</a></td>
-        <td><a href="/">Transactions</a></td>
-        <td><a href="/">Constitution</a></td>
+        <td><a href="/">[News]</a></td>
+        <td><a href="/">[Messages]</a></td>
+        <td><a href="/">[Transactions]</a></td>
+        <td><a href="/">[Constitution]</a></td>
     </tr>
 </table>
-<h2>{title}</h2>
+<h2>[{title}]</h2>
 {content}
 </body>
+<footer>
+    <form id="form" method="post">
+        <label for="lang">[Language]</label>
+        <select name="lang" id="lang" onchange="this.form.submit()">
+            <option value="en" {en}>English</option>
+            <option value="fr" {fr}>Français</option>
+        </select>
+    </form>
+</footer>
 </html>

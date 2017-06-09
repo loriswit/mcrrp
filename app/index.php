@@ -1,24 +1,36 @@
 <?php
 
+session_start();
+
+if(isset($_POST["logout"]))
+{
+    unset($_SESSION["uuid"]);
+    header("Location:/");
+}
+if(isset($_POST["lang"]))
+{
+    $_SESSION["lang"] = $_POST["lang"];
+    header("Refresh:0");
+}
+
 try
 {
     require_once "vendor/autoload.php";
     
+    require_once "include/translator.php";
     require_once "include/template.php";
     require_once "include/database.php";
     
     $db = new Database();
     
-    session_start();
-    
-    if(isset($_GET["logout"]) && isset($_SESSION))
-    {
-        unset($_SESSION["uuid"]);
-        header("Location: /");
-    }
-    
+    // if not logged in, redirect to login page
     if(!isset($_SESSION["uuid"]))
+    {
+        if(!empty($_GET["r"]))
+            header("Location:/");
+        
         $request = "login";
+    }
     else
         $request = empty($_GET["r"]) ? "home" : $_GET["r"];
     
@@ -40,12 +52,16 @@ try
         $main_tpl->set("uuid", $uuid);
         $main_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
         $main_tpl->set("code", $citizen["code"]);
-        $main_tpl->set("roles", "n/a");
+        $main_tpl->set("role", "n/a");
         $main_tpl->set("balance", $citizen["balance"]);
         
         $main_tpl->set("content", $tpl->html());
+        
+        $main_tpl->set("en", $lang == "en" ? "selected" : "");
+        $main_tpl->set("fr", $lang == "fr" ? "selected" : "");
     }
     
+    $main_tpl->set("lang", $lang);
     echo $main_tpl->html();
 }
 catch(Exception $e)

@@ -1,4 +1,4 @@
 <?php
 
-$title = "Accueil";
+$title = "News";
 $tpl = new Template("home");

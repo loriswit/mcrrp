@@ -47,6 +47,10 @@ class Template
     
             throw new Exception($error);
         }
+    
+        preg_match_all("<\\[(.+)\\]>", $html, $matches);
+        foreach(array_unique($matches[1]) as $match)
+            $html = str_replace("[$match]", tr($match), $html);
         
         return $html;
     }
