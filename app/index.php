@@ -10,6 +10,13 @@ try
     $db = new Database();
     
     session_start();
+    
+    if(isset($_GET["logout"]) && isset($_SESSION))
+    {
+        unset($_SESSION["uuid"]);
+        header("Location: /");
+    }
+    
     if(!isset($_SESSION["uuid"]))
         $request = "login";
     else
