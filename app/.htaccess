@@ -1,0 +1,12 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+# if not already redirected
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+
+# if not requesting an existing CSS
+RewriteCond %{REQUEST_URI} !^.*\.css$ [or]
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# redirect to index.php
+RewriteRule ^(.*)$ /index.php?r=$1 [QSA,L]
