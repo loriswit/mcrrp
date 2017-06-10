@@ -32,4 +32,21 @@ class Database
         $st->execute([$uuid]);
         return $st->fetch();
     }
+    
+    public function add_citizen($code, $first_name, $last_name, $sex, $state, $balance, $player)
+    {
+        $this->pdo->beginTransaction();
+        $st = $this->pdo->prepare(
+            "INSERT INTO citizen (code, first_name, last_name, sex, state, balance, player)"
+            ."VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $st->execute([$code, $first_name, $last_name, $sex, $state, $balance, $player]);
+        
+        $this->pdo->commit();
+    }
+    
+    public function code_available($code)
+    {
+        $codes = $this->pdo->query("SELECT code FROM citizen")->fetchAll(PDO::FETCH_COLUMN);
+        return !in_array($code, $codes);
+    }
 }

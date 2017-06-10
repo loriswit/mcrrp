@@ -1,33 +1,31 @@
 <?php
 
 $title = "Log in";
+$error = "";
 
-if(isset($_POST["submit"]))
+if(isset($_POST["login"]))
 {
     $name = $_POST["username"];
     
     $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
     
     if($json === false || empty($json))
-        echo "<p>Nom d'utilisateur invalide.</p>";
+        $error = tr("Invalid username. Please try again.");
     
     else
     {
-        $uuid = json_decode($json, true)["id"];
+        $data = json_decode($json, true);
+        $uuid = $data["id"];
         $uuid = substr_replace($uuid, "-", 8, 0);
         $uuid = substr_replace($uuid, "-", 13, 0);
         $uuid = substr_replace($uuid, "-", 18, 0);
         $uuid = substr_replace($uuid, "-", 23, 0);
-        
-        $citizen = $db->citizen($uuid);
-        if(empty($citizen))
-            echo "<p>Pas inscrit</p>";
-        
-        else
-        {
-            session_start(["use_only_cookies" => true, "cookie_lifetime" => 86400]);
-            $_SESSION["uuid"] = $uuid;
-            header("Location: /");
-        }
+    
+        $_SESSION["uuid"] = $uuid;
+        $_SESSION["username"] = $data["name"];
+        header("Location: /");
     }
 }
+
+$body_tpl = new Template("login");
+$body_tpl->set("error", $error);

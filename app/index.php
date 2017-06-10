@@ -3,15 +3,10 @@
 session_start();
 
 if(isset($_POST["logout"]))
-{
     unset($_SESSION["uuid"]);
-    header("Location:/");
-}
+
 if(isset($_POST["lang"]))
-{
     $_SESSION["lang"] = $_POST["lang"];
-    header("Refresh:0");
-}
 
 try
 {
@@ -29,34 +24,36 @@ try
         if(!empty($_GET["r"]))
             header("Location:/");
         
-        $request = "login";
+        require "page/login.php";
     }
-    else
-        $request = empty($_GET["r"]) ? "home" : $_GET["r"];
-    
-    require "page/$request.php";
-    
-    if($request == "login")
-        $body_tpl = new Template("login");
-    
     else
     {
-        if(!isset($title) || !isset($tpl))
-            throw new Exception("Title and/or template not defined.");
-        
         $uuid = $_SESSION["uuid"];
         $citizen = $db->citizen($uuid);
-    
-        $body_tpl = new Template("body");
-        $body_tpl->set("uuid", $uuid);
-        $body_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
-        $body_tpl->set("code", $citizen["code"]);
-        $body_tpl->set("role", "n/a");
-        $body_tpl->set("balance", $citizen["balance"]);
-        $body_tpl->set("title", $title);
-        $body_tpl->set("content", $tpl->html());
+        
+        // if not registered yet, redirect to join page
+        if(empty($citizen))
+            require "page/join.php";
+        
+        else
+        {
+            $request = empty($_GET["r"]) ? "home" : $_GET["r"];
+            require "page/$request.php";
+            
+            if(!isset($title) || !isset($tpl))
+                throw new Exception("Title and/or template not defined.");
+            
+            $body_tpl = new Template("body");
+            $body_tpl->set("uuid", $uuid);
+            $body_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
+            $body_tpl->set("code", $citizen["code"]);
+            $body_tpl->set("role", "n/a");
+            $body_tpl->set("balance", $citizen["balance"]);
+            $body_tpl->set("content", $tpl->html());
+        }
     }
     
+    $body_tpl->set("title", $title);
     $main_tpl = new Template("main");
     $main_tpl->set("lang", $lang);
     $main_tpl->set("title", $title);
