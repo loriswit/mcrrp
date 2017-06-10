@@ -49,6 +49,8 @@ try
             $body_tpl->set("code", $citizen["code"]);
             $body_tpl->set("role", "n/a");
             $body_tpl->set("balance", $citizen["balance"]);
+            $state = $db->state($citizen["state_id"]);
+            $body_tpl->set("state", $state["name"]);
             $body_tpl->set("content", $tpl->html());
         }
     }

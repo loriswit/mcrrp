@@ -37,11 +37,23 @@ class Database
     {
         $this->pdo->beginTransaction();
         $st = $this->pdo->prepare(
-            "INSERT INTO citizen (code, first_name, last_name, sex, state, balance, player)"
+            "INSERT INTO citizen (code, first_name, last_name, sex, state_id, balance, player)"
             ."VALUES (?, ?, ?, ?, ?, ?, ?)");
         $st->execute([$code, $first_name, $last_name, $sex, $state, $balance, $player]);
         
         $this->pdo->commit();
+    }
+    
+    public function states()
+    {
+        return $this->pdo->query("SELECT * FROM state")->fetchAll();
+    }
+    
+    public function state($id)
+    {
+        $st = $this->pdo->prepare("SELECT * FROM state WHERE id = ?");
+        $st->execute([$id]);
+        return $st->fetch();
     }
     
     public function code_available($code)

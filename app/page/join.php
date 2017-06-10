@@ -19,8 +19,8 @@ if(isset($_POST["join"]))
     if(empty($error))
     {
         $sex = $_POST["sex"];
-        $state = $_POST["state"];
-        $balance = 200;
+        $state_id = $_POST["state"];
+        $balance = $db->state($state_id)["initial"];
         
         // format names
         $first_name = str_replace("'", "’", $first_name);
@@ -59,13 +59,13 @@ if(isset($_POST["join"]))
                 $code = substr($code, 0, $code_length - 1);
             
             while(strlen($code) != $code_length)
-                $code .= mt_rand(0, 2);
+                $code .= mt_rand(0, 9);
             
             return $code;
         };
         
         // try 10 name based code ; if it fails, then try random codes
-        for($i = 0; $i < 1; $i++)
+        for($i = 0; $i < 10; $i++)
         {
             $code = $name_code($first_name.$last_name);
             if($db->code_available($code))
@@ -80,14 +80,17 @@ if(isset($_POST["join"]))
             while(!$db->code_available($code));
     
         // send to database
-        $db->add_citizen($code, $first_name, $last_name, $sex, $state, $balance, $uuid);
+        $db->add_citizen($code, $first_name, $last_name, $sex, $state_id, $balance, $uuid);
         header("Location: /");
     }
 }
 
-//unset($_SESSION["uuid"]);
+$states = "";
+foreach($db->states() as $state)
+    $states .= "<option value=".$state["id"].">".$state["name"]."</option>";
 
 $body_tpl = new Template("join");
 $body_tpl->set("uuid", $uuid);
 $body_tpl->set("name", $_SESSION["username"]);
 $body_tpl->set("error", $error);
+$body_tpl->set("states", $states);
