@@ -1,5 +1,7 @@
 <?php
 
+$title = "Log in";
+
 if(isset($_POST["submit"]))
 {
     $name = $_POST["username"];

@@ -37,31 +37,32 @@ try
     require "page/$request.php";
     
     if($request == "login")
-        $main_tpl = new Template("login");
+        $body_tpl = new Template("login");
     
     else
     {
         if(!isset($title) || !isset($tpl))
             throw new Exception("Title and/or template not defined.");
         
-        $main_tpl = new Template("main");
-        $main_tpl->set("title", $title);
-    
         $uuid = $_SESSION["uuid"];
         $citizen = $db->citizen($uuid);
-        $main_tpl->set("uuid", $uuid);
-        $main_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
-        $main_tpl->set("code", $citizen["code"]);
-        $main_tpl->set("role", "n/a");
-        $main_tpl->set("balance", $citizen["balance"]);
-        
-        $main_tpl->set("content", $tpl->html());
-        
-        $main_tpl->set("en", $lang == "en" ? "selected" : "");
-        $main_tpl->set("fr", $lang == "fr" ? "selected" : "");
+    
+        $body_tpl = new Template("body");
+        $body_tpl->set("uuid", $uuid);
+        $body_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
+        $body_tpl->set("code", $citizen["code"]);
+        $body_tpl->set("role", "n/a");
+        $body_tpl->set("balance", $citizen["balance"]);
+        $body_tpl->set("title", $title);
+        $body_tpl->set("content", $tpl->html());
     }
     
+    $main_tpl = new Template("main");
     $main_tpl->set("lang", $lang);
+    $main_tpl->set("title", $title);
+    $main_tpl->set("body", $body_tpl->html());
+    $main_tpl->set("en", $lang == "en" ? "selected" : "");
+    $main_tpl->set("fr", $lang == "fr" ? "selected" : "");
     echo $main_tpl->html();
 }
 catch(Exception $e)
