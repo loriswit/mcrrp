@@ -62,14 +62,14 @@ else
         
         if($buyer["id"] == $citizen["id"])
         {
-            $buyer_name = "<b>[@You]</b>";
+            $buyer_name = "<b>".tr("You")."</b>";
             $seller_name = $receiver["first_name"]." ".$receiver["last_name"]." (".$receiver["code"].")";
             $sign = "-";
         }
         else
         {
             $buyer_name = $buyer["first_name"]." ".$buyer["last_name"]." (".$buyer["code"].")";
-            $seller_name = "<b>[@You]</b>";
+            $seller_name = "<b>".tr("You")."</b>";
             $sign = "+";
         }
         

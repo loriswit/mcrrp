@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="{lang}">
+<html lang="{@lang}">
 <head>
     <meta charset="UTF-8">
-    <title>MCRRP - [@{title}]</title>
+    <title>MCRRP - [@{@title}]</title>
 </head>
 <body>
 <header>
     <h1>MCRRP</h1>
 </header>
-{body}
+{@body}
 </body>
 <footer>
     <br>
     <form id="form" method="post">
         <label for="lang">[@Language]</label>
         <select name="lang" id="lang" onchange="this.form.submit()">
-            <option value="en" {en}>English</option>
-            <option value="fr" {fr}>Français</option>
+            <option value="en" {@en}>English</option>
+            <option value="fr" {@fr}>Français</option>
         </select>
     </form>
 </footer>

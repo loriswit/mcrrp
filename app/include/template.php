@@ -31,14 +31,16 @@ class Template
         
         $html = file_get_contents($filename);
         
+        // replace {@...} tags by values
         foreach($this->values as $key => $value)
         {
-            $html = str_replace("{".$key."}", $value, $html, $count);
+            $html = str_replace("{@".$key."}", $value, $html, $count);
             if($count == 0)
                 throw new Exception("<i>$key</i> does not match any tag in template file <i>$filename</i>.");
         }
         
-        if(preg_match_all("<{([a-zA-Z_]+)}>", $html, $matches) != 0)
+        // ensure that there are no tags left
+        if(preg_match_all("/{@(.+)}/", $html, $matches) != 0)
         {
             $error = "Tag(s) not set in template file <i>$filename</i>:<ul>";
             foreach(array_unique($matches[1]) as $match)
@@ -48,7 +50,8 @@ class Template
             throw new Exception($error);
         }
     
-        preg_match_all("<\\[@(.+)\\]>", $html, $matches);
+        // replace [@...] tags by translations
+        preg_match_all("/\[@(.+)\]/", $html, $matches);
         foreach(array_unique($matches[1]) as $match)
             $html = str_replace("[@$match]", tr($match), $html);
         
