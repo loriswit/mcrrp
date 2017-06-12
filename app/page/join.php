@@ -2,7 +2,6 @@
 
 $title = "Register";
 
-$uuid = $_SESSION["uuid"];
 $error = "";
 
 if(isset($_POST["join"]))

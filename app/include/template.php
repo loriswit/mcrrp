@@ -38,7 +38,7 @@ class Template
                 throw new Exception("<i>$key</i> does not match any tag in template file <i>$filename</i>.");
         }
         
-        if(preg_match_all("<{([^}]+)}>", $html, $matches) != 0)
+        if(preg_match_all("<{([a-zA-Z_]+)}>", $html, $matches) != 0)
         {
             $error = "Tag(s) not set in template file <i>$filename</i>:<ul>";
             foreach(array_unique($matches[1]) as $match)
@@ -48,9 +48,9 @@ class Template
             throw new Exception($error);
         }
     
-        preg_match_all("<\\[(.+)\\]>", $html, $matches);
+        preg_match_all("<\\[@(.+)\\]>", $html, $matches);
         foreach(array_unique($matches[1]) as $match)
-            $html = str_replace("[$match]", tr($match), $html);
+            $html = str_replace("[@$match]", tr($match), $html);
         
         return $html;
     }

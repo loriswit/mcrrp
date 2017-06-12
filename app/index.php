@@ -29,7 +29,7 @@ try
     else
     {
         $uuid = $_SESSION["uuid"];
-        $citizen = $db->citizen($uuid);
+        $citizen = $db->citizen_by_uuid($uuid);
         
         // if not registered yet, redirect to join page
         if(empty($citizen))
@@ -51,6 +51,7 @@ try
             $body_tpl->set("balance", $citizen["balance"]);
             $state = $db->state($citizen["state_id"]);
             $body_tpl->set("state", $state["name"]);
+            $body_tpl->set("transac_count", $db->transaction_count($citizen["id"]));
             $body_tpl->set("content", $tpl->html());
         }
     }

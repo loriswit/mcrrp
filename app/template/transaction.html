@@ -1,0 +1,13 @@
+<p>{info}</p>
+<form method="post">
+    <label for="code">[@Make a payment]:</label>
+    <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Receiver's code]" id="code" required>
+    <input name="amount" type="number" step="1" placeholder="[@Amount]" id="amount" required>
+    <input name="description" type="text" placeholder="[@Description]" id="description" required>
+    <button name="pay" type="submit">[@Send]</button>
+</form>
+<br>
+<table>
+    {header}
+    {transactions}
+</table>

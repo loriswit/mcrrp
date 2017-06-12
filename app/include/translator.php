@@ -5,6 +5,8 @@ if(isset($_SESSION["lang"]))
 else
     $lang = locale_accept_from_http($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
 
+setlocale(LC_ALL, $lang);
+
 function tr($text)
 {
     global $lang;
