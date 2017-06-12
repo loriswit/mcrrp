@@ -15,30 +15,35 @@ class CitizenSeeder extends AbstractSeed
     public function run()
     {
         $this->execute("DELETE FROM citizen; ALTER TABLE citizen AUTO_INCREMENT = 1");
-        $this->execute("DELETE FROM state; ALTER TABLE state AUTO_INCREMENT = 1");
         
-        $states = $this->table("state");
+        $table = $this->table("citizen");
         $data = [
             [
-                "name" => "Toblerone",
-                "balance" => 1000000,
-                "initial" => 200]
-        ];
-        $states->insert($data);
-        $states->save();
-        
-        $citizens = $this->table("citizen");
-        $data = [
-            [
-                "code" => "LW12",
+                "code" => "LW84",
                 "first_name" => "Loris",
                 "last_name" => "Witschard",
                 "sex" => "M",
                 "state_id" => 1,
                 "balance" => 200,
                 "player" => "dee3dd3f-42f0-4f45-8d03-99ad769dd6a9"],
+            [
+                "code" => "HM61",
+                "first_name" => "Héliodore",
+                "last_name" => "Montambauds",
+                "sex" => "M",
+                "state_id" => 2,
+                "balance" => 300,
+                "player" => "579e797e-6b1d-475c-9306-1cb17a7fd248"],
+            [
+                "code" => "SDA2",
+                "first_name" => "Sérapine",
+                "last_name" => "D'Amiante",
+                "sex" => "F",
+                "state_id" => 1,
+                "balance" => 250,
+                "player" => "48c134d2-d6df-4b81-8a28-1aff29ea834e"]
         ];
-        $citizens->insert($data);
-        $citizens->save();
+        $table->insert($data);
+        $table->save();
     }
 }
