@@ -4,14 +4,6 @@ use Phinx\Seed\AbstractSeed;
 
 class TransactionSeeder extends AbstractSeed
 {
-    /**
-     * Run Method.
-     *
-     * Write your database seeder using this method.
-     *
-     * More information on writing seeders is available here:
-     * http://docs.phinx.org/en/latest/seeding.html
-     */
     public function run()
     {
         $this->execute("DELETE FROM transaction; ALTER TABLE transaction AUTO_INCREMENT = 1");
@@ -59,7 +51,28 @@ class TransactionSeeder extends AbstractSeed
                 "description" => "bought 1 pickaxe",
                 "buyer_id" => 3,
                 "seller_id" => 2,
-                "timestamp" => 1497859371]
+                "timestamp" => 1497859371],
+            [
+                "amount" => 110,
+                "description" => "tax",
+                "buyer_id" => 1,
+                "seller_id" => 1,
+                "seller_state" => true,
+                "timestamp" => 1497829403],
+            [
+                "amount" => 30,
+                "description" => "coffee",
+                "buyer_id" => 1,
+                "buyer_state" => true,
+                "seller_id" => 3,
+                "timestamp" => 1497928475],
+            [
+                "amount" => 75,
+                "description" => "something",
+                "buyer_id" => 2,
+                "buyer_state" => true,
+                "seller_id" => 2,
+                "timestamp" => 1497899817]
         ];
         $table->insert($data);
         $table->save();

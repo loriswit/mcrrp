@@ -4,14 +4,6 @@ use Phinx\Seed\AbstractSeed;
 
 class CitizenSeeder extends AbstractSeed
 {
-    /**
-     * Run Method.
-     *
-     * Write your database seeder using this method.
-     *
-     * More information on writing seeders is available here:
-     * http://docs.phinx.org/en/latest/seeding.html
-     */
     public function run()
     {
         $this->execute("DELETE FROM citizen; ALTER TABLE citizen AUTO_INCREMENT = 1");
@@ -19,6 +11,7 @@ class CitizenSeeder extends AbstractSeed
         $table = $this->table("citizen");
         $data = [
             [
+                // user: olybri
                 "code" => "LW84",
                 "first_name" => "Loris",
                 "last_name" => "Witschard",
@@ -27,6 +20,7 @@ class CitizenSeeder extends AbstractSeed
                 "balance" => 200,
                 "player" => "dee3dd3f-42f0-4f45-8d03-99ad769dd6a9"],
             [
+                // user: loris
                 "code" => "HM61",
                 "first_name" => "Héliodore",
                 "last_name" => "Montambauds",
@@ -35,6 +29,7 @@ class CitizenSeeder extends AbstractSeed
                 "balance" => 300,
                 "player" => "579e797e-6b1d-475c-9306-1cb17a7fd248"],
             [
+                // user: asdf
                 "code" => "SDA2",
                 "first_name" => "Sérapine",
                 "last_name" => "D'Amiante",

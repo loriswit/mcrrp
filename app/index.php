@@ -51,7 +51,7 @@ try
             $body_tpl->set("balance", $citizen["balance"]);
             $state = $db->state($citizen["state_id"]);
             $body_tpl->set("state", $state["name"]);
-            $body_tpl->set("transac_count", $db->transaction_count($citizen["id"]));
+            $body_tpl->set("transac_count", $db->transaction_count($citizen["id"], false));
             $body_tpl->set("content", $tpl->html());
         }
     }

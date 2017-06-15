@@ -73,41 +73,69 @@ class Database
         return !in_array($code, $codes);
     }
     
-    public function transactions($player_id, $sort_by = "timestamp")
+    public function transactions($id, $is_state, $sort_by = "timestamp")
     {
+        // check for valid sorting
         $columns = array_column($this->pdo->query("DESCRIBE transaction")->fetchAll(), "Field");
         if(!in_array($sort_by, $columns))
             header("Location: ".parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
         
+        $is_state = intval($is_state);
+        
         $st = $this->pdo->prepare(
-            "SELECT * FROM transaction WHERE buyer_id = :id OR seller_id = :id "
+            "SELECT * FROM transaction "
+            ."WHERE (buyer_id = :id AND buyer_state = $is_state) "
+            ."OR (seller_id = :id AND seller_state = $is_state) "
             ."ORDER BY $sort_by DESC");
-        $st->execute([":id" => $player_id]);
+        $st->execute([":id" => $id]);
         return $st->fetchAll();
     }
     
-    public function transaction_count($player_id)
+    public function transaction_count($player_id, $is_state)
     {
-        $st = $this->pdo->prepare("SELECT COUNT(*) FROM transaction WHERE buyer_id = :id OR seller_id = :id");
+        $is_state = intval($is_state);
+        
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM transaction "
+            ."WHERE (buyer_id = :id AND buyer_state = $is_state) "
+            ."OR (seller_id = :id AND seller_state = $is_state)");
         $st->execute([":id" => $player_id]);
         return $st->fetchColumn();
     }
     
-    public function add_transaction($buyer_id, $seller_id, $amount, $description)
+    public function add_transaction($buyer_id, $buyer_state, $seller_id, $seller_state, $amount, $description)
     {
-        $buyer_balance = $this->citizen($buyer_id)["balance"] - $amount;
-        $seller_balance = $this->citizen($seller_id)["balance"] + $amount;
+        if($buyer_state)
+        {
+            $buyer_balance = $this->state($buyer_id)["balance"] - $amount;
+            $buyer_table = "state";
+        }
+        else
+        {
+            $buyer_balance = $this->citizen($buyer_id)["balance"] - $amount;
+            $buyer_table = "citizen";
+        }
+        
+        if($seller_state)
+        {
+            $seller_balance = $this->state($seller_id)["balance"] + $amount;
+            $seller_table = "state";
+        }
+        else
+        {
+            $seller_balance = $this->citizen($seller_id)["balance"] + $amount;
+            $seller_table = "citizen";
+        }
         
         $this->pdo->beginTransaction();
         $st = $this->pdo->prepare(
-            "INSERT INTO transaction (buyer_id, seller_id, amount, description, timestamp) "
-            ."VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(NOW()))");
-        $st->execute([$buyer_id, $seller_id, $amount, $description]);
-    
-        $st = $this->pdo->prepare("UPDATE citizen SET balance = ? WHERE id = ?");
+            "INSERT INTO transaction (buyer_id, buyer_state, seller_id, seller_state, amount, description, timestamp) "
+            ."VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(NOW()))");
+        $st->execute([$buyer_id, $buyer_state, $seller_id, $seller_state, $amount, $description]);
+        
+        $st = $this->pdo->prepare("UPDATE $buyer_table SET balance = ? WHERE id = ?");
         $st->execute([$buyer_balance, $buyer_id]);
-    
-        $st = $this->pdo->prepare("UPDATE citizen SET balance = ? WHERE id = ?");
+        
+        $st = $this->pdo->prepare("UPDATE $seller_table SET balance = ? WHERE id = ?");
         $st->execute([$seller_balance, $seller_id]);
         
         $this->pdo->commit();
