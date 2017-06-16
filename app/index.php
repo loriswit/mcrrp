@@ -2,68 +2,48 @@
 
 session_start();
 
+require_once "vendor/autoload.php";
+
+spl_autoload_register(function($class)
+{
+    $filename = "include/".strtolower($class).".php";
+    if(file_exists($filename))
+        include $filename;
+    
+    $filename = "page/".strtolower($class).".php";
+    if(file_exists($filename))
+        include $filename;
+});
+
 if(isset($_POST["logout"]))
-    unset($_SESSION["uuid"]);
+    unset($_SESSION["logged"]);
 
 if(isset($_POST["lang"]))
     $_SESSION["lang"] = $_POST["lang"];
 
+if(isset($_SESSION["lang"]))
+    $translator = new Translator($_SESSION["lang"]);
+else
+    $translator = Translator::default();
+
+function tr($text)
+{
+    global $translator;
+    return $translator->translate($text);
+}
+
+define("LANG", $translator->lang());
+define("LOGGED", isset($_SESSION["logged"]));
+
+if(empty($_GET["r"]))
+    $class = LOGGED ? "Home" : "Login";
+else
+    $class = ucfirst($_GET["r"]);
+
 try
 {
-    require_once "vendor/autoload.php";
-    
-    require_once "include/translator.php";
-    require_once "include/template.php";
-    require_once "include/database.php";
-    
-    $db = new Database();
-    
-    // if not logged in, redirect to login page
-    if(!isset($_SESSION["uuid"]))
-    {
-        if(!empty($_GET["r"]))
-            header("Location:/");
-        
-        require "page/login.php";
-    }
-    else
-    {
-        $uuid = $_SESSION["uuid"];
-        $citizen = $db->citizen_by_uuid($uuid);
-        
-        // if not registered yet, redirect to join page
-        if(empty($citizen))
-            require "page/join.php";
-        
-        else
-        {
-            $request = empty($_GET["r"]) ? "home" : $_GET["r"];
-            require "page/$request.php";
-            
-            if(!isset($title) || !isset($tpl))
-                throw new Exception("Title and/or template not defined.");
-            
-            $body_tpl = new Template("body");
-            $body_tpl->set("uuid", $uuid);
-            $body_tpl->set("name", $citizen["first_name"]." ".$citizen["last_name"]);
-            $body_tpl->set("code", $citizen["code"]);
-            $body_tpl->set("role", "n/a");
-            $body_tpl->set("balance", $citizen["balance"]);
-            $state = $db->state($citizen["state_id"]);
-            $body_tpl->set("state", $state["name"]);
-            $body_tpl->set("transac_count", $db->transaction_count($citizen["id"], false));
-            $body_tpl->set("content", $tpl->html());
-        }
-    }
-    
-    $body_tpl->set("title", $title);
-    $main_tpl = new Template("main");
-    $main_tpl->set("lang", $lang);
-    $main_tpl->set("title", $title);
-    $main_tpl->set("body", $body_tpl->html());
-    $main_tpl->set("en", $lang == "en" ? "selected" : "");
-    $main_tpl->set("fr", $lang == "fr" ? "selected" : "");
-    echo $main_tpl->html();
+    $page = new $class();
+    $html = $page->render();
 }
 catch(Exception $e)
 {
@@ -72,3 +52,5 @@ catch(Exception $e)
         ."<br><b>Stack trace</b>:<br>".nl2br($e->getTraceAsString()));
 }
 
+$html = $translator->translateHTML($html);
+echo $html;

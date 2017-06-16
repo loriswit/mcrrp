@@ -1,23 +1,49 @@
 <?php
 
-if(isset($_SESSION["lang"]))
-    $lang = $_SESSION["lang"];
-else
-    $lang = locale_accept_from_http($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-
-setlocale(LC_ALL, $lang);
-
-function tr($text)
+class Translator
 {
-    global $lang;
-    if($lang == "en")
-        return $text;
+    private $lang;
     
-    $translation = @file_get_contents("language/$lang.json");
-    $res = @json_decode($translation, true)[$text];
+    public function __construct($lang)
+    {
+        $this->lang = $lang;
+        setlocale(LC_ALL, $lang);
+    }
     
-    if(!isset($res))
-        return $text;
+    // returns a Translator with default browser language
+    public static function default()
+    {
+        $lang = locale_accept_from_http($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+        return new self($lang);
+    }
     
-    return $res;
+    public function lang()
+    {
+        return $this->lang;
+    }
+    
+    public function translate($text)
+    {
+        if($this->lang == "en")
+            return $text;
+    
+        $translation = @file_get_contents("language/".$this->lang.".json");
+        $res = @json_decode($translation, true)[$text];
+    
+        if(!isset($res))
+            return $text;
+    
+        return $res;
+    }
+    
+    public function translateHTML($html)
+    {
+        // replace [@...] tags by translations
+        preg_match_all("/\[@(.+)\]/", $html, $matches);
+        foreach(array_unique($matches[1]) as $match)
+            $html = str_replace("[@$match]", $this->translate($match), $html);
+        
+        return $html;
+    }
 }
+

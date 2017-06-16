@@ -4,20 +4,33 @@ class Template
 {
     private $name;
     private $values = array();
+    private $error;
     
     public function __construct($name = "")
     {
-        $this->set_name($name);
+        $this->setName($name);
+        $this->error = "";
     }
     
-    public function set_name($name)
+    public function setName($name)
     {
-        $this->name = $name;
+        $this->name = strtolower($name);
     }
     
     public function set($key, $value)
     {
         $this->values[$key] = $value;
+    }
+    
+    public function setError($error)
+    {
+        $this->error = $error;
+    }
+    
+    public function setOptional($key)
+    {
+        if(!isset($this->values[$key]))
+            $this->values[$key] = "";
     }
     
     public function html()
@@ -31,29 +44,27 @@ class Template
         
         $html = file_get_contents($filename);
         
+        // replace optional {@error} tag
+        $html = str_replace("{@error}", $this->error, $html);
+        
         // replace {@...} tags by values
         foreach($this->values as $key => $value)
         {
-            $html = str_replace("{@".$key."}", $value, $html, $count);
+            $html = str_replace("{@$key}", $value, $html, $count);
             if($count == 0)
                 throw new Exception("<i>$key</i> does not match any tag in template file <i>$filename</i>.");
         }
         
         // ensure that there are no tags left
-        if(preg_match_all("/{@(.+)}/", $html, $matches) != 0)
+        if(preg_match_all("/{@([^\}]+)}/", $html, $matches) != 0)
         {
             $error = "Tag(s) not set in template file <i>$filename</i>:<ul>";
             foreach(array_unique($matches[1]) as $match)
                 $error .= "<li>$match</li>";
             $error .= "</ul>";
-    
+            
             throw new Exception($error);
         }
-    
-        // replace [@...] tags by translations
-        preg_match_all("/\[@(.+)\]/", $html, $matches);
-        foreach(array_unique($matches[1]) as $match)
-            $html = str_replace("[@$match]", tr($match), $html);
         
         return $html;
     }

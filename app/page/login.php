@@ -1,19 +1,27 @@
 <?php
 
-$title = "Log in";
-$error = "";
-
-if(isset($_POST["login"]))
+class Login extends Page
 {
-    $name = $_POST["username"];
+    protected $visitorOnly = true;
     
-    $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
-    
-    if($json === false || empty($json))
-        $error = tr("Invalid username. Please try again.");
-    
-    else
+    protected function title()
     {
+        return "Log in";
+    }
+    
+    protected function run()
+    {
+    }
+    
+    protected function submit()
+    {
+        $name = $_POST["username"];
+    
+        $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
+    
+        if($json === false || empty($json))
+            throw new InvalidInputException("Invalid username. Please try again.");
+    
         $data = json_decode($json, true);
         $uuid = $data["id"];
         $uuid = substr_replace($uuid, "-", 8, 0);
@@ -23,9 +31,14 @@ if(isset($_POST["login"]))
     
         $_SESSION["uuid"] = $uuid;
         $_SESSION["username"] = $data["name"];
-        header("Location: /");
+    
+        if($this->db->isRegistered($uuid))
+        {
+            $_SESSION["logged"] = true;
+            header("Location: /");
+        }
+        else
+            header("Location: /join");
     }
 }
 
-$body_tpl = new Template("login");
-$body_tpl->set("error", $error);
