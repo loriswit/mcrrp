@@ -26,6 +26,37 @@ class Database
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     
+    // CODES
+    
+    public function codeAvailable($code)
+    {
+        $codes = $this->pdo->query("SELECT code FROM citizen")->fetchAll(PDO::FETCH_COLUMN);
+        return !in_array($code, $codes);
+    }
+    
+    public function knownCodes($id)
+    {
+        $statements = [
+            "SELECT DISTINCT sender_id FROM message WHERE receiver_id = ?",
+            "SELECT DISTINCT receiver_id FROM message WHERE sender_id = ?",
+            "SELECT DISTINCT buyer_id FROM transaction WHERE buyer_state = 0 AND seller_state = 0 AND seller_id = ?",
+            "SELECT DISTINCT seller_id FROM transaction WHERE buyer_state = 0 AND seller_state = 0 AND buyer_id = ?",
+        ];
+        
+        $codes = array();
+        foreach($statements as $statement)
+        {
+            $st = $this->pdo->prepare($statement);
+            $st->execute([$id]);
+            foreach($st->fetchAll(PDO::FETCH_COLUMN) as $known_id)
+                array_push($codes, $this->citizen($known_id)["code"]);
+        }
+        
+        return array_unique($codes);
+    }
+    
+    // CITIZENS
+    
     public function isRegistered($uuid)
     {
         $st = $this->pdo->prepare("SELECT COUNT(*) FROM citizen WHERE player = ?");
@@ -62,6 +93,8 @@ class Database
         $st->execute([$code, $firstName, $lastName, $sex, $state, $balance, $player]);
     }
     
+    // STATES
+    
     public function states()
     {
         return $this->pdo->query("SELECT * FROM state")->fetchAll();
@@ -74,27 +107,29 @@ class Database
         return $st->fetch();
     }
     
-    public function codeAvailable($code)
-    {
-        $codes = $this->pdo->query("SELECT code FROM citizen")->fetchAll(PDO::FETCH_COLUMN);
-        return !in_array($code, $codes);
-    }
-    
     // MESSAGES
     
-    public function contacts($id)
+    public function conversations($id)
     {
         $st = $this->pdo->prepare(
             "SELECT msg.* FROM message msg "
-            ."INNER JOIN ("
-                ."SELECT LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), "
-                    ."MAX(timestamp) AS most_recent "
-                ."FROM message "
-                ."GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) group_msg "
+            ."INNER JOIN (SELECT MAX(timestamp) AS most_recent FROM message "
+            ."GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) group_msg "
             ."ON msg.timestamp = group_msg.most_recent "
-            ."WHERE msg.sender_id = :id OR msg.receiver_id = :id");
+            ."WHERE msg.sender_id = :id OR msg.receiver_id = :id "
+            ."ORDER BY msg.timestamp DESC");
         
         $st->execute([":id" => $id]);
+        return $st->fetchAll();
+    }
+    
+    public function messages($idA, $idB)
+    {
+        $st = $this->pdo->prepare("SELECT * FROM message "
+            ."WHERE sender_id = :idA AND receiver_id = :idB "
+            ."OR sender_id = :idB AND receiver_id = :idA "
+            ."ORDER BY timestamp");
+        $st->execute([":idA" => $idA, ":idB" => $idB]);
         return $st->fetchAll();
     }
     
@@ -104,6 +139,14 @@ class Database
             ."WHERE sender_id = :id OR receiver_id = :id");
         $st->execute([":id" => $id]);
         return $st->fetchColumn();
+    }
+    
+    public function addMessage($sender_id, $receiver_id, $body)
+    {
+        $st = $this->pdo->prepare(
+            "INSERT INTO message (sender_id, receiver_id, body, timestamp) "
+            ."VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()))");
+        $st->execute([$sender_id, $receiver_id, $body]);
     }
     
     // TRANSACTIONS
@@ -126,14 +169,14 @@ class Database
         return $st->fetchAll();
     }
     
-    public function transactionCount($playerID, $isState)
+    public function transactionCount($id, $isState)
     {
         $isState = intval($isState);
         
         $st = $this->pdo->prepare("SELECT COUNT(*) FROM transaction "
             ."WHERE (buyer_id = :id AND buyer_state = $isState) "
             ."OR (seller_id = :id AND seller_state = $isState)");
-        $st->execute([":id" => $playerID]);
+        $st->execute([":id" => $id]);
         return $st->fetchColumn();
     }
     

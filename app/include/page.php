@@ -3,6 +3,9 @@
 abstract class Page
 {
     protected $citizen;
+    protected $messageCount;
+    protected $transactionCount;
+    
     protected $db;
     protected $tpl;
     
@@ -10,7 +13,9 @@ abstract class Page
     protected $userOnly = false;
     
     abstract protected function title();
+    
     abstract protected function run();
+    
     abstract protected function submit();
     
     public function __construct()
@@ -22,7 +27,11 @@ abstract class Page
             header("Location: /");
         
         if($this->userOnly)
+        {
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
+            $this->messageCount = $this->db->messageCount($this->citizen["id"]);
+            $this->transactionCount = $this->db->transactionCount($this->citizen["id"], false);
+        }
     }
     
     public function render()
@@ -36,7 +45,7 @@ abstract class Page
             {
                 $this->tpl->setError(tr($exception->getMessage()));
             }
-    
+        
         $this->run();
         $main_tpl = new Template("main");
         
@@ -49,8 +58,8 @@ abstract class Page
             $header_tpl->set("role", "n/a");
             $header_tpl->set("balance", $this->citizen["balance"]);
             $header_tpl->set("state", $state["name"]);
-            $header_tpl->set("msg_count", $this->db->messageCount($this->citizen["id"]));
-            $header_tpl->set("transac_count", $this->db->transactionCount($this->citizen["id"], false));
+            $header_tpl->set("msg_count", $this->messageCount);
+            $header_tpl->set("transac_count", $this->transactionCount);
         }
         else
             $header_tpl = new Template("visitor");
@@ -65,20 +74,27 @@ abstract class Page
         $main_tpl->set("en", LANG == "en" ? "selected" : "");
         $main_tpl->set("fr", LANG == "fr" ? "selected" : "");
         $html = $main_tpl->html();
-    
+        
         // replace :XXXX: codes by names
-        preg_match_all("/:([a-zA-Z\d]{4}):/", $html, $matches);
+        preg_match_all("/:(@?[a-zA-Z\d]{4}):/", $html, $matches);
         foreach(array_unique($matches[1]) as $match)
         {
-            $citizen = $this->db->citizenByCode(strtoupper($match));
-            if(empty($citizen))
+            $link = strlen($match) == 5;
+            
+            if($link)
+                $code = substr($match, 1);
+            else
+                $code = $match;
+            
+            $otherCitizen = $this->db->citizenByCode(strtoupper($code));
+            if(empty($otherCitizen))
                 continue;
             
-            $name = $citizen["first_name"]." ".$citizen["last_name"];
-            if($this->citizen["id"] == $citizen["id"])
-                $html = str_replace(":$match:", $name, $html);
+            $name = $otherCitizen["first_name"]." ".$otherCitizen["last_name"];
+            if($link && $this->citizen["id"] != $otherCitizen["id"])
+                $html = str_replace(":$match:", "<a href='/conversation/".$otherCitizen["code"]."'>$name</a>", $html);
             else
-                $html = str_replace(":$match:", "<a href='/message?to=".$citizen["code"]."'>$name</a>", $html);
+                $html = str_replace(":$match:", $name, $html);
         }
         
         return $html;

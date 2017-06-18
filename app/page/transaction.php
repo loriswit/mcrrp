@@ -17,6 +17,10 @@ class Transaction extends Page
         foreach($this->db->states() as $state)
             $states .= "<option value=".$state["id"].">".$state["name"]."</option>";
         
+        $codes = "";
+        foreach($this->db->knownCodes($this->citizen["id"]) as $code)
+            $codes .= "<option value='$code'>:$code:</options>";
+        
         if(isset($_GET["sortby"]))
             $this->sortBy = $_GET["sortby"];
         else
@@ -30,13 +34,19 @@ class Transaction extends Page
             "description" => tr("Description")
         ];
         
-        $header = "<tr>\n";
-        foreach($columns as $key => $value)
-            $header .= "<th>".($this->sortBy == $key ? $value : "<a href='?sortby=$key'>$value</a>")."</th>\n";
-        $header .= "</tr>\n";
+        if($this->transactionCount > 0)
+        {
+            $header = "<tr>\n";
+            foreach($columns as $key => $value)
+                $header .= "<th>".($this->sortBy == $key ? $value : "<a href='?sortby=$key'>$value</a>")."</th>\n";
+            $header .= "</tr>\n";
+        }
+        else
+            $header = "";
         
         $this->tpl->setOptional("info");
         $this->tpl->set("states", $states);
+        $this->tpl->set("codes", $codes);
         $this->tpl->set("header", $header);
         $this->tpl->set("transactions", $this->transactionList());
     }
@@ -57,10 +67,10 @@ class Transaction extends Page
                 throw new InvalidInputException("You cannot pay to yourself.");
             
             $receiver = $this->db->citizenByCode($code);
-            $sellerName = ":".$receiver["code"].":";
+            $sellerName = ":@".$receiver["code"].":";
         }
         
-        if(!isset($receiver) || empty($receiver))
+        if(empty($receiver))
             throw new InvalidInputException("Invalid receiver's code.");
         
         if($this->citizen["balance"] - $_POST["amount"] < 0)
@@ -71,11 +81,12 @@ class Transaction extends Page
         
         // reload citizen
         $this->citizen = $this->db->citizen($this->citizen["id"]);
+        $this->transactionCount = $this->db->transactionCount($this->citizen["id"], false);
     }
     
     private function transactionList()
     {
-        if($this->db->transactionCount($this->citizen["id"], false) == 0)
+        if($this->transactionCount == 0)
             return "<tr><td colspan=5>No transactions.</td></tr>";
         
         $transact_list = "";
@@ -97,7 +108,7 @@ class Transaction extends Page
                     $sign = "-";
                 }
                 else
-                    $buyerName = ":".$buyer["code"].": (".$buyer["code"].")";
+                    $buyerName = ":@".$buyer["code"].":";
             }
             
             if($transaction["seller_state"])
@@ -114,7 +125,7 @@ class Transaction extends Page
                     $sign = "+";
                 }
                 else
-                    $sellerName = ":".$receiver["code"].": (".$receiver["code"].")";
+                    $sellerName = ":@".$receiver["code"].":";
             }
             
             $date = strftime("%A %e %B %Y, %H:%M", $transaction["timestamp"]);

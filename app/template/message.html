@@ -1,3 +1,13 @@
+<p>{@error}</p>
+<form method="post">
+    <label for="code">[@New conversation]:</label>
+    <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Contact's code]" id="code" list="contacts" required>
+    <datalist id="contacts">
+        {@codes}
+    </datalist>
+    <button name="submit" type="submit">[@Start]</button>
+</form>
+<br>
 <table>
     {@contacts}
 </table>

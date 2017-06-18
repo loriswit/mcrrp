@@ -31,7 +31,7 @@ class CitizenSeeder extends AbstractSeed
             [
                 // user: asdf
                 "code" => "SDA2",
-                "first_name" => "Sérapine",
+                "first_name" => "Séraphine",
                 "last_name" => "D'Amiante",
                 "sex" => "F",
                 "state_id" => 1,

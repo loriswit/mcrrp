@@ -35,10 +35,10 @@ function tr($text)
 define("LANG", $translator->lang());
 define("LOGGED", isset($_SESSION["logged"]));
 
-if(empty($_GET["r"]))
+if(empty($_GET["class"]))
     $class = LOGGED ? "Home" : "Login";
 else
-    $class = ucfirst($_GET["r"]);
+    $class = ucfirst($_GET["class"]);
 
 try
 {
