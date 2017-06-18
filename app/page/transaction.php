@@ -57,7 +57,7 @@ class Transaction extends Page
                 throw new InvalidInputException("You cannot pay to yourself.");
             
             $receiver = $this->db->citizenByCode($code);
-            $sellerName = $receiver["first_name"]." ".$receiver["last_name"];
+            $sellerName = ":".$receiver["code"].":";
         }
         
         if(!isset($receiver) || empty($receiver))
@@ -97,7 +97,7 @@ class Transaction extends Page
                     $sign = "-";
                 }
                 else
-                    $buyerName = $buyer["first_name"]." ".$buyer["last_name"]." (".$buyer["code"].")";
+                    $buyerName = ":".$buyer["code"].": (".$buyer["code"].")";
             }
             
             if($transaction["seller_state"])
@@ -114,7 +114,7 @@ class Transaction extends Page
                     $sign = "+";
                 }
                 else
-                    $sellerName = $receiver["first_name"]." ".$receiver["last_name"]." (".$receiver["code"].")";
+                    $sellerName = ":".$receiver["code"].": (".$receiver["code"].")";
             }
             
             $date = strftime("%A %e %B %Y, %H:%M", $transaction["timestamp"]);

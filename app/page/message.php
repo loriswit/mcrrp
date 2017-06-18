@@ -27,11 +27,11 @@ class Message extends Page
                 $contactID = $contact["sender_id"];
             }
             
-            $contactCitizen = $this->db->citizen($contactID);
+            $citizen = $this->db->citizen($contactID);
             
             $contact_list .= "<tr>\n"
                 ."<td>$date</td>\n"
-                ."<td>".$contactCitizen["first_name"]." ".$contactCitizen["last_name"]."</td>\n"
+                ."<td>:".$citizen["code"].":</td>\n"
                 ."<td>$prefix ".$contact["body"]."</td>\n"
                 ."</tr>\n";
         }

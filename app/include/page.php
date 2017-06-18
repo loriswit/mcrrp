@@ -45,7 +45,6 @@ abstract class Page
             $state = $this->db->state($this->citizen["state_id"]);
             $header_tpl = new Template("user");
             $header_tpl->set("uuid", $this->citizen["player"]);
-            $header_tpl->set("name", $this->citizen["first_name"]." ".$this->citizen["last_name"]);
             $header_tpl->set("code", $this->citizen["code"]);
             $header_tpl->set("role", "n/a");
             $header_tpl->set("balance", $this->citizen["balance"]);
@@ -65,7 +64,23 @@ abstract class Page
         $main_tpl->set("content", $this->tpl->html());
         $main_tpl->set("en", LANG == "en" ? "selected" : "");
         $main_tpl->set("fr", LANG == "fr" ? "selected" : "");
+        $html = $main_tpl->html();
+    
+        // replace :XXXX: codes by names
+        preg_match_all("/:([a-zA-Z\d]{4}):/", $html, $matches);
+        foreach(array_unique($matches[1]) as $match)
+        {
+            $citizen = $this->db->citizenByCode(strtoupper($match));
+            if(empty($citizen))
+                continue;
+            
+            $name = $citizen["first_name"]." ".$citizen["last_name"];
+            if($this->citizen["id"] == $citizen["id"])
+                $html = str_replace(":$match:", $name, $html);
+            else
+                $html = str_replace(":$match:", "<a href='/message?to=".$citizen["code"]."'>$name</a>", $html);
+        }
         
-        return $main_tpl->html();
+        return $html;
     }
 }
