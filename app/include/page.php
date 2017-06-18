@@ -50,6 +50,7 @@ abstract class Page
             $header_tpl->set("role", "n/a");
             $header_tpl->set("balance", $this->citizen["balance"]);
             $header_tpl->set("state", $state["name"]);
+            $header_tpl->set("msg_count", $this->db->messageCount($this->citizen["id"]));
             $header_tpl->set("transac_count", $this->db->transactionCount($this->citizen["id"], false));
         }
         else

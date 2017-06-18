@@ -12,6 +12,8 @@ class CreateTransactionTable extends AbstractMigration
         $table->addColumn("buyer_id", "integer");
         $table->addColumn("seller_id", "integer");
         $table->addColumn("timestamp", "integer");
+        $table->addForeignKey("buyer_id", "citizen", "id");
+        $table->addForeignKey("seller_id", "citizen", "id");
         $table->create();
     }
 }

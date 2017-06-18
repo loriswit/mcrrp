@@ -80,6 +80,34 @@ class Database
         return !in_array($code, $codes);
     }
     
+    // MESSAGES
+    
+    public function contacts($id)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT msg.* FROM message msg "
+            ."INNER JOIN ("
+                ."SELECT LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), "
+                    ."MAX(timestamp) AS most_recent "
+                ."FROM message "
+                ."GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) group_msg "
+            ."ON msg.timestamp = group_msg.most_recent "
+            ."WHERE msg.sender_id = :id OR msg.receiver_id = :id");
+        
+        $st->execute([":id" => $id]);
+        return $st->fetchAll();
+    }
+    
+    public function messageCount($id)
+    {
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM message "
+            ."WHERE sender_id = :id OR receiver_id = :id");
+        $st->execute([":id" => $id]);
+        return $st->fetchColumn();
+    }
+    
+    // TRANSACTIONS
+    
     public function transactions($id, $isState, $sortBy = "timestamp")
     {
         // check for valid sorting
