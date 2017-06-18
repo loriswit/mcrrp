@@ -43,8 +43,6 @@ class Transaction extends Page
     
     protected function submit()
     {
-        // TODO: prevent negative balance
-        
         $sellerState = ($_POST["receiver"] != "citizen");
         
         if($sellerState)
@@ -64,6 +62,9 @@ class Transaction extends Page
         
         if(!isset($receiver) || empty($receiver))
             throw new InvalidInputException("Invalid receiver's code.");
+        
+        if($this->citizen["balance"] - $_POST["amount"] < 0)
+            throw new InvalidInputException("Your balance is too low for this transaction.");
         
         $this->db->addTransaction($this->citizen["id"], false, $receiver["id"], $sellerState, $_POST["amount"], $_POST["description"]);
         $this->tpl->set("info", tr("You paid")." ".$_POST["amount"]." ".tr("to")." ".$sellerName.".");

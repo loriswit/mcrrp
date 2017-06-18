@@ -20,7 +20,6 @@
   "Make a payment": "Effectuer un paiement",
   "Male": "Homme",
   "Messages": "Messages",
-  "Your name must only contain letters, spaces, dashes and apostrophes.": "Votre nom ne doit contenir que des lettres, espaces, tirets, et apostrophes.",
   "News": "Actualités",
   "Profile": "Profile",
   "Receiver's code": "Code du destinataire",
@@ -36,5 +35,7 @@
   "Username": "Nom d'utilisateur",
   "You cannot pay to yourself.": "Vous ne pouvez pas payer à vous-même.",
   "You paid": "Vous avez payé",
-  "You": "Vous"
+  "You": "Vous",
+  "Your balance is too low for this transaction.": "Votre solde est trop bas pour cette transaction.",
+  "Your name must only contain letters, spaces, dashes and apostrophes.": "Votre nom ne doit contenir que des lettres, espaces, tirets, et apostrophes."
 }
