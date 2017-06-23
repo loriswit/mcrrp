@@ -38,15 +38,19 @@ class Message extends Page
             }
             
             $contact = $this->db->citizen($contactID);
+            $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
             
             $contact_list .= "<tr>\n"
                 ."<td>$date</td>\n"
-                ."<td>:@".$contact["code"].":</td>\n"
+                ."<td>:@".$contact["code"].":".($unreadMessages > 0 ? " ($unreadMessages)" : "")."</td>\n"
                 ."<td>$status ".$conversation["body"]."</td>\n"
                 ."</tr>\n";
         }
         
-        $this->tpl->set("contacts", $contact_list);
+        if($this->db->messageCount($this->citizen["id"]) == 0)
+            $this->tpl->set("contacts", "<tr><td colspan=5>".tr("No messages").".</td></tr>");
+        else
+            $this->tpl->set("contacts", $contact_list);
         $this->tpl->set("codes", $codes);
     }
     

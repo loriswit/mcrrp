@@ -66,7 +66,5 @@ class Conversation extends Page
     {
         $receiver = $this->db->citizenByCode($_GET["data"]);
         $this->db->addMessage($this->citizen["id"], $receiver["id"], $_POST["body"]);
-        
-        $this->messageCount = $this->db->messageCount($this->citizen["id"]);
     }
 }

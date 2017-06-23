@@ -34,7 +34,8 @@ class Transaction extends Page
             "description" => tr("Description")
         ];
         
-        if($this->transactionCount > 0)
+        $transactionCount = $this->db->transactionCount($this->citizen["id"], false);
+        if($transactionCount > 0)
         {
             $header = "<tr>\n";
             foreach($columns as $key => $value)
@@ -48,7 +49,10 @@ class Transaction extends Page
         $this->tpl->set("states", $states);
         $this->tpl->set("codes", $codes);
         $this->tpl->set("header", $header);
-        $this->tpl->set("transactions", $this->transactionList());
+        if($transactionCount == 0)
+            $this->tpl->set("transactions", "<tr><td colspan=5>".tr("No transactions").".</td></tr>");
+        else
+            $this->tpl->set("transactions", $this->transactionList());
         
         // mark transactions as read
         $this->db->readTransactions($this->citizen["id"], false);
@@ -84,14 +88,10 @@ class Transaction extends Page
         
         // reload citizen
         $this->citizen = $this->db->citizen($this->citizen["id"]);
-        $this->transactionCount = $this->db->transactionCount($this->citizen["id"], false);
     }
     
     private function transactionList()
     {
-        if($this->transactionCount == 0)
-            return "<tr><td colspan=5>No transactions.</td></tr>";
-        
         $transactList = "";
         foreach($this->db->transactions($this->citizen["id"], false, $this->sortBy) as $transaction)
         {

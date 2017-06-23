@@ -3,8 +3,6 @@
 abstract class Page
 {
     protected $citizen;
-    protected $messageCount;
-    protected $transactionCount;
     
     protected $db;
     protected $tpl;
@@ -27,11 +25,7 @@ abstract class Page
             header("Location: /");
         
         if($this->userOnly)
-        {
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
-            $this->messageCount = $this->db->messageCount($this->citizen["id"]);
-            $this->transactionCount = $this->db->transactionCount($this->citizen["id"], false);
-        }
     }
     
     public function render()
@@ -47,33 +41,36 @@ abstract class Page
             }
         
         $this->run();
-        $main_tpl = new Template("main");
+        $mainTpl = new Template("main");
         
         if(LOGGED)
         {
+            $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
+            $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
+    
             $state = $this->db->state($this->citizen["state_id"]);
-            $header_tpl = new Template("user");
-            $header_tpl->set("uuid", $this->citizen["player"]);
-            $header_tpl->set("code", $this->citizen["code"]);
-            $header_tpl->set("role", "n/a");
-            $header_tpl->set("balance", $this->citizen["balance"]);
-            $header_tpl->set("state", $state["name"]);
-            $header_tpl->set("msg_count", $this->messageCount);
-            $header_tpl->set("transac_count", $this->transactionCount);
+            $headerTpl = new Template("user");
+            $headerTpl->set("uuid", $this->citizen["player"]);
+            $headerTpl->set("code", $this->citizen["code"]);
+            $headerTpl->set("role", "n/a");
+            $headerTpl->set("balance", $this->citizen["balance"]);
+            $headerTpl->set("state", $state["name"]);
+            $headerTpl->set("msg_count", $unreadMessages > 0 ? " ($unreadMessages)" : "");
+            $headerTpl->set("transac_count", $unreadTransactions > 0 ? " ($unreadTransactions)" : "");
         }
         else
-            $header_tpl = new Template("visitor");
+            $headerTpl = new Template("visitor");
         
         
-        $header_tpl->set("title", $this->title());
+        $headerTpl->set("title", $this->title());
         
-        $main_tpl->set("lang", LANG);
-        $main_tpl->set("title", $this->title());
-        $main_tpl->set("header", $header_tpl->html());
-        $main_tpl->set("content", $this->tpl->html());
-        $main_tpl->set("en", LANG == "en" ? "selected" : "");
-        $main_tpl->set("fr", LANG == "fr" ? "selected" : "");
-        $html = $main_tpl->html();
+        $mainTpl->set("lang", LANG);
+        $mainTpl->set("title", $this->title());
+        $mainTpl->set("header", $headerTpl->html());
+        $mainTpl->set("content", $this->tpl->html());
+        $mainTpl->set("en", LANG == "en" ? "selected" : "");
+        $mainTpl->set("fr", LANG == "fr" ? "selected" : "");
+        $html = $mainTpl->html();
         
         // replace :XXXX: codes by names
         preg_match_all("/:(@?[a-zA-Z\d]{4}):/", $html, $matches);

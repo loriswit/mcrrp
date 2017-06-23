@@ -141,6 +141,22 @@ class Database
         return $st->fetchColumn();
     }
     
+    public function unreadMessageCount($receiverID)
+    {
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM message "
+            ."WHERE receiver_id = ? AND seen = 0");
+        $st->execute([$receiverID]);
+        return $st->fetchColumn();
+    }
+    
+    public function unreadMessageCountFrom($senderID, $receiverID)
+    {
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM message "
+            ."WHERE sender_id = ? AND receiver_id = ? AND seen = 0");
+        $st->execute([$senderID, $receiverID]);
+        return $st->fetchColumn();
+    }
+    
     public function addMessage($senderID, $receiverID, $body)
     {
         $st = $this->pdo->prepare(
@@ -184,6 +200,16 @@ class Database
             ."WHERE (buyer_id = :id AND buyer_state = $isState) "
             ."OR (seller_id = :id AND seller_state = $isState)");
         $st->execute([":id" => $id]);
+        return $st->fetchColumn();
+    }
+    
+    public function unreadTransactionCount($id, $isState)
+    {
+        $isState = intval($isState);
+        
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM transaction "
+            ."WHERE seller_id = ? AND seller_state = $isState AND seen = 0");
+        $st->execute([$id]);
         return $st->fetchColumn();
     }
     
