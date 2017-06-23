@@ -48,8 +48,8 @@ class Database
         {
             $st = $this->pdo->prepare($statement);
             $st->execute([$id]);
-            foreach($st->fetchAll(PDO::FETCH_COLUMN) as $known_id)
-                array_push($codes, $this->citizen($known_id)["code"]);
+            foreach($st->fetchAll(PDO::FETCH_COLUMN) as $knownID)
+                array_push($codes, $this->citizen($knownID)["code"]);
         }
         
         return array_unique($codes);
@@ -141,19 +141,19 @@ class Database
         return $st->fetchColumn();
     }
     
-    public function addMessage($sender_id, $receiver_id, $body)
+    public function addMessage($senderID, $receiverID, $body)
     {
         $st = $this->pdo->prepare(
             "INSERT INTO message (sender_id, receiver_id, body, timestamp) "
             ."VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()))");
-        $st->execute([$sender_id, $receiver_id, $body]);
+        $st->execute([$senderID, $receiverID, $body]);
     }
     
-    public function readMessages($sender_id, $receiver_id)
+    public function readMessages($senderID, $receiverID)
     {
         $st = $this->pdo->prepare("UPDATE message SET seen = UNIX_TIMESTAMP(NOW()) ".
             "WHERE sender_id = ? AND receiver_id = ? AND seen = 0");
-        $st->execute([$sender_id, $receiver_id]);
+        $st->execute([$senderID, $receiverID]);
     }
     
     // TRANSACTIONS
@@ -224,5 +224,12 @@ class Database
         $st->execute([$sellerBalance, $sellerID]);
         
         $this->pdo->commit();
+    }
+    
+    public function readTransactions($sellerID, $sellerState)
+    {
+        $st = $this->pdo->prepare("UPDATE transaction SET seen = UNIX_TIMESTAMP(NOW()) ".
+            "WHERE seller_id = ? AND seller_state = ? AND seen = 0");
+        $st->execute([$sellerID, $sellerState]);
     }
 }

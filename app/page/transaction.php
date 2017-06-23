@@ -49,6 +49,9 @@ class Transaction extends Page
         $this->tpl->set("codes", $codes);
         $this->tpl->set("header", $header);
         $this->tpl->set("transactions", $this->transactionList());
+        
+        // mark transactions as read
+        $this->db->readTransactions($this->citizen["id"], false);
     }
     
     protected function submit()
@@ -89,10 +92,12 @@ class Transaction extends Page
         if($this->transactionCount == 0)
             return "<tr><td colspan=5>No transactions.</td></tr>";
         
-        $transact_list = "";
+        $transactList = "";
         foreach($this->db->transactions($this->citizen["id"], false, $this->sortBy) as $transaction)
         {
             $sign = "";
+            $status = "";
+            $seen = "";
             
             if($transaction["buyer_state"])
             {
@@ -106,6 +111,13 @@ class Transaction extends Page
                 {
                     $buyerName = "<b>".tr("You")."</b>";
                     $sign = "-";
+                    if($transaction["seen"])
+                    {
+                        $seen = tr("read").": ".strftime("%e %B %Y, %H:%M", $transaction["seen"]);
+                        $status = "&#10003";
+                    }
+                    else
+                        $status = "&#11208";
                 }
                 else
                     $buyerName = ":@".$buyer["code"].":";
@@ -123,6 +135,8 @@ class Transaction extends Page
                 {
                     $sellerName = "<b>".tr("You")."</b>";
                     $sign = "+";
+                    if(!$transaction["seen"])
+                        $status = "[".tr("new")."]";
                 }
                 else
                     $sellerName = ":@".$receiver["code"].":";
@@ -130,15 +144,15 @@ class Transaction extends Page
             
             $date = strftime("%A %e %B %Y, %H:%M", $transaction["timestamp"]);
             
-            $transact_list .= "<tr>\n"
+            $transactList .= "<tr>\n"
                 ."<td>$date</td>\n"
                 ."<td>$buyerName</td>\n"
                 ."<td>$sellerName</td>\n"
                 ."<td>$sign ".$transaction["amount"]."</td>\n"
-                ."<td>".$transaction["description"]."</td>\n"
+                ."<td title='$seen'>$status ".$transaction["description"]."</td>\n"
                 ."</tr>\n";
         }
         
-        return $transact_list;
+        return $transactList;
     }
 }

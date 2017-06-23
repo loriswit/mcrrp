@@ -18,22 +18,27 @@ class Conversation extends Page
             header("Location: /message");
         
         $day = 0;
-        $message_list = "";
+        $messageList = "";
         foreach($this->db->messages($this->citizen["id"], $contact["id"]) as $message)
         {
             $date = $message["timestamp"];
-            $msg_day = $date - $date % 86400;
-            if($day < $msg_day)
+            $msgDay = $date - $date % 86400;
+            if($day < $msgDay)
             {
-                $day = $msg_day;
-                $message_list .= "<p align='center'><b>".strftime("%e %B %Y", $day)."</b></p>";
+                $day = $msgDay;
+                $messageList .= "<p align='center'><b>".strftime("%e %B %Y", $day)."</b></p>";
             }
+            
+            $seen = "";
             
             if($message["sender_id"] == $this->citizen["id"])
             {
                 $align = "right";
                 if($message["seen"])
+                {
                     $status = "&#10003";
+                    $seen = tr("read").": ".strftime("%e %B %Y, %H:%M", $message["seen"]);
+                }
                 else
                     $status = "&#11208";
             }
@@ -46,9 +51,7 @@ class Conversation extends Page
                     $status = "[".tr("new")."]";
             }
             
-            $seen = tr("read").": ".strftime("%e %B %Y, %H:%M", $message["seen"]);
-            
-            $message_list .= "<p align='$align' title='$seen'>".$message["body"]
+            $messageList .= "<p align='$align' title='$seen'>".$message["body"]
                 ."<br>\n$status [".strftime("%H:%M", $date)."]</p>\n";
         }
         
@@ -56,7 +59,7 @@ class Conversation extends Page
         $this->db->readMessages($contact["id"], $this->citizen["id"]);
         
         $this->tpl->set("code", $code);
-        $this->tpl->set("messages", $message_list);
+        $this->tpl->set("messages", $messageList);
     }
     
     protected function submit()
