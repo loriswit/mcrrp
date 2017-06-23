@@ -149,6 +149,13 @@ class Database
         $st->execute([$sender_id, $receiver_id, $body]);
     }
     
+    public function readMessages($sender_id, $receiver_id)
+    {
+        $st = $this->pdo->prepare("UPDATE message SET seen = UNIX_TIMESTAMP(NOW()) ".
+            "WHERE sender_id = ? AND receiver_id = ? AND seen = 0");
+        $st->execute([$sender_id, $receiver_id]);
+    }
+    
     // TRANSACTIONS
     
     public function transactions($id, $isState, $sortBy = "timestamp")

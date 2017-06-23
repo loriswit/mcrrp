@@ -26,16 +26,34 @@ class Conversation extends Page
             if($day < $msg_day)
             {
                 $day = $msg_day;
-                $message_list .= "<p><b>".strftime("%e %B %Y", $day)."</b></p>";
+                $message_list .= "<p align='center'><b>".strftime("%e %B %Y", $day)."</b></p>";
             }
             
             if($message["sender_id"] == $this->citizen["id"])
-                $name = tr("You");
+            {
+                $align = "right";
+                if($message["seen"])
+                    $status = "&#10003";
+                else
+                    $status = "&#11208";
+            }
             else
-                $name = ":$code:";
+            {
+                $align = "left";
+                if($message["seen"])
+                    $status = "";
+                else
+                    $status = "[".tr("new")."]";
+            }
             
-            $message_list .= "<p>".strftime("%H:%M", $date)." <b>$name</b><br>\n".$message["body"]."</p>\n";
+            $seen = tr("read").": ".strftime("%e %B %Y, %H:%M", $message["seen"]);
+            
+            $message_list .= "<p align='$align' title='$seen'>".$message["body"]
+                ."<br>\n$status [".strftime("%H:%M", $date)."]</p>\n";
         }
+        
+        // mark messages as read
+        $this->db->readMessages($contact["id"], $this->citizen["id"]);
         
         $this->tpl->set("code", $code);
         $this->tpl->set("messages", $message_list);

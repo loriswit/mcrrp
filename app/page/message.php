@@ -22,13 +22,19 @@ class Message extends Page
             
             if($conversation["sender_id"] == $this->citizen["id"])
             {
-                $prefix = "&#11208;";
                 $contactID = $conversation["receiver_id"];
+                if($conversation["seen"])
+                    $status = "&#10003";
+                else
+                    $status = "&#11208";
             }
             else
             {
-                $prefix = "";
                 $contactID = $conversation["sender_id"];
+                if($conversation["seen"])
+                    $status = "";
+                else
+                    $status = "[".tr("new")."]";
             }
             
             $contact = $this->db->citizen($contactID);
@@ -36,7 +42,7 @@ class Message extends Page
             $contact_list .= "<tr>\n"
                 ."<td>$date</td>\n"
                 ."<td>:@".$contact["code"].":</td>\n"
-                ."<td>$prefix ".$conversation["body"]."</td>\n"
+                ."<td>$status ".$conversation["body"]."</td>\n"
                 ."</tr>\n";
         }
         
@@ -47,10 +53,10 @@ class Message extends Page
     protected function submit()
     {
         $code = strtoupper($_POST["code"]);
-    
+        
         if($code == $this->citizen["code"])
             throw new InvalidInputException("You cannot start a conversation with yourself.");
-    
+        
         if(empty($this->db->citizenByCode($code)))
             throw new InvalidInputException("Invalid contact's code.");
         
