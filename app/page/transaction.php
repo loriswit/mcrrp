@@ -80,6 +80,9 @@ class Transaction extends Page
         if(empty($receiver))
             throw new InvalidInputException("Invalid receiver's code.");
         
+        if($_POST["amount"] < 1)
+            throw new InvalidInputException("Invalid amount.");
+        
         if($this->citizen["balance"] - $_POST["amount"] < 0)
             throw new InvalidInputException("Your balance is too low for this transaction.");
         
