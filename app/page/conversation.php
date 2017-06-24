@@ -51,7 +51,9 @@ class Conversation extends Page
                     $status = "[".tr("new")."]";
             }
             
-            $messageList .= "<p align='$align' title='$seen'>".$message["body"]
+            $body = htmlspecialchars($message["body"]);
+            
+            $messageList .= "<p align='$align' title='$seen'>".$body
                 ."<br>\n$status [".strftime("%H:%M", $date)."]</p>\n";
         }
         

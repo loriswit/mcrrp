@@ -39,11 +39,12 @@ class Message extends Page
             
             $contact = $this->db->citizen($contactID);
             $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
+            $body = htmlspecialchars($conversation["body"]);
             
             $contact_list .= "<tr>\n"
                 ."<td>$date</td>\n"
                 ."<td>:@".$contact["code"].":".($unreadMessages > 0 ? " ($unreadMessages)" : "")."</td>\n"
-                ."<td>$status ".$conversation["body"]."</td>\n"
+                ."<td>$status ".$body."</td>\n"
                 ."</tr>\n";
         }
         
