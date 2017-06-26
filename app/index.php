@@ -42,7 +42,11 @@ else
 
 try
 {
-    $page = new $class();
+    if(class_exists($class))
+        $page = new $class();
+    else
+        $page = new NotFound();
+    
     $html = $page->render();
 }
 catch(Exception $e)

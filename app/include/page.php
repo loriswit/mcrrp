@@ -24,7 +24,7 @@ abstract class Page
         if($this->userOnly && !LOGGED || $this->visitorOnly && LOGGED)
             header("Location: /");
         
-        if($this->userOnly)
+        if(LOGGED)
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
     }
     
