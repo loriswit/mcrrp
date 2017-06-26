@@ -8,15 +8,15 @@ spl_autoload_register(function($class)
 {
     $filename = "include/".strtolower($class).".php";
     if(file_exists($filename))
-        include $filename;
+        require_once $filename;
     
     $filename = "page/".strtolower($class).".php";
     if(file_exists($filename))
-        include $filename;
+        require_once $filename;
 });
 
 if(isset($_POST["logout"]))
-    unset($_SESSION["logged"]);
+    session_unset();
 
 if(isset($_POST["lang"]))
     $_SESSION["lang"] = $_POST["lang"];
