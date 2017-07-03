@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public final class MCRRP extends JavaPlugin
@@ -18,14 +19,21 @@ public final class MCRRP extends JavaPlugin
         try
         {
             Database.init("localhost", "mcrrp", "root", "");
+            Tr.load("fr");
         }
         catch(SQLException e)
         {
             getLogger().severe("Database connection failed. " + e.getMessage());
             return;
         }
+        catch(IOException e)
+        {
+            getLogger().severe("Language file not found. " + e.getMessage());
+            return;
+        }
+        
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
-        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new CommandListener(), this);
     }
     
     @Override
@@ -36,12 +44,6 @@ public final class MCRRP extends JavaPlugin
     
     public static void kickPlayer(final Player player, final String msg)
     {
-        Bukkit.getScheduler().runTask(instance, new Runnable()
-        {
-            public void run()
-            {
-                player.kickPlayer(msg);
-            }
-        });
+        Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
     }
 }

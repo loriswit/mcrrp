@@ -19,7 +19,7 @@ public class Database
         return citizen(player, true);
     }
     
-    public static ResultSet citizen(final Player player, boolean kickOnError) throws SQLException
+    public static ResultSet citizen(Player player, boolean kickOnError) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM citizen WHERE player = ?");
         statement.setString(1, player.getUniqueId().toString());
@@ -27,10 +27,19 @@ public class Database
         if(!rs.first())
         {
             if(kickOnError)
-                MCRRP.kickPlayer(player, "You are not registered on the server.");
+                MCRRP.kickPlayer(player, "Player not registered on the server.");
             else
                 return null;
         }
+        return rs;
+    }
+    
+    public static ResultSet state(int stateID) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement("SELECT * FROM state WHERE id = ?");
+        statement.setInt(1, stateID);
+        ResultSet rs = statement.executeQuery();
+        rs.first();
         return rs;
     }
 }

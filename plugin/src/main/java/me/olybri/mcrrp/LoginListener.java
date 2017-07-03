@@ -16,7 +16,10 @@ public class LoginListener implements Listener
     public void onPlayerLogin(PlayerLoginEvent event) throws SQLException
     {
         if(Database.citizen(event.getPlayer(), false) == null)
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "You first need to register at http://olybri.me");
+        {
+            String msg = Tr.s("You first need to register at") + " http://olybri.me";
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
+        }
     }
     
     @EventHandler
@@ -29,7 +32,7 @@ public class LoginListener implements Listener
         if(rs == null)
             return;
         
-        player.sendMessage("Welcome, " + rs.getString("first_name") + " " + rs.getString("last_name"));
+        player.sendMessage(Tr.s("Welcome") + ", " + rs.getString("first_name") + " " + rs.getString("last_name"));
         player.setDisplayName(rs.getString("code"));
     }
     
