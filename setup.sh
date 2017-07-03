@@ -70,6 +70,7 @@ echo $separator
 read -p "Enter maximum size of memory allocation: " memory
 cd ..
 echo -e "#!/usr/bin/env bash\n\ncd server\njava -Xms512M -Xmx$memory -jar spigot.jar\n" > start.sh
+chmod +x start.sh
 echo -e "created \e[33m./start.sh\e[0m"
 
 echo
