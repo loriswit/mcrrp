@@ -44,8 +44,8 @@ class Join extends Page
         $firstName = str_replace("'", "’", $firstName);
         $lastName = str_replace("'", "’", $lastName);
     
-        $firstName = mb_convert_case($firstName, MB_CASE_TITLE, "utf-8");
-        $lastName = mb_convert_case($lastName, MB_CASE_TITLE, "utf-8");
+        $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
+        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
     
         // try 10 name based code ; if it fails, then try random codes
         for($i = 0; $i < 10; $i++)

@@ -15,6 +15,8 @@ spl_autoload_register(function($class)
         require_once $filename;
 });
 
+mb_internal_encoding("UTF-8");
+
 if(isset($_POST["logout"]))
     session_unset();
 

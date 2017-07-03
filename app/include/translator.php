@@ -3,11 +3,18 @@
 class Translator
 {
     private $lang;
+    private $translation;
     
     public function __construct($lang)
     {
         $this->lang = $lang;
         setlocale(LC_ALL, $lang);
+        
+        if($this->lang != "en")
+        {
+            $content = @file_get_contents("../lang/".$this->lang.".json");
+            $this->translation = @json_decode($content, true);
+        }
     }
     
     // returns a Translator with default browser language
@@ -24,16 +31,15 @@ class Translator
     
     public function translate($text)
     {
-        if($this->lang == "en")
+        $key = mb_strtolower($text);
+        
+        if(!isset($this->translation[$key]))
             return $text;
-    
-        $translation = @file_get_contents("language/".$this->lang.".json");
-        $res = @json_decode($translation, true)[$text];
-    
-        if(!isset($res))
-            return $text;
-    
-        return $res;
+        
+        if($this->isUpperFirst($text))
+            return $this->upperFirst($this->translation[$key]);
+        else
+            return $this->translation[$key];
     }
     
     public function translateHTML($html)
@@ -44,6 +50,19 @@ class Translator
             $html = str_replace("[@$match]", $this->translate($match), $html);
         
         return $html;
+    }
+    
+    private function upperFirst($str)
+    {
+        $first = mb_substr($str, 0, 1);
+        $end = mb_substr($str, 1, mb_strlen($str) - 1);
+        return mb_strtoupper($first).$end;
+    }
+    
+    private function isUpperFirst($str)
+    {
+        $first = mb_substr($str, 0, 1);
+        return mb_strtoupper($first) == $first;
     }
 }
 
