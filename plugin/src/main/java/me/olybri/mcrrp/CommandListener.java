@@ -1,6 +1,5 @@
 package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,8 +35,8 @@ public class CommandListener implements Listener
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) throws SQLException
     {
-        Entity target = event.getRightClicked();
-        if(!(target instanceof Player))
+        Entity entity = event.getRightClicked();
+        if(!(entity instanceof Player))
             return;
         
         Player player = event.getPlayer();
@@ -46,19 +45,18 @@ public class CommandListener implements Listener
         if(!messageWaiting.containsKey(uuid))
             return;
         
+        Player target = (Player) entity;
+        
         String message = messageWaiting.remove(uuid);
         
         ResultSet citizen = Database.citizen(player);
         String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
         
-        target.sendMessage(nameColor(name) + " " + Tr.s("to") + " " + nameColor(Tr.s("you")));
-        target.sendMessage(formatMessage(message));
+        String title = "{name:" + name + "} " + Tr.s("to") + " {name:" + Tr.s("you") + "}:";
+        new Message(title, message).send(target);
         
-        citizen = Database.citizen((Player) target);
-        name = citizen.getString("first_name") + " " + citizen.getString("last_name");
-        
-        player.sendMessage(nameColor(Tr.s("You")) + " " + Tr.s("showed") + ":\n");
-        player.sendMessage(formatMessage(message));
+        title = "{name:" + Tr.s("You") + "} " + Tr.s("showed") + ":";
+        new Message(title, message).send(player);
     }
     
     private void runCommand(Player player, String commandLine) throws SQLException
@@ -71,7 +69,7 @@ public class CommandListener implements Listener
         
         messageWaiting.remove(player.getUniqueId());
         
-        String message;
+        Message message = new Message();
         ResultSet citizen = Database.citizen(player);
         
         switch(command)
@@ -79,50 +77,30 @@ public class CommandListener implements Listener
             case "identity":
             case "id":
                 ResultSet state = Database.state(citizen.getInt("state_id"));
-                message = Tr.s("First name(s)") + ": " + valueColor(citizen.getString("first_name"))
-                        + "\n" + Tr.s("Last name(s)") + ": " + valueColor(citizen.getString("last_name"))
-                        + "\n" + Tr.s("Code") + ": " + valueColor(citizen.getString("code"))
-                        + "\n" + Tr.s("Sex") + ": " + valueColor(citizen.getString("sex"))
-                        + "\n" + Tr.s("State") + ": " + valueColor(state.getString("name"));
+                message.body = Tr.s("First name(s)") + ": {value:" + citizen.getString("first_name") + "}\n"
+                        + Tr.s("Last name(s)") + ": {value:" + citizen.getString("last_name") + "}\n"
+                        + Tr.s("Code") + ": {value:" + citizen.getString("code") + "}\n"
+                        + Tr.s("Sex") + ": {value:" + citizen.getString("sex") + "}\n"
+                        + Tr.s("State") + ": {value:" + state.getString("name") + "}";
                 break;
             
             case "balance":
             case "bal":
             case "$":
-                message = Tr.s("Current balance") + ": " + valueColor(citizen.getInt("balance"));
+                message.body = Tr.s("Current balance") + ": {value:" + (citizen.getInt("balance")) + "}";
                 break;
             
             default:
-                player.sendMessage(Tr.s("Unknown command") + ": " + command + "\n ");
-                return;
+                message.title = Tr.s("Unknown command") + ": {value:" + command + "}";
+                break;
         }
         
         if(show)
         {
-            messageWaiting.put(player.getUniqueId(), message);
-            player.sendMessage(Tr.s("Please click on any player") + "...");
+            messageWaiting.put(player.getUniqueId(), message.body);
+            new Message(Tr.s("Please click on any player") + "...").send(player);
         }
         else
-            player.sendMessage(formatMessage(message));
-    }
-    
-    private String formatMessage(String message)
-    {
-        return message.replaceAll("(?m)^", "  ") + "\n ";
-    }
-    
-    private String nameColor(String str)
-    {
-        return ChatColor.GREEN + str + ChatColor.RESET;
-    }
-    
-    private String valueColor(String str)
-    {
-        return ChatColor.YELLOW + str + ChatColor.RESET;
-    }
-    
-    private String valueColor(int value)
-    {
-        return valueColor(Integer.toString(value));
+            message.send(player);
     }
 }

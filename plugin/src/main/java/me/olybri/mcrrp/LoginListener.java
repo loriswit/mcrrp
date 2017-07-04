@@ -28,12 +28,12 @@ public class LoginListener implements Listener
         event.setJoinMessage(null);
         
         Player player = event.getPlayer();
-        ResultSet rs = Database.citizen(player);
-        if(rs == null)
+        ResultSet citizen = Database.citizen(player);
+        if(citizen == null)
             return;
         
-        player.sendMessage(Tr.s("Welcome") + ", " + rs.getString("first_name") + " " + rs.getString("last_name"));
-        player.setDisplayName(rs.getString("code"));
+        String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
+        new Message(Tr.s("Welcome") + ", {name:" + name + "}").send(player);
     }
     
     @EventHandler
