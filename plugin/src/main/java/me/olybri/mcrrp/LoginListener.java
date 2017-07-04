@@ -1,11 +1,14 @@
 package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +37,27 @@ public class LoginListener implements Listener
         
         String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
         new Message(Tr.s("Welcome") + ", {name:" + name + "}").send(player);
+    
+    
+        player.setPlayerListName("");
+        player.setDisplayName("");
+    
+        if(!player.hasPlayedBefore())
+        {
+            Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+        
+            Team team;
+            if(board.getTeams().isEmpty())
+            {
+                team = board.registerNewTeam("citizen");
+                team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+                team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
+            }
+            else
+                team = board.getTeam("citizen");
+        
+            team.addEntry(player.getName());
+        }
     }
     
     @EventHandler
