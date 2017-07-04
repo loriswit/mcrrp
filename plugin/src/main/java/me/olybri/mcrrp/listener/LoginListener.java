@@ -1,5 +1,8 @@
-package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
+package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
+import me.olybri.mcrrp.Database;
+import me.olybri.mcrrp.Message;
+import me.olybri.mcrrp.Tr;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

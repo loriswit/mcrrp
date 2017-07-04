@@ -1,23 +1,21 @@
-package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
+package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
-import org.bukkit.entity.Entity;
+import me.olybri.mcrrp.Database;
+import me.olybri.mcrrp.Message;
+import me.olybri.mcrrp.Tr;
+import me.olybri.mcrrp.interaction.Interaction;
+import me.olybri.mcrrp.interaction.ShowMessageInteraction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class CommandListener implements Listener
 {
-    private Map<UUID, String> messageWaiting = new HashMap<>();
-    
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) throws SQLException
     {
@@ -32,44 +30,17 @@ public class CommandListener implements Listener
         event.setCancelled(true);
     }
     
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) throws SQLException
-    {
-        Entity entity = event.getRightClicked();
-        if(!(entity instanceof Player))
-            return;
-        
-        Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
-        
-        if(!messageWaiting.containsKey(uuid))
-            return;
-        
-        Player target = (Player) entity;
-        
-        String message = messageWaiting.remove(uuid);
-        
-        ResultSet citizen = Database.citizen(player);
-        String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
-        
-        String title = "{name:" + name + "} " + Tr.s("to") + " {name:" + Tr.s("you") + "}:";
-        new Message(title, message).send(target);
-        
-        title = "{name:" + Tr.s("You") + "} " + Tr.s("showed") + ":";
-        new Message(title, message).send(player);
-    }
-    
     private void runCommand(Player player, String commandLine) throws SQLException
     {
         commandLine = commandLine.replaceAll("\\s", " ").trim().toLowerCase();
         String[] args = commandLine.split(" ");
         
         boolean show = args[0].equals("show");
+        boolean cancelShow = false;
         String command = show ? args[1] : args[0];
         
-        messageWaiting.remove(player.getUniqueId());
-        
         Message message = new Message();
+        Interaction interaction = null;
         ResultSet citizen = Database.citizen(player);
         
         switch(command)
@@ -98,10 +69,19 @@ public class CommandListener implements Listener
         
         if(show)
         {
-            messageWaiting.put(player.getUniqueId(), message.body);
-            new Message(Tr.s("Please click on any player") + "...").send(player);
+            if(cancelShow)
+            {
+                message.title = Tr.s("Cannot show command") + ": {value:" + command + "}";
+                interaction = null;
+            }
+            else
+            {
+                interaction = new ShowMessageInteraction(message.body);
+                message.title = Tr.s("Please click on any player") + "...";
+            }
         }
-        else
-            message.send(player);
+        
+        message.send(player);
+        InteractionListener.putInteraction(player, interaction);
     }
 }
