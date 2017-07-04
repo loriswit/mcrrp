@@ -92,6 +92,7 @@ public class CommandListener implements Listener
             
             default:
                 message.title = Tr.s("Unknown command") + ": {value:" + command + "}";
+                show = false;
                 break;
         }
         
