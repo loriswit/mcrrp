@@ -6,7 +6,6 @@ import me.olybri.mcrrp.Tr;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ShowMessageInteraction extends PlayerInteraction
 {
@@ -18,7 +17,7 @@ public class ShowMessageInteraction extends PlayerInteraction
     }
     
     @Override
-    protected void run(Player player, Player target) throws SQLException
+    protected boolean run(Player player, Player target) throws Exception
     {
         ResultSet citizen = Database.citizen(player);
         String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
@@ -28,5 +27,7 @@ public class ShowMessageInteraction extends PlayerInteraction
     
         title = "{name:" + Tr.s("You") + "} " + Tr.s("showed") + ":";
         new Message(title, message).send(player);
+        
+        return true;
     }
 }

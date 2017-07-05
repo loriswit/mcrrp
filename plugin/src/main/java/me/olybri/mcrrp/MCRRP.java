@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public final class MCRRP extends JavaPlugin
 {
@@ -49,5 +50,10 @@ public final class MCRRP extends JavaPlugin
     public static void kickPlayer(final Player player, final String msg)
     {
         Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
+    }
+    
+    public static Logger log()
+    {
+        return instance.getLogger();
     }
 }

@@ -4,6 +4,7 @@ import me.olybri.mcrrp.Database;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
 import me.olybri.mcrrp.interaction.Interaction;
+import me.olybri.mcrrp.interaction.SellInteraction;
 import me.olybri.mcrrp.interaction.ShowMessageInteraction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,15 +20,15 @@ public class CommandListener implements Listener
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) throws SQLException
     {
-        runCommand(event.getPlayer(), event.getMessage());
         event.setCancelled(true);
+        runCommand(event.getPlayer(), event.getMessage());
     }
     
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) throws SQLException
     {
-        runCommand(event.getPlayer(), event.getMessage().substring(1));
         event.setCancelled(true);
+        runCommand(event.getPlayer(), event.getMessage().substring(1));
     }
     
     private void runCommand(Player player, String commandLine) throws SQLException
@@ -59,6 +60,12 @@ public class CommandListener implements Listener
             case "bal":
             case "$":
                 message.body = Tr.s("Current balance") + ": {value:" + (citizen.getInt("balance")) + "}";
+                break;
+                
+            case "sell":
+                message.title = Tr.s("Please click on any chest") + "...";
+                interaction = new SellInteraction(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                cancelShow = true;
                 break;
             
             default:
