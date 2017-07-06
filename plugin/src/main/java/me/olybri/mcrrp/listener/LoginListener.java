@@ -82,5 +82,7 @@ public class LoginListener implements Listener
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         event.setQuitMessage(null);
+        
+        InteractionListener.putInteraction(event.getPlayer(), null);
     }
 }
