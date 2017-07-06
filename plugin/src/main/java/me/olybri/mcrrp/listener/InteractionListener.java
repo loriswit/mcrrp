@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,18 +22,18 @@ public class InteractionListener implements Listener
     }
     
     @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) throws SQLException
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
     {
         applyInteraction(event);
     }
     
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) throws SQLException
+    public void onPlayerInteract(PlayerInteractEvent event)
     {
         applyInteraction(event);
     }
     
-    private void applyInteraction(PlayerEvent event) throws SQLException
+    private void applyInteraction(PlayerEvent event)
     {
         UUID uuid = event.getPlayer().getUniqueId();
         

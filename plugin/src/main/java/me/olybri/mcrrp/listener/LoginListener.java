@@ -1,6 +1,7 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.Database;
+import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
 import org.bukkit.Bukkit;
@@ -14,41 +15,55 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class LoginListener implements Listener
 {
     @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent event) throws SQLException
+    public void onPlayerLogin(PlayerLoginEvent event)
     {
-        if(Database.citizen(event.getPlayer(), false) == null)
+        Player player = event.getPlayer();
+        
+        try
         {
-            String msg = Tr.s("You first need to register at") + " http://olybri.me";
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
+            if(Database.citizen(player) == null)
+            {
+                String msg = Tr.s("You first need to register at") + " http://olybri.me";
+                event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
+            }
+        }
+        catch(Exception e)
+        {
+            String msg = MCRRP.error(e, player);
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, msg);
         }
     }
     
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) throws SQLException
+    public void onPlayerJoin(PlayerJoinEvent event)
     {
         event.setJoinMessage(null);
-        
         Player player = event.getPlayer();
-        ResultSet citizen = Database.citizen(player);
-        if(citizen == null)
-            return;
         
-        String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
-        new Message(Tr.s("Welcome") + ", {name:" + name + "}").send(player);
-    
-    
+        try
+        {
+            ResultSet citizen = Database.citizen(player);
+            
+            String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
+            new Message(Tr.s("Welcome") + ", {name:" + name + "}").send(player);
+        }
+        catch(Exception e)
+        {
+            MCRRP.error(e, player);
+            return;
+        }
+        
         player.setPlayerListName("");
         player.setDisplayName("");
-    
+        
         if(!player.hasPlayedBefore())
         {
             Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        
+            
             Team team;
             if(board.getTeams().isEmpty())
             {
@@ -58,7 +73,7 @@ public class LoginListener implements Listener
             }
             else
                 team = board.getTeam("citizen");
-        
+            
             team.addEntry(player.getName());
         }
     }

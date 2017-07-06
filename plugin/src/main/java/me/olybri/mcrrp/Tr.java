@@ -30,6 +30,9 @@ public class Tr
     
     public static String s(String text)
     {
+        if(translation == null)
+            return text;
+        
         String key = text.toLowerCase();
         
         if(!translation.containsKey(key))

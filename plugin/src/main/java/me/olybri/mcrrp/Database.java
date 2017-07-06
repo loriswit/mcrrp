@@ -16,21 +16,10 @@ public class Database
     
     public static ResultSet citizen(Player player) throws SQLException
     {
-        return citizen(player, true);
-    }
-    
-    public static ResultSet citizen(Player player, boolean kickOnError) throws SQLException
-    {
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM citizen WHERE player = ?");
         statement.setString(1, player.getUniqueId().toString());
         ResultSet rs = statement.executeQuery();
-        if(!rs.first())
-        {
-            if(kickOnError)
-                MCRRP.kickPlayer(player, "Player not registered on the server.");
-            else
-                return null;
-        }
+        rs.first();
         return rs;
     }
     

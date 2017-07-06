@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 
 public final class MCRRP extends JavaPlugin
@@ -31,13 +33,11 @@ public final class MCRRP extends JavaPlugin
         }
         catch(SQLException e)
         {
-            getLogger().severe("Database connection failed. " + e.getMessage());
-            return;
+            getLogger().severe(Tr.s("Database connection failed") + ": " + e.getMessage());
         }
         catch(IOException e)
         {
-            getLogger().severe("Language file not found. " + e.getMessage());
-            return;
+            getLogger().severe(Tr.s("Language file not found") + ": " + e.getMessage());
         }
         
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
@@ -50,16 +50,20 @@ public final class MCRRP extends JavaPlugin
         getCommand("sell").setExecutor(new SellCommand());
     }
     
-    public static void kickPlayer(final Player player, final String msg)
+    public static String error(Exception exception, Player player)
     {
+        instance.getLogger().severe(exception.getClass().getSimpleName() + ": " + exception.getMessage());
+        
+        StringWriter stackTrace = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stackTrace));
+        instance.getLogger().info(stackTrace.toString());
+        
+        String msg = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName() + ".\n"
+            + Tr.s("Please contact an administrator") + ".";
+        
         Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
-    }
-    
-    public static void error(Exception excepton, Player player)
-    {
-        new Message(Tr.s("An error occurred") + ": {value:" + excepton.getClass().getSimpleName() + "}.").send(player);
-        instance.getLogger().severe(excepton.getMessage());
-        excepton.printStackTrace();
+        
+        return msg;
     }
     
     public static PluginCommand command(String name)
