@@ -2,3 +2,15 @@ name: MCRRP
 version: 1.0
 author: Loris Witschard
 main: me.olybri.mcrrp.MCRRP
+
+database: true
+
+commands:
+  identity:
+    aliases: id
+  balance:
+    aliases: [bal, $]
+  show:
+    usage: "Usage: /show <command> <arguments>"
+  sell:
+    usage: "Usage: /sell <amount> <price>"

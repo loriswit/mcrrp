@@ -1,15 +1,19 @@
 package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
+import me.olybri.mcrrp.command.BalanceCommand;
+import me.olybri.mcrrp.command.IdentityCommand;
+import me.olybri.mcrrp.command.SellCommand;
+import me.olybri.mcrrp.command.ShowCommand;
 import me.olybri.mcrrp.listener.CommandListener;
 import me.olybri.mcrrp.listener.InteractionListener;
 import me.olybri.mcrrp.listener.LoginListener;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 public final class MCRRP extends JavaPlugin
 {
@@ -39,12 +43,11 @@ public final class MCRRP extends JavaPlugin
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
         getServer().getPluginManager().registerEvents(new CommandListener(), this);
         getServer().getPluginManager().registerEvents(new InteractionListener(), this);
-    }
-    
-    @Override
-    public void onDisable()
-    {
-        // TODO Insert logic to be performed when the plugin is disabled
+        
+        getCommand("identity").setExecutor(new IdentityCommand());
+        getCommand("balance").setExecutor(new BalanceCommand());
+        getCommand("show").setExecutor(new ShowCommand());
+        getCommand("sell").setExecutor(new SellCommand());
     }
     
     public static void kickPlayer(final Player player, final String msg)
@@ -52,8 +55,19 @@ public final class MCRRP extends JavaPlugin
         Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
     }
     
-    public static Logger log()
+    public static void error(Exception excepton, Player player)
     {
-        return instance.getLogger();
+        new Message(Tr.s("An error occurred") + ": {value:" + excepton.getClass().getSimpleName() + "}.").send(player);
+        instance.getLogger().severe(excepton.getMessage());
+        excepton.printStackTrace();
+    }
+    
+    public static PluginCommand command(String name)
+    {
+        PluginCommand command = instance.getCommand(name);
+        if(command == null || command.getExecutor() == null)
+            return null;
+        
+        return command;
     }
 }

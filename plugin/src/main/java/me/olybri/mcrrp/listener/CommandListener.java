@@ -1,94 +1,51 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
-import me.olybri.mcrrp.Database;
+import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
-import me.olybri.mcrrp.interaction.Interaction;
-import me.olybri.mcrrp.interaction.SellInteraction;
-import me.olybri.mcrrp.interaction.ShowMessageInteraction;
+import me.olybri.mcrrp.command.PlayerCommand;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CommandListener implements Listener
 {
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) throws SQLException
+    public void onPlayerChat(AsyncPlayerChatEvent event)
     {
         event.setCancelled(true);
         runCommand(event.getPlayer(), event.getMessage());
     }
     
     @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) throws SQLException
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event)
     {
         event.setCancelled(true);
         runCommand(event.getPlayer(), event.getMessage().substring(1));
     }
     
-    private void runCommand(Player player, String commandLine) throws SQLException
+    private void runCommand(Player player, String commandLine)
     {
-        commandLine = commandLine.replaceAll("\\s", " ").trim().toLowerCase();
-        String[] args = commandLine.split(" ");
+        List<String> args = new LinkedList<>(Arrays.asList(commandLine.split("\\s")));
+        String name = args.remove(0);
         
-        boolean show = args[0].equals("show");
-        boolean cancelShow = false;
-        String command = show ? args[1] : args[0];
+        PluginCommand command = MCRRP.command(name);
         
-        Message message = new Message();
-        Interaction interaction = null;
-        ResultSet citizen = Database.citizen(player);
-        
-        switch(command)
+        if(command == null || !(command.getExecutor() instanceof PlayerCommand))
         {
-            case "identity":
-            case "id":
-                ResultSet state = Database.state(citizen.getInt("state_id"));
-                message.body = Tr.s("First name(s)") + ": {value:" + citizen.getString("first_name") + "}\n"
-                        + Tr.s("Last name(s)") + ": {value:" + citizen.getString("last_name") + "}\n"
-                        + Tr.s("Code") + ": {value:" + citizen.getString("code") + "}\n"
-                        + Tr.s("Sex") + ": {value:" + citizen.getString("sex") + "}\n"
-                        + Tr.s("State") + ": {value:" + state.getString("name") + "}";
-                break;
-            
-            case "balance":
-            case "bal":
-            case "$":
-                message.body = Tr.s("Current balance") + ": {value:" + (citizen.getInt("balance")) + "}";
-                break;
-                
-            case "sell":
-                message.title = Tr.s("Please click on any chest") + "...";
-                interaction = new SellInteraction(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-                cancelShow = true;
-                break;
-            
-            default:
-                message.title = Tr.s("Unknown command") + ": {value:" + command + "}";
-                show = false;
-                break;
+            new Message(Tr.s("Unknown command") + ": {value:" + name + "}").send(player);
+            return;
         }
         
-        if(show)
-        {
-            if(cancelShow)
-            {
-                message.title = Tr.s("Cannot show command") + ": {value:" + command + "}";
-                interaction = null;
-            }
-            else
-            {
-                interaction = new ShowMessageInteraction(message.body);
-                message.title = Tr.s("Please click on any player") + "...";
-            }
-        }
-        
-        message.send(player);
-        InteractionListener.putInteraction(player, interaction);
+        PlayerCommand executor = (PlayerCommand) command.getExecutor();
+        if(!executor.apply(player, name, args, false))
+            new Message(command.getUsage()).send(player);
     }
 }

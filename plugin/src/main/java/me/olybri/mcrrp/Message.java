@@ -25,6 +25,9 @@ public class Message
     
     public void send(Player player)
     {
+        if(title.isEmpty() && body.isEmpty())
+            return;
+        
         String message = title;
         if(!message.isEmpty())
             message += "\n";

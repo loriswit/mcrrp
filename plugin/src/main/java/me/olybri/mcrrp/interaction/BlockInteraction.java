@@ -14,9 +14,11 @@ public abstract class BlockInteraction implements Interaction
     {
         if(!(event instanceof PlayerInteractEvent))
             return false;
-    
+        
         Block block = ((PlayerInteractEvent) event).getClickedBlock();
         BlockFace blockFace = ((PlayerInteractEvent) event).getBlockFace();
+        
+        Player player = event.getPlayer();
         
         try
         {
@@ -26,10 +28,9 @@ public abstract class BlockInteraction implements Interaction
         }
         catch(Exception e)
         {
-            MCRRP.log().severe(e.getMessage());
-            e.printStackTrace();
+            MCRRP.error(e, player);
         }
-    
+        
         return false;
     }
     

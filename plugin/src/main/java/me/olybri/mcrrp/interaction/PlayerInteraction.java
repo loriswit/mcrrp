@@ -18,16 +18,17 @@ public abstract class PlayerInteraction implements Interaction
         if(!(entity instanceof Player))
             return false;
         
+        Player player = (Player) entity;
+        
         try
         {
-            boolean success = run(event.getPlayer(), (Player) entity);
+            boolean success = run(event.getPlayer(), player);
             ((PlayerInteractEntityEvent) event).setCancelled(success);
             return success;
         }
         catch(Exception e)
         {
-            MCRRP.log().severe(e.getMessage());
-            e.printStackTrace();
+            MCRRP.error(e, player);
         }
         
         return false;
