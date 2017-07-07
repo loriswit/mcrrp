@@ -1,9 +1,6 @@
 package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
-import me.olybri.mcrrp.command.BalanceCommand;
-import me.olybri.mcrrp.command.IdentityCommand;
-import me.olybri.mcrrp.command.SellCommand;
-import me.olybri.mcrrp.command.ShowCommand;
+import me.olybri.mcrrp.command.*;
 import me.olybri.mcrrp.listener.CommandListener;
 import me.olybri.mcrrp.listener.InteractionListener;
 import me.olybri.mcrrp.listener.LoginListener;
@@ -48,6 +45,7 @@ public final class MCRRP extends JavaPlugin
         getCommand("balance").setExecutor(new BalanceCommand());
         getCommand("show").setExecutor(new ShowCommand());
         getCommand("sell").setExecutor(new SellCommand());
+        getCommand("buy").setExecutor(new BuyCommand());
     }
     
     public static String error(Exception exception, Player player)

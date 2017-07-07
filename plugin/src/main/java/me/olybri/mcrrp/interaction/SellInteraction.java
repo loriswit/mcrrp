@@ -1,5 +1,6 @@
 package me.olybri.mcrrp.interaction;// Created by Loris Witschard on 7/4/2017.
 
+import me.olybri.mcrrp.Database;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ public class SellInteraction extends BlockInteraction
     }
     
     @Override
-    protected boolean run(Player player, Block block, BlockFace face)
+    protected boolean run(Player player, Block block, BlockFace face) throws Exception
     {
         if(block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST)
             return false;
@@ -45,7 +46,7 @@ public class SellInteraction extends BlockInteraction
         if(sellingItem.getAmount() == 0)
             sellingItem = player.getInventory().getItemInOffHand();
         
-        Material sellingMaterial = sellingItem.getType();
+        String article = sellingItem.getType().toString();
         
         Block signBlock = block.getRelative(face);
         signBlock.setType(Material.WALL_SIGN);
@@ -55,19 +56,25 @@ public class SellInteraction extends BlockInteraction
         signMaterial.setFacingDirection(face);
         
         sign.setData(signMaterial);
-        sign.setLine(0, ChatColor.YELLOW + sellingMaterial.toString());
+        sign.setLine(0, ChatColor.YELLOW + article.replace('_', ' '));
         sign.setLine(1, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
         sign.update();
-        
-        String location = signBlock.getLocation().getBlockX() + " "
+    
+        String chestLocation = block.getLocation().getBlockX() + " "
+            + block.getLocation().getBlockY() + " "
+            + block.getLocation().getBlockZ() + " ";
+    
+        String signLocation = signBlock.getLocation().getBlockX() + " "
                 + signBlock.getLocation().getBlockY() + " "
                 + signBlock.getLocation().getBlockZ() + " ";
-        
-        String buyCommand = "say TODO"; // TODO
+    
+        String code = Database.citizen(player).getString("code");
+    
+        String buyCommand = "buy " + chestLocation + article + " " + amount + " " + price + " " + code;
         String dataTag = "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + location + dataTag.replace("'", "\\\""));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + signLocation + dataTag.replace("'", "\\\""));
         
-        new Message("Done!").send(player);
+        new Message(Tr.s("Selling") + " {value:" + amount + " " + article + "} @ $" + price + ".").send(player);
         
         return true;
     }

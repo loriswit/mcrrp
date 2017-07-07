@@ -3,6 +3,7 @@ package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/6/2017.
 import me.olybri.mcrrp.Database;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
+import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -15,8 +16,9 @@ public class IdentityCommand extends PlayerCommand
     }
     
     @Override
-    protected boolean run(ResultSet citizen, List<String> args) throws Exception
+    protected boolean run(Player player, List<String> args) throws Exception
     {
+        ResultSet citizen = Database.citizen(player);
         ResultSet state = Database.state(citizen.getInt("state_id"));
         Message msg = new Message("",
             Tr.s("First name(s)") + ": {value:" + citizen.getString("first_name") + "}\n"

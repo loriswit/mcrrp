@@ -1,6 +1,5 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/5/2017.
 
-import me.olybri.mcrrp.Database;
 import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
@@ -10,9 +9,9 @@ import me.olybri.mcrrp.listener.InteractionListener;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.entity.Player;
 
-import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,13 +32,21 @@ public abstract class PlayerCommand implements CommandExecutor
     @Override
     public final boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if(!(sender instanceof Player))
+        Player player;
+        
+        if(sender instanceof Player)
+            player = (Player) sender;
+        
+        else if(sender instanceof ProxiedCommandSender
+            && ((ProxiedCommandSender) sender).getCallee() instanceof Player)
+            player = (Player) ((ProxiedCommandSender) sender).getCallee();
+        
+        else
         {
             sender.sendMessage(Tr.s("This command can only be used by a player") + ".");
             return true;
         }
         
-        Player player = (Player) sender;
         return apply(player, label, Arrays.asList(args), false);
     }
     
@@ -59,8 +66,7 @@ public abstract class PlayerCommand implements CommandExecutor
             message = new Message();
             interaction = null;
             
-            ResultSet citizen = Database.citizen(player);
-            boolean success = run(citizen, args);
+            boolean success = run(player, args);
             if(success)
             {
                 if(show)
@@ -93,5 +99,5 @@ public abstract class PlayerCommand implements CommandExecutor
         this.interaction = interaction;
     }
     
-    protected abstract boolean run(ResultSet citizen, List<String> args) throws Exception;
+    protected abstract boolean run(Player player, List<String> args) throws Exception;
 }

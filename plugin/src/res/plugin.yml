@@ -14,3 +14,5 @@ commands:
     usage: "Usage: /show <command> <arguments>"
   sell:
     usage: "Usage: /sell <amount> <price>"
+  buy:
+    usage: "Usage: /buy <x> <y> <z> <article> <amount> <price> <code>"
