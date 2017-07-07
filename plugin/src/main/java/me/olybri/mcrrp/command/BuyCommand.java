@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class BuyCommand extends PlayerCommand
         double z;
         int amount;
         int price;
+        int sellerID;
         
         try
         {
@@ -39,6 +41,7 @@ public class BuyCommand extends PlayerCommand
             z = Double.parseDouble(args.get(2));
             amount = Integer.parseInt(args.get(4));
             price = Integer.parseInt(args.get(5));
+            sellerID = Integer.parseInt(args.get(6));
         }
         catch(Exception e)
         {
@@ -48,21 +51,45 @@ public class BuyCommand extends PlayerCommand
         Block block = new Location(player.getWorld(), x, y, z).getBlock();
         if(!(block.getState() instanceof Chest))
         {
-            setMessage(new Message(Tr.s("Invalid chest location") + "."));
+            setMessage(new Message(Tr.s("Invalid chest") + "."));
             return true;
         }
     
         Material material = Material.matchMaterial(args.get(3));
         if(material == null)
         {
-            setMessage(new Message(Tr.s("Unknown article") + ": {value:" + args.get(3) + "}."));
+            setMessage(new Message(Tr.s("Invalid article") + "."));
             return true;
         }
         
-        String code = args.get(6);
-        if(code.equals(Database.citizen(player).getString("code")))
+        if(amount < 1)
+        {
+            setMessage(new Message(Tr.s("Invalid amount") + "."));
+            return true;
+        }
+    
+        if(price < 1)
+        {
+            setMessage(new Message(Tr.s("Invalid price") + "."));
+            return true;
+        }
+    
+        if(!Database.citizen(sellerID).first())
+        {
+            setMessage(new Message(Tr.s("Invalid seller") + "."));
+            return true;
+        }
+    
+        ResultSet citizen = Database.citizen(player);
+        if(citizen.getInt("id") == sellerID)
         {
             setMessage(new Message(Tr.s("Cannot buy what your are selling") + "."));
+            return true;
+        }
+        
+        if(citizen.getInt("balance") < price)
+        {
+            setMessage(new Message(Tr.s("Your balance is too low") + "."));
             return true;
         }
         
@@ -86,10 +113,13 @@ public class BuyCommand extends PlayerCommand
             return true;
         }
         
-        // TODO: send transaction
+        String articleName = material.toString().replace('_', ' ').toLowerCase();
+        
+        int buyerID = citizen.getInt("id");
+        Database.addTransaction(buyerID, sellerID, price, "Bought " + amount + " " + articleName + " @ $" + price);
         
         setMessage(new Message(Tr.s("Bought")
-            + " {value:" + amount + " " + material.toString() + "} @ $" + price + "."));
+            + " {value:" + amount + " " + articleName + "} @ $" + price + "."));
         
         return true;
     }

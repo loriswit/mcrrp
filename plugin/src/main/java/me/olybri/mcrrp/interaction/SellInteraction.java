@@ -68,9 +68,9 @@ public class SellInteraction extends BlockInteraction
                 + signBlock.getLocation().getBlockY() + " "
                 + signBlock.getLocation().getBlockZ() + " ";
     
-        String code = Database.citizen(player).getString("code");
+        int sellerID = Database.citizen(player).getInt("id");
     
-        String buyCommand = "buy " + chestLocation + article + " " + amount + " " + price + " " + code;
+        String buyCommand = "buy " + chestLocation + article + " " + amount + " " + price + " " + sellerID;
         String dataTag = "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + signLocation + dataTag.replace("'", "\\\""));
         

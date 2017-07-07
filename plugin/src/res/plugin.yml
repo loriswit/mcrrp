@@ -15,4 +15,4 @@ commands:
   sell:
     usage: "Usage: /sell <amount> <price>"
   buy:
-    usage: "Usage: /buy <x> <y> <z> <article> <amount> <price> <code>"
+    usage: "Usage: /buy <x> <y> <z> <article> <amount> <price> <seller>"
