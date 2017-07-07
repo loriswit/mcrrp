@@ -25,7 +25,7 @@ public class LoginListener implements Listener
         
         try
         {
-            if(Database.citizen(player) == null)
+            if(!Database.citizen(player).first())
             {
                 String msg = Tr.s("You first need to register at") + " http://olybri.me";
                 event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
