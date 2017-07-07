@@ -35,32 +35,29 @@ public final class MCRRP extends JavaPlugin
         }
         catch(Exception e)
         {
-            getLogger().severe(e.getMessage());
+            printException(e);
+            getLogger().severe("Failed to enable MCRRP. Shutting down server.");
             Bukkit.shutdown();
         }
         
+        getLogger().info("Registering listeners...");
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
         getServer().getPluginManager().registerEvents(new CommandListener(), this);
         getServer().getPluginManager().registerEvents(new InteractionListener(), this);
-        
+    
+        getLogger().info("Registering command executors...");
         getCommand("identity").setExecutor(new IdentityCommand());
         getCommand("balance").setExecutor(new BalanceCommand());
         getCommand("show").setExecutor(new ShowCommand());
         getCommand("sell").setExecutor(new SellCommand());
         getCommand("buy").setExecutor(new BuyCommand());
+        
+        getLogger().info("Plugin enabled successfully.");
     }
     
     public static String error(Exception exception, Player player)
     {
-        instance.getLogger().severe(exception.getClass().getSimpleName() + ": " + exception.getMessage());
-        
-        StringWriter stackTrace = new StringWriter();
-        exception.printStackTrace(new PrintWriter(stackTrace));
-        instance.getLogger().severe(stackTrace.toString());
-        
-        String msg = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName() + ".\n"
-            + Tr.s("Please contact an administrator") + ".";
-        
+        String msg = printException(exception) + ".\n" + Tr.s("Please contact an administrator") + ".";
         Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
         
         return msg;
@@ -73,5 +70,18 @@ public final class MCRRP extends JavaPlugin
             return null;
         
         return command;
+    }
+    
+    private static String printException(Exception exception)
+    {
+        String title = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName();
+        instance.getLogger().severe(title);
+        instance.getLogger().severe(Tr.s("Message") + ": " + exception.getMessage());
+    
+        StringWriter stackTrace = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stackTrace));
+        instance.getLogger().severe(stackTrace.toString());
+        
+        return title;
     }
 }
