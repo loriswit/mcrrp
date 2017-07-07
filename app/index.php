@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Yaml\Yaml;
+
 session_start();
 
 require_once "vendor/autoload.php";
@@ -17,6 +19,8 @@ spl_autoload_register(function($class)
 
 mb_internal_encoding("UTF-8");
 
+define("CONFIG", Yaml::parse(file_get_contents("../config.yml")));
+
 if(isset($_POST["logout"]))
     session_unset();
 
@@ -26,7 +30,7 @@ if(isset($_POST["lang"]))
 if(isset($_SESSION["lang"]))
     $translator = new Translator($_SESSION["lang"]);
 else
-    $translator = Translator::default();
+    $translator = new Translator(CONFIG["settings"]["lang"]);
 
 function tr($text)
 {

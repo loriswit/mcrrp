@@ -5,6 +5,7 @@ import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.Message;
 import me.olybri.mcrrp.Tr;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +28,9 @@ public class LoginListener implements Listener
         {
             if(!Database.citizen(player).first())
             {
-                String msg = Tr.s("You first need to register at") + " http://olybri.me";
+                String msg = Tr.s("You first need to register at")
+                    + ChatColor.YELLOW + " " + MCRRP.config.getString("settings.website");
+                
                 event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
             }
         }

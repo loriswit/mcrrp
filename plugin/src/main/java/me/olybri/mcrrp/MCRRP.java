@@ -6,17 +6,20 @@ import me.olybri.mcrrp.listener.InteractionListener;
 import me.olybri.mcrrp.listener.LoginListener;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 
 public final class MCRRP extends JavaPlugin
 {
     private static MCRRP instance;
+    
+    public static FileConfiguration config = new YamlConfiguration();
     
     @Override
     public void onEnable()
@@ -25,16 +28,15 @@ public final class MCRRP extends JavaPlugin
         
         try
         {
-            Database.init("localhost", "mcrrp", "root", "");
-            Tr.load("fr");
+            config.load(new File("../config.yml"));
+            
+            Database.init();
+            Tr.init();
         }
-        catch(SQLException e)
+        catch(Exception e)
         {
-            getLogger().severe(Tr.s("Database connection failed") + ": " + e.getMessage());
-        }
-        catch(IOException e)
-        {
-            getLogger().severe(Tr.s("Language file not found") + ": " + e.getMessage());
+            getLogger().severe(e.getMessage());
+            Bukkit.shutdown();
         }
         
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
@@ -54,7 +56,7 @@ public final class MCRRP extends JavaPlugin
         
         StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));
-        instance.getLogger().info(stackTrace.toString());
+        instance.getLogger().severe(stackTrace.toString());
         
         String msg = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName() + ".\n"
             + Tr.s("Please contact an administrator") + ".";

@@ -16,22 +16,36 @@ class Login extends Page
     protected function submit()
     {
         $name = $_POST["username"];
-    
-        $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
-    
+        $offline = CONFIG["settings"]["offline"];
+        
+        if($offline)
+            $json = @file_get_contents("https://www.fabianwennink.nl/projects/OfflineUUID/api/$name");
+        else
+            $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
+        
         if($json === false || empty($json))
             throw new InvalidInputException("Invalid username. Please try again.");
-    
+        
         $data = json_decode($json, true);
-        $uuid = $data["id"];
-        $uuid = substr_replace($uuid, "-", 8, 0);
-        $uuid = substr_replace($uuid, "-", 13, 0);
-        $uuid = substr_replace($uuid, "-", 18, 0);
-        $uuid = substr_replace($uuid, "-", 23, 0);
-    
+        
+        if($offline)
+        {
+            $uuid = $data["uuid"];
+            $username = $data["username"];
+        }
+        else
+        {
+            $uuid = $data["id"];
+            $uuid = substr_replace($uuid, "-", 8, 0);
+            $uuid = substr_replace($uuid, "-", 13, 0);
+            $uuid = substr_replace($uuid, "-", 18, 0);
+            $uuid = substr_replace($uuid, "-", 23, 0);
+            $username = $data["name"];
+        }
+        
         $_SESSION["uuid"] = $uuid;
-        $_SESSION["username"] = $data["name"];
-    
+        $_SESSION["username"] = $username;
+        
         if($this->db->isRegistered($uuid))
         {
             $_SESSION["logged"] = true;

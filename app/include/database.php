@@ -1,21 +1,12 @@
 <?php
 
-use Symfony\Component\Yaml\Yaml;
-
 class Database
 {
     private $pdo;
     
     public function __construct($environment = "")
     {
-        // get identifiers from phinx.yml
-        
-        $config = Yaml::parse(file_get_contents("phinx.yml"));
-        
-        if(empty($environment))
-            $environment = $config["environments"]["default_database"];
-        
-        $dbInfo = $config["environments"][$environment];
+        $dbInfo = CONFIG["database"];
         
         $host = $dbInfo["host"];
         $name = $dbInfo["name"];

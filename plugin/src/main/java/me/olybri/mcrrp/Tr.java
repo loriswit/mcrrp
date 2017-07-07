@@ -15,8 +15,10 @@ public class Tr
 {
     private static Map<String, String> translation;
     
-    public static void load(String lang) throws IOException
+    public static void init() throws IOException
     {
+        String lang = MCRRP.config.getString("settings.lang");
+        
         if(lang.equals("en"))
             return;
         

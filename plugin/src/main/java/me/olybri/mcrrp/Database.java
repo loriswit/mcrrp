@@ -8,8 +8,13 @@ public class Database
 {
     private static Connection conn;
     
-    public static void init(String host, String name, String user, String pass) throws SQLException
+    public static void init() throws SQLException
     {
+        String host = MCRRP.config.getString("database.host");
+        String name = MCRRP.config.getString("database.name");
+        String user = MCRRP.config.getString("database.user");
+        String pass = MCRRP.config.getString("database.pass");
+        
         String url = "jdbc:mysql://" + host + "/" + name;
         conn = DriverManager.getConnection(url, user, pass);
     }
