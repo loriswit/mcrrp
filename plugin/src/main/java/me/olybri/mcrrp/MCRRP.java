@@ -24,6 +24,14 @@ public final class MCRRP extends JavaPlugin
     @Override
     public void onEnable()
     {
+        if(System.getProperty("me.olybri.mcrrp.setup") != null)
+        {
+            getLogger().info("MCRRP is being installed. Shutting down server.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            Bukkit.shutdown();
+            return;
+        }
+            
         instance = this;
         
         try
@@ -37,7 +45,9 @@ public final class MCRRP extends JavaPlugin
         {
             printException(e);
             getLogger().severe("Failed to enable MCRRP. Shutting down server.");
+            Bukkit.getPluginManager().disablePlugin(this);
             Bukkit.shutdown();
+            return;
         }
         
         getLogger().info("Registering listeners...");

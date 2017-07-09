@@ -7,18 +7,26 @@ settings:
   # Website shown to unregistered players.
   website: "http://example.com"
 
-  # Default language
+  # Default server language
   lang: en
 
-  # Set to true to enable offline mode.
-  # If enabled, anyone can login to the server using any nickname and no password.
-  # Warning: this feature should be for testing purpose only!
-  offline: false
+  # Set to true to enable online mode.
+  # If disabled, anyone can login to the server using any nickname and no password.
+  # Warning: set to false for testing purpose only!
+  online: true
+
+  # Set to true to accept Minecraft end-user license agreement.
+  # See: https://account.mojang.com/documents/minecraft_eula
+  eula: false
+
+# Server memory allocation
+memory:
+  initial: 512M
+  max: 4G
 
 # Database management system identifiers.
 # Using MariaDB Server is recommended.
 database:
-  host: localhost
   name: mcrrp
   user: root
   pass:

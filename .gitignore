@@ -10,6 +10,3 @@ target/
 
 # Migration config file
 phinx.yml
-
-# Server startup script
-start.sh

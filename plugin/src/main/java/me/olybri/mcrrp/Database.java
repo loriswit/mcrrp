@@ -10,12 +10,11 @@ public class Database
     
     public static void init() throws SQLException
     {
-        String host = MCRRP.config.getString("database.host");
         String name = MCRRP.config.getString("database.name");
         String user = MCRRP.config.getString("database.user");
         String pass = MCRRP.config.getString("database.pass");
         
-        String url = "jdbc:mysql://" + host + "/" + name;
+        String url = "jdbc:mysql://localhost/" + name;
         conn = DriverManager.getConnection(url, user, pass);
     }
     
