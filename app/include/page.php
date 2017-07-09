@@ -1,21 +1,48 @@
 <?php
 
+/**
+ * Abstract class representing a web page.
+ */
 abstract class Page
 {
+    /**
+     * @var array Array containing all fields of the citizen linked to the
+     * current user (can be undefined if no user is not logged in)
+     */
     protected $citizen;
     
+    /** @var Database Object representing the MCRRP Database */
     protected $db;
+    
+    /** @var Template Object representing the page's HTML template */
     protected $tpl;
     
+    /** @var bool TRUE if the page is for visitor only, FALSE if not */
     protected $visitorOnly = false;
+    
+    /** @var bool TRUE if the page is for user only, FALSE if not */
     protected $userOnly = false;
     
+    /**
+     * Returns the title of the current page.
+     *
+     * @return string The title of the page
+     */
     abstract protected function title();
     
+    /**
+     * Executes the current page and fills the HTML template.
+     */
     abstract protected function run();
     
+    /**
+     * Submits POST data to the page
+     */
     abstract protected function submit();
     
+    /**
+     * Creates a web page instance.
+     */
     public function __construct()
     {
         $this->db = new Database();
@@ -26,8 +53,15 @@ abstract class Page
         
         if(LOGGED)
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
+        
+        echo $_SESSION["uuid"];
     }
     
+    /**
+     * Runs the page's script and generates HTML code.
+     *
+     * @return string The HTML code of the page
+     */
     public function render()
     {
         if(isset($_POST["submit"]))

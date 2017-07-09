@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying the news
+ */
 class Home extends Page
 {
     protected $userOnly = true;

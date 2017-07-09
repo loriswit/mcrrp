@@ -1,11 +1,20 @@
 <?php
 
+/**
+ * Class providing static methods to generate citizen's codes
+ */
 class Code
 {
     private const CODE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const CODE_LENGTH = 4;
     
-    // generates a code according to the name
+    /**
+     * Generates a code according to the given name.
+     *
+     * @param string $name A name with uppercase letters
+     *
+     * @return string A code made of the name's uppercase letters and digits
+     */
     public static function generate($name)
     {
         $code = "";
@@ -26,7 +35,11 @@ class Code
         return $code;
     }
     
-    // generates a random code
+    /**
+     * Generates a random code
+     *
+     * @return string A code randomly generated
+     */
     public static function random()
     {
         $code = "";

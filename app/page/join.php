@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying a registration form
+ */
 class Join extends Page
 {
     protected $visitorOnly = true;

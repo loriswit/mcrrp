@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying a conversation between two citizen.
+ */
 class Conversation extends Page
 {
     protected $userOnly = true;

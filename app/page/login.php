@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying a login form
+ */
 class Login extends Page
 {
     protected $visitorOnly = true;

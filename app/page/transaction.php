@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying all transactions
+ */
 class Transaction extends Page
 {
     protected $userOnly = true;

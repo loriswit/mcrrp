@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page displaying all conversations
+ */
 class Message extends Page
 {
     protected $userOnly = true;

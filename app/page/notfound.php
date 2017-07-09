@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Page sending an error 404
+ */
 class NotFound extends Page
 {
     protected function title()
