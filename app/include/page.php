@@ -53,8 +53,6 @@ abstract class Page
         
         if(LOGGED)
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
-        
-        echo $_SESSION["uuid"];
     }
     
     /**

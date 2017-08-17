@@ -19,24 +19,19 @@ class Login extends Page
     protected function submit()
     {
         $name = $_POST["username"];
-        $offline = CONFIG["settings"]["offline"];
+        $online = CONFIG["settings"]["online"];
         
-        if($offline)
-            $json = @file_get_contents("https://www.fabianwennink.nl/projects/OfflineUUID/api/$name");
-        else
+        if($online)
             $json = @file_get_contents("https://api.mojang.com/users/profiles/minecraft/$name");
+        else
+            $json = @file_get_contents("https://www.fabianwennink.nl/projects/OfflineUUID/api/$name");
         
         if($json === false || empty($json))
             throw new InvalidInputException("Invalid username. Please try again.");
         
         $data = json_decode($json, true);
         
-        if($offline)
-        {
-            $uuid = $data["uuid"];
-            $username = $data["username"];
-        }
-        else
+        if($online)
         {
             $uuid = $data["id"];
             $uuid = substr_replace($uuid, "-", 8, 0);
@@ -44,6 +39,11 @@ class Login extends Page
             $uuid = substr_replace($uuid, "-", 18, 0);
             $uuid = substr_replace($uuid, "-", 23, 0);
             $username = $data["name"];
+        }
+        else
+        {
+            $uuid = $data["uuid"];
+            $username = $data["username"];
         }
         
         $_SESSION["uuid"] = $uuid;

@@ -14,7 +14,7 @@ class Database
     {
         $dbInfo = CONFIG["database"];
         
-        $host = $dbInfo["host"];
+        $host = "localhost";
         $name = $dbInfo["name"];
         $user = $dbInfo["user"];
         $pass = $dbInfo["pass"];
@@ -97,7 +97,7 @@ class Database
     }
     
     /**
-     * Returns a citizen record fetched the player's UUID.
+     * Returns the citizen record associated with the player's UUID.
      *
      * @param string $uuid The UUID of a registered player
      * @return array An array containing all fields of the record
@@ -110,7 +110,7 @@ class Database
     }
     
     /**
-     * Returns a citizen record fetched by its code.
+     * Returns the citizen record associated with a code.
      *
      * @param string $code The code of a valid citizen
      * @return array An array containing all fields of the record
@@ -350,9 +350,9 @@ class Database
     /**
      * Adds a transaction to the database.
      *
-     * @param int $buyerID The ID of the buyer citizen or state
+     * @param int $buyerID The ID of the buyer (citizen or state)
      * @param bool $buyerState TRUE if the buyer ID is for a state, FALSE for a citizen
-     * @param int $sellerID The ID of the seller citizen or state
+     * @param int $sellerID The ID of the seller (citizen or state)
      * @param bool $sellerState TRUE if the seller ID is for a state, FALSE for a citizen
      * @param int $amount The amount of money transacted
      * @param string $description A textual description of the transaction
