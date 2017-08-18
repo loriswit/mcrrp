@@ -7,6 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+/**
+ * Abstract class representing an interaction with a block.
+ */
 public abstract class BlockInteraction implements Interaction
 {
     @Override
@@ -34,5 +37,13 @@ public abstract class BlockInteraction implements Interaction
         return false;
     }
     
+    /**
+     * Runs the block interaction process.
+     *
+     * @param player The involved player
+     * @param block  The involved block
+     * @param face   The involved face of that block
+     * @return <i>true</i> if the process succeeded, <i>false</i> if not
+     */
     protected abstract boolean run(Player player, Block block, BlockFace face) throws Exception;
 }

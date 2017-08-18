@@ -12,11 +12,23 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Class representing an interaction with a chest in order to sell its content.
+ * The player has to interact with the chest holding the items he wants to sell.
+ * The interaction has to be on a vertical face of the chest without any block next to it.
+ * If the interaction succeeds, a clickable sign is created at the involved face.
+ */
 public class SellInteraction extends BlockInteraction
 {
     private int amount;
     private int price;
     
+    /**
+     * Constructs the interaction.
+     *
+     * @param amount The amount of item to sell for the specified price
+     * @param price  The price that the buyer has to pay
+     */
     public SellInteraction(int amount, int price)
     {
         this.price = price;
@@ -36,7 +48,7 @@ public class SellInteraction extends BlockInteraction
             return false;
         
         if(player.getInventory().getItemInMainHand().getAmount() == 0
-                && player.getInventory().getItemInOffHand().getAmount() == 0)
+            && player.getInventory().getItemInOffHand().getAmount() == 0)
         {
             new Message(Tr.s("There are no items in your hands") + ".").send(player);
             return true;
@@ -59,17 +71,17 @@ public class SellInteraction extends BlockInteraction
         sign.setLine(0, ChatColor.YELLOW + article.replace('_', ' '));
         sign.setLine(1, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
         sign.update();
-    
+        
         String chestLocation = block.getLocation().getBlockX() + " "
             + block.getLocation().getBlockY() + " "
             + block.getLocation().getBlockZ() + " ";
-    
+        
         String signLocation = signBlock.getLocation().getBlockX() + " "
-                + signBlock.getLocation().getBlockY() + " "
-                + signBlock.getLocation().getBlockZ() + " ";
-    
+            + signBlock.getLocation().getBlockY() + " "
+            + signBlock.getLocation().getBlockZ() + " ";
+        
         int sellerID = Database.citizen(player).getInt("id");
-    
+        
         String buyCommand = "buy " + chestLocation + article + " " + amount + " " + price + " " + sellerID;
         String dataTag = "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + signLocation + dataTag.replace("'", "\\\""));

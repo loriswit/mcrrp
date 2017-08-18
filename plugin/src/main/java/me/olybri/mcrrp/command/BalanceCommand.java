@@ -8,8 +8,14 @@ import org.bukkit.entity.Player;
 import java.sql.ResultSet;
 import java.util.List;
 
+/**
+ * Command that prints the player's balance
+ */
 public class BalanceCommand extends PlayerCommand
 {
+    /**
+     * Constructs the balance command.
+     */
     public BalanceCommand()
     {
         super(0, true);
@@ -21,7 +27,7 @@ public class BalanceCommand extends PlayerCommand
         ResultSet citizen = Database.citizen(player);
         Message msg = new Message("",
             Tr.s("Current balance") + ": {value:" + (citizen.getInt("balance")) + "}");
-    
+        
         setMessage(msg);
         return true;
     }

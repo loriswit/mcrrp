@@ -15,10 +15,17 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 
-// TODO: prevent usage
+// TODO: prevent usage in chat
 
+/**
+ * Command that allows a player to buy something from a chest of another player.
+ * This command cannot be used directly in the player chat.
+ */
 public class BuyCommand extends PlayerCommand
 {
+    /**
+     * Constructs the buy command.
+     */
     public BuyCommand()
     {
         super(7, false);
@@ -54,7 +61,7 @@ public class BuyCommand extends PlayerCommand
             setMessage(new Message(Tr.s("Invalid chest") + "."));
             return true;
         }
-    
+        
         Material material = Material.matchMaterial(args.get(3));
         if(material == null)
         {
@@ -67,19 +74,19 @@ public class BuyCommand extends PlayerCommand
             setMessage(new Message(Tr.s("Invalid amount") + "."));
             return true;
         }
-    
+        
         if(price < 1)
         {
             setMessage(new Message(Tr.s("Invalid price") + "."));
             return true;
         }
-    
+        
         if(!Database.citizen(sellerID).first())
         {
             setMessage(new Message(Tr.s("Invalid seller") + "."));
             return true;
         }
-    
+        
         ResultSet citizen = Database.citizen(player);
         if(citizen.getInt("id") == sellerID)
         {

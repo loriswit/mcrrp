@@ -8,8 +8,14 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+/**
+ * Command that allows a player to show the result of a command to another player.
+ */
 public class ShowCommand extends PlayerCommand
 {
+    /**
+     * Constructs the show command.
+     */
     public ShowCommand()
     {
         super(1, false);

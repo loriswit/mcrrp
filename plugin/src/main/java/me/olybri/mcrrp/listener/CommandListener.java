@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class listening to player commands.
+ */
 public class CommandListener implements Listener
 {
     @EventHandler
@@ -31,6 +34,12 @@ public class CommandListener implements Listener
         runCommand(event.getPlayer(), event.getMessage().substring(1));
     }
     
+    /**
+     * Runs a command for a specific player.
+     *
+     * @param player      The player running the command
+     * @param commandLine The full command line
+     */
     private void runCommand(Player player, String commandLine)
     {
         List<String> args = new LinkedList<>(Arrays.asList(commandLine.split("\\s")));

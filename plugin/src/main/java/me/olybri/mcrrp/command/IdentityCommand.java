@@ -8,8 +8,14 @@ import org.bukkit.entity.Player;
 import java.sql.ResultSet;
 import java.util.List;
 
+/**
+ * Command that prints the player's identity.
+ */
 public class IdentityCommand extends PlayerCommand
 {
+    /**
+     * Constructs the identity command.
+     */
     public IdentityCommand()
     {
         super(0, true);

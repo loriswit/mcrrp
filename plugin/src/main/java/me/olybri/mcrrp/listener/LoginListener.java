@@ -17,6 +17,9 @@ import org.bukkit.scoreboard.Team;
 
 import java.sql.ResultSet;
 
+/**
+ * Class listening to login/logout related events.
+ */
 public class LoginListener implements Listener
 {
     @EventHandler

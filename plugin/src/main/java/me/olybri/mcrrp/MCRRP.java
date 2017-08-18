@@ -15,6 +15,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * Minecraft Realistic Roleplay
+ * Main Bukkit plugin
+ */
 public final class MCRRP extends JavaPlugin
 {
     private static MCRRP instance;
@@ -31,7 +35,7 @@ public final class MCRRP extends JavaPlugin
             Bukkit.shutdown();
             return;
         }
-            
+        
         instance = this;
         
         try
@@ -54,7 +58,7 @@ public final class MCRRP extends JavaPlugin
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
         getServer().getPluginManager().registerEvents(new CommandListener(), this);
         getServer().getPluginManager().registerEvents(new InteractionListener(), this);
-    
+        
         getLogger().info("Registering command executors...");
         getCommand("identity").setExecutor(new IdentityCommand());
         getCommand("balance").setExecutor(new BalanceCommand());
@@ -65,14 +69,12 @@ public final class MCRRP extends JavaPlugin
         getLogger().info("Plugin enabled successfully.");
     }
     
-    public static String error(Exception exception, Player player)
-    {
-        String msg = printException(exception) + ".\n" + Tr.s("Please contact an administrator") + ".";
-        Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
-        
-        return msg;
-    }
-    
+    /**
+     * Returns one of the registered command from this plugin.
+     *
+     * @param name The command name
+     * @return The command associated to the name
+     */
     public static PluginCommand command(String name)
     {
         PluginCommand command = instance.getCommand(name);
@@ -82,12 +84,33 @@ public final class MCRRP extends JavaPlugin
         return command;
     }
     
+    /**
+     * Prints an fatal error and kicks the player causing it.
+     *
+     * @param exception The exception to be printed
+     * @param player    The player causing the exception
+     * @return The kick message sent to the player
+     */
+    public static String error(Exception exception, Player player)
+    {
+        String msg = printException(exception) + ".\n" + Tr.s("Please contact an administrator") + ".";
+        Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
+        
+        return msg;
+    }
+    
+    /**
+     * Prints an exception message to the log.
+     *
+     * @param exception The exception to print
+     * @return The printed message
+     */
     private static String printException(Exception exception)
     {
         String title = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName();
         instance.getLogger().severe(title);
         instance.getLogger().severe(Tr.s("Message") + ": " + exception.getMessage());
-    
+        
         StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));
         instance.getLogger().severe(stackTrace.toString());

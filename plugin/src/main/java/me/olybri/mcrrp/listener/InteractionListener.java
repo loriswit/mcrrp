@@ -12,10 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Class listening to players interactions with the world and others entities.
+ */
 public class InteractionListener implements Listener
 {
     private static Map<UUID, Interaction> interactions = new HashMap<>();
     
+    /**
+     * Static function that defines which interaction to listen to for a specific player.
+     * Only one interaction per player can be listened to.
+     * If the interaction is <i>null</i>, no interactions will be listened to for this player.
+     *
+     * @param player      The player involved in the interaction
+     * @param interaction The interaction to listen to
+     */
     public static void putInteraction(Player player, Interaction interaction)
     {
         interactions.put(player.getUniqueId(), interaction);
@@ -33,6 +44,12 @@ public class InteractionListener implements Listener
         applyInteraction(event);
     }
     
+    /**
+     * Executes the interaction being listened to, if any.
+     * If the interaction process succeeded, the interaction is not listened to anymore.
+     *
+     * @param event The associated event
+     */
     private void applyInteraction(PlayerEvent event)
     {
         UUID uuid = event.getPlayer().getUniqueId();

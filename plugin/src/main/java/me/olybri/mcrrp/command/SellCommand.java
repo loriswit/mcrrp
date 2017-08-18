@@ -7,8 +7,14 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+/**
+ * Command that allows a player to sell the content of a chest.
+ */
 public class SellCommand extends PlayerCommand
 {
+    /**
+     * Constructs the sell command.
+     */
     public SellCommand()
     {
         super(2, false);

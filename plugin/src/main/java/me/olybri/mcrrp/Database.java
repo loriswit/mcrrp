@@ -4,10 +4,18 @@ import org.bukkit.entity.Player;
 
 import java.sql.*;
 
+/**
+ * Class that provides static functions to connect and communicate with the MCRRP database.
+ */
 public class Database
 {
     private static Connection conn;
     
+    /**
+     * Initializes the connection to the MCRRP database.
+     *
+     * @throws SQLException if a database error occurs
+     */
     public static void init() throws SQLException
     {
         String name = MCRRP.config.getString("database.name");
@@ -18,6 +26,12 @@ public class Database
         conn = DriverManager.getConnection(url, user, pass);
     }
     
+    /**
+     * Returns a citizen record.
+     *
+     * @param id The ID of a valid citizen
+     * @return An array containing all fields of the record
+     */
     public static ResultSet citizen(int id) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM citizen WHERE id = ?");
@@ -25,15 +39,25 @@ public class Database
         return result(statement);
     }
     
+    /**
+     * Returns the citizen record associated with a player.
+     *
+     * @param player The player associated to the citizen
+     * @return An array containing all fields of the record
+     */
     public static ResultSet citizen(Player player) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM citizen WHERE player = ?");
         statement.setString(1, player.getUniqueId().toString());
-        ResultSet rs = statement.executeQuery();
-        rs.first();
-        return rs;
+        return result(statement);
     }
     
+    /**
+     * Returns a state record.
+     *
+     * @param stateID The ID of a valid state
+     * @return An array containing all fields of the record
+     */
     public static ResultSet state(int stateID) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM state WHERE id = ?");
@@ -41,6 +65,14 @@ public class Database
         return result(statement);
     }
     
+    /**
+     * Adds a transaction to the database.
+     *
+     * @param buyerID     The ID of the buyer
+     * @param sellerID    The ID of the seller
+     * @param amount      The amount of money transacted
+     * @param description A textual description of the transaction
+     */
     public static void addTransaction(int buyerID, int sellerID, int amount, String description) throws SQLException
     {
         conn.setAutoCommit(false);
@@ -56,12 +88,12 @@ public class Database
         statement.executeUpdate();
         
         statement = conn.prepareStatement("UPDATE citizen SET balance = ? WHERE id = ?");
-    
+        
         int buyerBalance = citizen(buyerID).getInt("balance") - amount;
         statement.setInt(1, buyerBalance);
         statement.setInt(2, buyerID);
         statement.executeUpdate();
-    
+        
         int sellerBalance = citizen(sellerID).getInt("balance") + amount;
         statement.setInt(1, sellerBalance);
         statement.setInt(2, sellerID);
@@ -71,6 +103,12 @@ public class Database
         conn.setAutoCommit(true);
     }
     
+    /**
+     * Executes a SQL query and returns the result set.
+     *
+     * @param statement The prepared SQL statement to execute
+     * @return The result set of the query with cursor on the first row
+     */
     private static ResultSet result(PreparedStatement statement) throws SQLException
     {
         ResultSet rs = statement.executeQuery();

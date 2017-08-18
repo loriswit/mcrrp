@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
+/**
+ * Abstract class representing an interaction with another player.
+ */
 public abstract class PlayerInteraction implements Interaction
 {
     @Override
@@ -34,5 +37,12 @@ public abstract class PlayerInteraction implements Interaction
         return false;
     }
     
+    /**
+     * Runs the player interaction process.
+     *
+     * @param player The source player
+     * @param target The target player
+     * @return <i>true</i> if the process succeeded, <i>false</i> if not
+     */
     protected abstract boolean run(Player player, Player target) throws Exception;
 }

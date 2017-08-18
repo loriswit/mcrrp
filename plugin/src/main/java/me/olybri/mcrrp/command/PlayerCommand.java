@@ -15,6 +15,9 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Abstract class representing a command executable by a player.
+ */
 public abstract class PlayerCommand implements CommandExecutor
 {
     private Message message = new Message();
@@ -23,6 +26,12 @@ public abstract class PlayerCommand implements CommandExecutor
     private int argsCount;
     private boolean canShow;
     
+    /**
+     * Construct the player command.
+     *
+     * @param argsCount The number of arguments needed to execute the command
+     * @param canShow   <i>true</i> if result of the command can be shown to another player, <i>false</i> if not
+     */
     public PlayerCommand(int argsCount, boolean canShow)
     {
         this.argsCount = argsCount;
@@ -50,6 +59,15 @@ public abstract class PlayerCommand implements CommandExecutor
         return apply(player, label, Arrays.asList(args), false);
     }
     
+    /**
+     * Executes the command.
+     *
+     * @param player The player executing the command
+     * @param label  The label used to execute the command
+     * @param args   The arguments list
+     * @param show   <i>true</i> if the result of the command has to be shown to another player, <i>false</i> if not
+     * @return
+     */
     public final boolean apply(Player player, String label, List<String> args, boolean show)
     {
         if(show && !canShow)
@@ -89,15 +107,32 @@ public abstract class PlayerCommand implements CommandExecutor
         return true;
     }
     
+    /**
+     * Defines the result message of the command.
+     *
+     * @param message The result message
+     */
     protected final void setMessage(Message message)
     {
         this.message = message;
     }
     
+    /**
+     * Defines the interaction to listen to once the command has been executed.
+     *
+     * @param interaction The interaction to listen to
+     */
     protected final void setInteraction(Interaction interaction)
     {
         this.interaction = interaction;
     }
     
+    /**
+     * Runs the command process.
+     *
+     * @param player The player executing the command
+     * @param args   The arguments list
+     * @return <i>true</i> if the process succeeded, <i>false</i> if not
+     */
     protected abstract boolean run(Player player, List<String> args) throws Exception;
 }
