@@ -15,8 +15,6 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 
-// TODO: prevent usage in chat
-
 /**
  * Command that allows a player to buy something from a chest of another player.
  * This command cannot be used directly in the player chat.
@@ -28,7 +26,7 @@ public class BuyCommand extends PlayerCommand
      */
     public BuyCommand()
     {
-        super(7, false);
+        super(7, false, true);
     }
     
     @Override

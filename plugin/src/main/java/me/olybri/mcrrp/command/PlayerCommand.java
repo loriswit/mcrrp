@@ -25,6 +25,21 @@ public abstract class PlayerCommand implements CommandExecutor
     
     private int argsCount;
     private boolean canShow;
+    private boolean proxy;
+    
+    /**
+     * Construct the player command.
+     *
+     * @param argsCount The number of arguments needed to execute the command
+     * @param canShow   <i>true</i> if result of the command can be shown to another player, <i>false</i> if not
+     * @param proxy     <i>true</i> if the command must be executed by a proxied command sender, <i>false</i> if not
+     */
+    public PlayerCommand(int argsCount, boolean canShow, boolean proxy)
+    {
+        this.argsCount = argsCount;
+        this.canShow = canShow;
+        this.proxy = proxy;
+    }
     
     /**
      * Construct the player command.
@@ -34,8 +49,7 @@ public abstract class PlayerCommand implements CommandExecutor
      */
     public PlayerCommand(int argsCount, boolean canShow)
     {
-        this.argsCount = argsCount;
-        this.canShow = canShow;
+        this(argsCount, canShow, false);
     }
     
     @Override
@@ -43,16 +57,20 @@ public abstract class PlayerCommand implements CommandExecutor
     {
         Player player;
         
-        if(sender instanceof Player)
+        if(!proxy && sender instanceof Player)
             player = (Player) sender;
         
-        else if(sender instanceof ProxiedCommandSender
+        else if(proxy && sender instanceof ProxiedCommandSender
             && ((ProxiedCommandSender) sender).getCallee() instanceof Player)
             player = (Player) ((ProxiedCommandSender) sender).getCallee();
         
         else
         {
-            sender.sendMessage(Tr.s("This command can only be used by a player") + ".");
+            if(proxy)
+                sender.sendMessage(Tr.s("This command can only be executed by a proxied command sender") + ".");
+            else
+                sender.sendMessage(Tr.s("This command can only be executed by a player") + ".");
+            
             return true;
         }
         
@@ -105,6 +123,16 @@ public abstract class PlayerCommand implements CommandExecutor
         }
         
         return true;
+    }
+    
+    /**
+     * Tells if the command can be executed by a player.
+     *
+     * @return <i>true</i> if a player can executes the command, <i>false</i> if not
+     */
+    public final boolean isExecutable()
+    {
+        return !proxy;
     }
     
     /**

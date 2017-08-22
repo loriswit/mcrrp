@@ -47,7 +47,9 @@ public class CommandListener implements Listener
         
         PluginCommand command = MCRRP.command(name);
         
-        if(command == null || !(command.getExecutor() instanceof PlayerCommand))
+        if(command == null
+            || !(command.getExecutor() instanceof PlayerCommand)
+            || !((PlayerCommand) command.getExecutor()).isExecutable())
         {
             new Message(Tr.s("Unknown command") + ": {value:" + name + "}").send(player);
             return;
