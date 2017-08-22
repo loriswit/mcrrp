@@ -104,6 +104,18 @@ public class Database
     }
     
     /**
+     * Marks a citizen as dead, so that no player is linked to it anymore.
+     *
+     * @param player The player associated to the citizen
+     */
+    public static void killCitizen(Player player) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement("UPDATE citizen SET player = 'dead' WHERE player = ?");
+        statement.setString(1, player.getUniqueId().toString());
+        statement.executeUpdate();
+    }
+    
+    /**
      * Executes a SQL query and returns the result set.
      *
      * @param statement The prepared SQL statement to execute

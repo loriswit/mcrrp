@@ -2,6 +2,7 @@ package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.command.*;
 import me.olybri.mcrrp.listener.CommandListener;
+import me.olybri.mcrrp.listener.DeathListener;
 import me.olybri.mcrrp.listener.InteractionListener;
 import me.olybri.mcrrp.listener.LoginListener;
 import org.bukkit.Bukkit;
@@ -58,6 +59,7 @@ public final class MCRRP extends JavaPlugin
         getServer().getPluginManager().registerEvents(new LoginListener(), this);
         getServer().getPluginManager().registerEvents(new CommandListener(), this);
         getServer().getPluginManager().registerEvents(new InteractionListener(), this);
+        getServer().getPluginManager().registerEvents(new DeathListener(), this);
         
         getLogger().info("Registering command executors...");
         getCommand("identity").setExecutor(new IdentityCommand());
