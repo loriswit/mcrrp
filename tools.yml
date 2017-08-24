@@ -1,0 +1,198 @@
+shears:
+- leaves
+- leaves 2
+- vine
+- web
+- wool
+
+wood axe / stone axe / iron axe / gold axe / diamond axe:
+- acacia door
+- acacia fence
+- acacia fence gate
+- acacia stairs
+- birch door
+- birch fence
+- birch fence gate
+- birch wood stairs
+- bookshelf
+- chest
+- chorus flower
+- chorus plant
+- cocoa
+- dark oak door
+- dark oak fence
+- dark oak fence gate
+- dark oak stairs
+- daylight detector
+- daylight detector inverted
+- fence
+- fence gate
+- huge mushroom 1
+- huge mushroom 2
+- jack o lantern
+- jukebox
+- jungle door
+- jungle fence
+- jungle fence gate
+- jungle wood stairs
+- ladder
+- log
+- log 2
+- melon block
+- note block
+- pumpkin
+- sign post
+- spruce door
+- spruce fence
+- spruce fence gate
+- spruce wood stairs
+- standing banner
+- trap door
+- trapped chest
+- vine
+- wall banner
+- wall sign
+- wood
+- wood button
+- wood double step
+- wood plate
+- wood stairs
+- wood step
+- wooden door
+- workbench
+
+wood pickaxe / stone pickaxe / iron pickaxe / gold pickaxe / diamond pickaxe:
+- activator rail
+- anvil
+- black glazed terracotta
+- black shulker box
+- blue glazed terracotta
+- blue shulker box
+- bone block
+- brewing stand
+- brick
+- brick stairs
+- brown glazed terracotta
+- brown shulker box
+- burning furnace
+- cauldron
+- coal block
+- coal ore
+- cobble wall
+- cobblestone
+- cobblestone stairs
+- concrete
+- cyan glazed terracotta
+- cyan shulker box
+- detector rail
+- diamond block
+- diamond ore
+- dispenser
+- double step
+- double stone slab2
+- dropper
+- emerald block
+- emerald ore
+- enchantment table
+- end bricks
+- ender chest
+- ender stone
+- furnace
+- glowing redstone ore
+- gold block
+- gold ore
+- gold plate
+- gray glazed terracotta
+- gray shulker box
+- green glazed terracotta
+- green shulker box
+- hard clay
+- hopper
+- ice
+- iron block
+- iron door block
+- iron fence
+- iron ore
+- iron plate
+- iron trapdoor
+- lapis block
+- lapis ore
+- light blue glazed terracotta
+- light blue shulker box
+- lime glazed terracotta
+- lime shulker box
+- magenta glazed terracotta
+- magenta shulker box
+- magma
+- mob spawner
+- mossy cobblestone
+- nether brick
+- nether brick stairs
+- nether fence
+- netherrack
+- observer
+- obsidian
+- orange glazed terracotta
+- orange shulker box
+- packed ice
+- pink glazed terracotta
+- pink shulker box
+- powered rail
+- prismarine
+- purple glazed terracotta
+- purple shulker box
+- purpur block
+- purpur double slab
+- purpur pillar
+- purpur slab
+- purpur stairs
+- quartz block
+- quartz ore
+- quartz stairs
+- rails
+- red glazed terracotta
+- red nether brick
+- red sandstone
+- red sandstone stairs
+- red shulker box
+- redstone block
+- redstone ore
+- sandstone
+- sandstone stairs
+- silver glazed terracotta
+- silver shulker box
+- smooth brick
+- smooth brick
+- smooth stairs
+- stained clay
+- step
+- stone
+- stone button
+- stone plate
+- stone slab2
+- white glazed terracotta
+- white shulker box
+- yellow glazed terracotta
+- yellow shulker box
+
+wood spade / stone spade / iron spade / gold spade / diamond spade:
+- clay
+- concrete powder
+- dirt
+- grass
+- grass path
+- gravel
+- mycel
+- sand
+- snow
+- snow block
+- soil
+- soul sand
+
+wood sword / stone sword / iron sword / gold sword / diamond sword:
+- cocoa
+- jack o lantern
+- leaves
+- melon block
+- pumpkin
+- vine

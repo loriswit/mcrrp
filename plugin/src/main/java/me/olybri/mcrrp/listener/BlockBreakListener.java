@@ -8,7 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class listening to block break events.
@@ -20,6 +23,7 @@ public class BlockBreakListener implements Listener
     
     /**
      * Generates the block break rules and constructs the listener.
+     *
      * @throws Exception if the <i>tools.yml</i> file can't be read.
      */
     public BlockBreakListener() throws Exception
