@@ -1,10 +1,7 @@
 package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.command.*;
-import me.olybri.mcrrp.listener.CommandListener;
-import me.olybri.mcrrp.listener.DeathListener;
-import me.olybri.mcrrp.listener.InteractionListener;
-import me.olybri.mcrrp.listener.LoginListener;
+import me.olybri.mcrrp.listener.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -41,10 +37,24 @@ public final class MCRRP extends JavaPlugin
         
         try
         {
-            config.load(new File("../config.yml"));
+            config.load("../config.yml");
             
             Database.init();
             Tr.init();
+            
+            getLogger().info("Registering listeners...");
+            getServer().getPluginManager().registerEvents(new LoginListener(), this);
+            getServer().getPluginManager().registerEvents(new CommandListener(), this);
+            getServer().getPluginManager().registerEvents(new InteractionListener(), this);
+            getServer().getPluginManager().registerEvents(new DeathListener(), this);
+            getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
+            
+            getLogger().info("Registering command executors...");
+            getCommand("identity").setExecutor(new IdentityCommand());
+            getCommand("balance").setExecutor(new BalanceCommand());
+            getCommand("show").setExecutor(new ShowCommand());
+            getCommand("sell").setExecutor(new SellCommand());
+            getCommand("buy").setExecutor(new BuyCommand());
         }
         catch(Exception e)
         {
@@ -54,19 +64,6 @@ public final class MCRRP extends JavaPlugin
             Bukkit.shutdown();
             return;
         }
-        
-        getLogger().info("Registering listeners...");
-        getServer().getPluginManager().registerEvents(new LoginListener(), this);
-        getServer().getPluginManager().registerEvents(new CommandListener(), this);
-        getServer().getPluginManager().registerEvents(new InteractionListener(), this);
-        getServer().getPluginManager().registerEvents(new DeathListener(), this);
-        
-        getLogger().info("Registering command executors...");
-        getCommand("identity").setExecutor(new IdentityCommand());
-        getCommand("balance").setExecutor(new BalanceCommand());
-        getCommand("show").setExecutor(new ShowCommand());
-        getCommand("sell").setExecutor(new SellCommand());
-        getCommand("buy").setExecutor(new BuyCommand());
         
         getLogger().info("Plugin enabled successfully.");
     }
