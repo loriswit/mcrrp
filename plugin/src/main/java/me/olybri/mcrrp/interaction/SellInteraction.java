@@ -1,8 +1,7 @@
 package me.olybri.mcrrp.interaction;// Created by Loris Witschard on 7/4/2017.
 
-import me.olybri.mcrrp.Database;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
+import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +10,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Class representing an interaction with a chest in order to sell its content.
@@ -50,7 +51,7 @@ public class SellInteraction extends BlockInteraction
         if(player.getInventory().getItemInMainHand().getAmount() == 0
             && player.getInventory().getItemInOffHand().getAmount() == 0)
         {
-            new Message(Tr.s("There are no items in your hands") + ".").send(player);
+            new Message(tr("There are no items in your hands") + ".").send(player);
             return true;
         }
         
@@ -92,7 +93,7 @@ public class SellInteraction extends BlockInteraction
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
             "blockdata " + signLocation + dataTag.replace("'", "\\\""));
         
-        new Message(Tr.s("Selling") + " {value:" + amount + " " + materialName + "} @ $" + price + ".").send(player);
+        new Message(tr("Selling") + " {value:" + amount + " " + materialName + "} @ $" + price + ".").send(player);
         
         return true;
     }

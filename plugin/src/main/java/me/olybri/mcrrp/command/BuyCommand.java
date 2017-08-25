@@ -1,8 +1,7 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/7/2017.
 
-import me.olybri.mcrrp.Database;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
+import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.sql.ResultSet;
 import java.util.List;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Command that allows a player to buy something from a chest of another player.
@@ -57,7 +58,7 @@ public class BuyCommand extends PlayerCommand
         Block block = new Location(player.getWorld(), x, y, z).getBlock();
         if(!(block.getState() instanceof Chest))
         {
-            setMessage(new Message(Tr.s("Invalid chest") + "."));
+            setMessage(new Message(tr("Invalid chest") + "."));
             return true;
         }
         
@@ -65,26 +66,26 @@ public class BuyCommand extends PlayerCommand
         Material material = Material.matchMaterial(args.get(3));
         if(material == null)
         {
-            setMessage(new Message(Tr.s("Invalid article") + "."));
+            setMessage(new Message(tr("Invalid article") + "."));
             return true;
         }
         
         if(!Database.citizen(sellerID).first())
         {
-            setMessage(new Message(Tr.s("Invalid seller") + "."));
+            setMessage(new Message(tr("Invalid seller") + "."));
             return true;
         }
         
         ResultSet citizen = Database.citizen(player);
         if(citizen.getInt("id") == sellerID)
         {
-            setMessage(new Message(Tr.s("Cannot buy what your are selling") + "."));
+            setMessage(new Message(tr("Cannot buy what your are selling") + "."));
             return true;
         }
         
         if(citizen.getInt("balance") < price)
         {
-            setMessage(new Message(Tr.s("Your balance is too low") + "."));
+            setMessage(new Message(tr("Your balance is too low") + "."));
             return true;
         }
         
@@ -97,7 +98,7 @@ public class BuyCommand extends PlayerCommand
         {
             notRemoved.setAmount(amount - notRemoved.getAmount());
             chestInventory.addItem(notRemoved);
-            setMessage(new Message(Tr.s("Not enough articles left") + "."));
+            setMessage(new Message(tr("Not enough articles left") + "."));
             return true;
         }
         
@@ -107,7 +108,7 @@ public class BuyCommand extends PlayerCommand
             notAdded.setAmount(amount - notAdded.getAmount());
             playerInventory.removeItem(notAdded);
             chestInventory.addItem(item);
-            setMessage(new Message(Tr.s("Not enough space in your inventory") + "."));
+            setMessage(new Message(tr("Not enough space in your inventory") + "."));
             return true;
         }
         
@@ -116,7 +117,7 @@ public class BuyCommand extends PlayerCommand
         int buyerID = citizen.getInt("id");
         Database.addTransaction(buyerID, sellerID, price, "Bought " + amount + " " + articleName + " @ $" + price);
         
-        setMessage(new Message(Tr.s("Bought")
+        setMessage(new Message(tr("Bought")
             + " {value:" + amount + " " + articleName + "} @ $" + price + "."));
         
         return true;

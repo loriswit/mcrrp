@@ -1,9 +1,8 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
-import me.olybri.mcrrp.Database;
 import me.olybri.mcrrp.MCRRP;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
+import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,6 +15,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.sql.ResultSet;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Class listening to login/logout related events.
@@ -31,7 +32,7 @@ public class LoginListener implements Listener
         {
             if(!Database.citizen(player).first())
             {
-                String msg = Tr.s("You first need to register at")
+                String msg = tr("You first need to register at")
                     + ChatColor.YELLOW + " " + MCRRP.config.getString("settings.website");
                 
                 event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, msg);
@@ -55,7 +56,7 @@ public class LoginListener implements Listener
             ResultSet citizen = Database.citizen(player);
             
             String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
-            new Message(Tr.s("Welcome") + ", {name:" + name + "}").send(player);
+            new Message(tr("Welcome") + ", {name:" + name + "}").send(player);
         }
         catch(Exception e)
         {

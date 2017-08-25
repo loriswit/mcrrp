@@ -1,11 +1,10 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/5/2017.
 
 import me.olybri.mcrrp.MCRRP;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
 import me.olybri.mcrrp.interaction.Interaction;
 import me.olybri.mcrrp.interaction.ShowMessageInteraction;
 import me.olybri.mcrrp.listener.InteractionListener;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +13,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Abstract class representing a command executable by a player.
@@ -67,9 +68,9 @@ public abstract class PlayerCommand implements CommandExecutor
         else
         {
             if(proxy)
-                sender.sendMessage(Tr.s("This command can only be executed by a proxied command sender") + ".");
+                sender.sendMessage(tr("This command can only be executed by a proxied command sender") + ".");
             else
-                sender.sendMessage(Tr.s("This command can only be executed by a player") + ".");
+                sender.sendMessage(tr("This command can only be executed by a player") + ".");
             
             return true;
         }
@@ -90,7 +91,7 @@ public abstract class PlayerCommand implements CommandExecutor
     {
         if(show && !canShow)
         {
-            new Message(Tr.s("Cannot show command") + ": {value:" + label + "}.").send(player);
+            new Message(tr("Cannot show command") + ": {value:" + label + "}.").send(player);
             return true;
         }
         
@@ -108,7 +109,7 @@ public abstract class PlayerCommand implements CommandExecutor
                 if(show)
                 {
                     interaction = new ShowMessageInteraction(message.body);
-                    message = new Message(Tr.s("Please click on any player") + "...");
+                    message = new Message(tr("Please click on any player") + "...");
                 }
                 
                 message.send(player);

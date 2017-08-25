@@ -1,9 +1,8 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.MCRRP;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
 import me.olybri.mcrrp.command.PlayerCommand;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +13,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Class listening to player commands.
@@ -51,7 +52,7 @@ public class CommandListener implements Listener
             || !(command.getExecutor() instanceof PlayerCommand)
             || !((PlayerCommand) command.getExecutor()).isExecutable())
         {
-            new Message(Tr.s("Unknown command") + ": {value:" + name + "}").send(player);
+            new Message(tr("Unknown command") + ": {value:" + name + "}").send(player);
             return;
         }
         

@@ -2,6 +2,8 @@ package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.command.*;
 import me.olybri.mcrrp.listener.*;
+import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.Translation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,6 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Minecraft Realistic Roleplay
@@ -40,7 +44,7 @@ public final class MCRRP extends JavaPlugin
             config.load("../config.yml");
             
             Database.init();
-            Tr.init();
+            Translation.init();
             
             getLogger().info("Registering listeners...");
             getServer().getPluginManager().registerEvents(new LoginListener(), this);
@@ -92,7 +96,7 @@ public final class MCRRP extends JavaPlugin
      */
     public static String error(Exception exception, Player player)
     {
-        String msg = printException(exception) + ".\n" + Tr.s("Please contact an administrator") + ".";
+        String msg = printException(exception) + ".\n" + tr("Please contact an administrator") + ".";
         Bukkit.getScheduler().runTask(instance, () -> player.kickPlayer(msg));
         
         return msg;
@@ -106,9 +110,9 @@ public final class MCRRP extends JavaPlugin
      */
     private static String printException(Exception exception)
     {
-        String title = Tr.s("An error occurred") + ": " + exception.getClass().getSimpleName();
+        String title = tr("An error occurred") + ": " + exception.getClass().getSimpleName();
         instance.getLogger().severe(title);
-        instance.getLogger().severe(Tr.s("Message") + ": " + exception.getMessage());
+        instance.getLogger().severe(tr("Message") + ": " + exception.getMessage());
         
         StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));

@@ -1,5 +1,6 @@
-package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
+package me.olybri.mcrrp.util;// Created by Loris Witschard on 6/11/2017.
 
+import me.olybri.mcrrp.MCRRP;
 import org.bukkit.entity.Player;
 
 import java.sql.*;

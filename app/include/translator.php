@@ -21,7 +21,7 @@ class Translator
         
         if($this->lang != "en")
         {
-            $content = @file_get_contents("../lang/".$this->lang.".json");
+            $content = @file_get_contents("../data/lang/".$this->lang.".json");
             $this->translation = @json_decode($content, true);
         }
     }

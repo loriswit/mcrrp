@@ -1,12 +1,13 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/6/2017.
 
 import me.olybri.mcrrp.MCRRP;
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Command that allows a player to show the result of a command to another player.
@@ -29,7 +30,7 @@ public class ShowCommand extends PlayerCommand
         
         if(command == null || !(command.getExecutor() instanceof PlayerCommand))
         {
-            setMessage(new Message(Tr.s("Cannot show unknown command") + ": {value:" + name + "}"));
+            setMessage(new Message(tr("Cannot show unknown command") + ": {value:" + name + "}"));
             return true;
         }
         

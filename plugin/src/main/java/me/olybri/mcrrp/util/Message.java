@@ -1,4 +1,4 @@
-package me.olybri.mcrrp;// Created by Loris Witschard on 7/4/2017.
+package me.olybri.mcrrp.util;// Created by Loris Witschard on 7/4/2017.
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

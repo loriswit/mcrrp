@@ -1,11 +1,12 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/6/2017.
 
-import me.olybri.mcrrp.Message;
-import me.olybri.mcrrp.Tr;
 import me.olybri.mcrrp.interaction.SellInteraction;
+import me.olybri.mcrrp.util.Message;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import static me.olybri.mcrrp.util.Translation.tr;
 
 /**
  * Command that allows a player to sell the content of a chest.
@@ -35,9 +36,9 @@ public class SellCommand extends PlayerCommand
         {
             return false;
         }
-    
+        
         setInteraction(new SellInteraction(amount, price));
-        setMessage(new Message(Tr.s("Please click on any chest") + "..."));
+        setMessage(new Message(tr("Please click on any chest") + "..."));
         
         return true;
     }
