@@ -44,11 +44,11 @@ public class BuyCommand extends PlayerCommand
             x = Double.parseDouble(args.get(0));
             y = Double.parseDouble(args.get(1));
             z = Double.parseDouble(args.get(2));
-            amount = Integer.parseInt(args.get(4));
-            price = Integer.parseInt(args.get(5));
-            sellerID = Integer.parseInt(args.get(6));
+            amount = Integer.parseUnsignedInt(args.get(4));
+            price = Integer.parseUnsignedInt(args.get(5));
+            sellerID = Integer.parseUnsignedInt(args.get(6));
         }
-        catch(Exception e)
+        catch(NumberFormatException e)
         {
             return false;
         }
@@ -64,18 +64,6 @@ public class BuyCommand extends PlayerCommand
         if(material == null)
         {
             setMessage(new Message(Tr.s("Invalid article") + "."));
-            return true;
-        }
-        
-        if(amount < 1)
-        {
-            setMessage(new Message(Tr.s("Invalid amount") + "."));
-            return true;
-        }
-        
-        if(price < 1)
-        {
-            setMessage(new Message(Tr.s("Invalid price") + "."));
             return true;
         }
         

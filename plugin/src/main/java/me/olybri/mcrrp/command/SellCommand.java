@@ -23,15 +23,22 @@ public class SellCommand extends PlayerCommand
     @Override
     protected boolean run(Player player, List<String> args) throws Exception
     {
+        int amount;
+        int price;
+        
         try
         {
-            setInteraction(new SellInteraction(Integer.parseInt(args.get(0)), Integer.parseInt(args.get(1))));
-            setMessage(new Message(Tr.s("Please click on any chest") + "..."));
-            return true;
+            amount = Integer.parseUnsignedInt(args.get(0));
+            price = Integer.parseUnsignedInt(args.get(1));
         }
         catch(NumberFormatException e)
         {
             return false;
         }
+    
+        setInteraction(new SellInteraction(amount, price));
+        setMessage(new Message(Tr.s("Please click on any chest") + "..."));
+        
+        return true;
     }
 }
