@@ -12,7 +12,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,6 +35,7 @@ public class BuyCommand extends PlayerCommand
         double y;
         double z;
         int amount;
+        short dataValue;
         int price;
         int sellerID;
         
@@ -45,8 +45,9 @@ public class BuyCommand extends PlayerCommand
             y = Double.parseDouble(args.get(1));
             z = Double.parseDouble(args.get(2));
             amount = Integer.parseUnsignedInt(args.get(4));
-            price = Integer.parseUnsignedInt(args.get(5));
-            sellerID = Integer.parseUnsignedInt(args.get(6));
+            dataValue = Short.parseShort(args.get(5));
+            price = Integer.parseUnsignedInt(args.get(6));
+            sellerID = Integer.parseUnsignedInt(args.get(7));
         }
         catch(NumberFormatException e)
         {
@@ -59,6 +60,7 @@ public class BuyCommand extends PlayerCommand
             setMessage(new Message(Tr.s("Invalid chest") + "."));
             return true;
         }
+        
         
         Material material = Material.matchMaterial(args.get(3));
         if(material == null)
@@ -86,22 +88,25 @@ public class BuyCommand extends PlayerCommand
             return true;
         }
         
+        ItemStack item = new ItemStack(material, amount, dataValue);
         Inventory chestInventory = ((Chest) block.getState()).getBlockInventory();
         Inventory playerInventory = player.getInventory();
         
-        HashMap<Integer, ItemStack> extra = chestInventory.removeItem(new ItemStack(material, amount));
-        if(!extra.isEmpty())
+        ItemStack notRemoved = chestInventory.removeItem(item.clone()).get(0);
+        if(notRemoved != null)
         {
-            chestInventory.addItem(new ItemStack(material, amount - extra.get(0).getAmount()));
+            notRemoved.setAmount(amount - notRemoved.getAmount());
+            chestInventory.addItem(notRemoved);
             setMessage(new Message(Tr.s("Not enough articles left") + "."));
             return true;
         }
         
-        extra = playerInventory.addItem(new ItemStack(material, amount));
-        if(!extra.isEmpty())
+        ItemStack notAdded = playerInventory.addItem(item.clone()).get(0);
+        if(notAdded != null)
         {
-            playerInventory.removeItem(new ItemStack(material, amount - extra.get(0).getAmount()));
-            chestInventory.addItem(new ItemStack(material, amount));
+            notAdded.setAmount(amount - notAdded.getAmount());
+            playerInventory.removeItem(notAdded);
+            chestInventory.addItem(item);
             setMessage(new Message(Tr.s("Not enough space in your inventory") + "."));
             return true;
         }

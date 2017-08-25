@@ -84,7 +84,7 @@ public abstract class PlayerCommand implements CommandExecutor
      * @param label  The label used to execute the command
      * @param args   The arguments list
      * @param show   <i>true</i> if the result of the command has to be shown to another player, <i>false</i> if not
-     * @return
+     * @return <i>true</i> if the command is well-formed, <i>false</i> if not
      */
     public final boolean apply(Player player, String label, List<String> args, boolean show)
     {
@@ -102,8 +102,8 @@ public abstract class PlayerCommand implements CommandExecutor
             message = new Message();
             interaction = null;
             
-            boolean success = run(player, args);
-            if(success)
+            boolean wellFormed = run(player, args);
+            if(wellFormed)
             {
                 if(show)
                 {
@@ -115,7 +115,7 @@ public abstract class PlayerCommand implements CommandExecutor
                 if(!label.equals("show"))
                     InteractionListener.putInteraction(player, interaction);
             }
-            return success;
+            return wellFormed;
         }
         catch(Exception e)
         {
@@ -160,7 +160,7 @@ public abstract class PlayerCommand implements CommandExecutor
      *
      * @param player The player executing the command
      * @param args   The arguments list
-     * @return <i>true</i> if the process succeeded, <i>false</i> if not
+     * @return <i>true</i> if the command is well-formed, <i>false</i> if not
      */
     protected abstract boolean run(Player player, List<String> args) throws Exception;
 }

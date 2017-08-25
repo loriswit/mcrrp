@@ -54,11 +54,12 @@ public class SellInteraction extends BlockInteraction
             return true;
         }
         
-        ItemStack sellingItem = player.getInventory().getItemInMainHand();
-        if(sellingItem.getAmount() == 0)
-            sellingItem = player.getInventory().getItemInOffHand();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if(item.getAmount() == 0)
+            item = player.getInventory().getItemInOffHand();
         
-        String article = sellingItem.getType().toString();
+        String materialName = item.getType().name();
+        short dataValue = item.getDurability();
         
         Block signBlock = block.getRelative(face);
         signBlock.setType(Material.WALL_SIGN);
@@ -68,7 +69,7 @@ public class SellInteraction extends BlockInteraction
         signMaterial.setFacingDirection(face);
         
         sign.setData(signMaterial);
-        sign.setLine(0, ChatColor.YELLOW + article.replace('_', ' '));
+        sign.setLine(0, ChatColor.YELLOW + materialName.replace('_', ' '));
         sign.setLine(1, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
         sign.update();
         
@@ -82,11 +83,16 @@ public class SellInteraction extends BlockInteraction
         
         int sellerID = Database.citizen(player).getInt("id");
         
-        String buyCommand = "buy " + chestLocation + article + " " + amount + " " + price + " " + sellerID;
-        String dataTag = "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + signLocation + dataTag.replace("'", "\\\""));
+        String buyCommand =
+            "buy " + chestLocation + materialName + " " + amount + " " + dataValue + " " + price + " " + sellerID;
         
-        new Message(Tr.s("Selling") + " {value:" + amount + " " + article + "} @ $" + price + ".").send(player);
+        String dataTag =
+            "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
+        
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+            "blockdata " + signLocation + dataTag.replace("'", "\\\""));
+        
+        new Message(Tr.s("Selling") + " {value:" + amount + " " + materialName + "} @ $" + price + ".").send(player);
         
         return true;
     }
