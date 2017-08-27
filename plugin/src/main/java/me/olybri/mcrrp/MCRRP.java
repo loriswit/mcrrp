@@ -3,6 +3,7 @@ package me.olybri.mcrrp;// Created by Loris Witschard on 6/11/2017.
 import me.olybri.mcrrp.command.*;
 import me.olybri.mcrrp.listener.*;
 import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.ItemName;
 import me.olybri.mcrrp.util.Translation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -45,6 +46,7 @@ public final class MCRRP extends JavaPlugin
             
             Database.init();
             Translation.init();
+            ItemName.init();
             
             getLogger().info("Registering listeners...");
             getServer().getPluginManager().registerEvents(new LoginListener(), this);

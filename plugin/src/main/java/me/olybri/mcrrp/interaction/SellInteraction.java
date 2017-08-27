@@ -1,6 +1,7 @@
 package me.olybri.mcrrp.interaction;// Created by Loris Witschard on 7/4/2017.
 
 import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.ItemName;
 import me.olybri.mcrrp.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -61,6 +62,7 @@ public class SellInteraction extends BlockInteraction
         
         String materialName = item.getType().name();
         short dataValue = item.getDurability();
+        ItemName itemName = new ItemName(item);
         
         Block signBlock = block.getRelative(face);
         signBlock.setType(Material.WALL_SIGN);
@@ -68,9 +70,9 @@ public class SellInteraction extends BlockInteraction
         
         org.bukkit.material.Sign signMaterial = new org.bukkit.material.Sign(Material.WALL_SIGN);
         signMaterial.setFacingDirection(face);
-        
+    
         sign.setData(signMaterial);
-        sign.setLine(0, ChatColor.YELLOW + materialName.replace('_', ' '));
+        sign.setLine(0, ChatColor.YELLOW + itemName.toString());
         sign.setLine(1, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
         sign.update();
         
@@ -93,7 +95,8 @@ public class SellInteraction extends BlockInteraction
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
             "blockdata " + signLocation + dataTag.replace("'", "\\\""));
         
-        new Message(tr("Selling") + " {value:" + amount + " " + materialName + "} @ $" + price + ".").send(player);
+        new Message(tr("Selling") + " {value:" + amount + " " + itemName + "} @ $" + price + ".")
+            .send(player);
         
         return true;
     }

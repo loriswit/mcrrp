@@ -1,6 +1,7 @@
 package me.olybri.mcrrp.command;// Created by Loris Witschard on 7/7/2017.
 
 import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.ItemName;
 import me.olybri.mcrrp.util.Message;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +63,6 @@ public class BuyCommand extends PlayerCommand
             return true;
         }
         
-        
         Material material = Material.matchMaterial(args.get(3));
         if(material == null)
         {
@@ -111,14 +111,14 @@ public class BuyCommand extends PlayerCommand
             setMessage(new Message(tr("Not enough space in your inventory") + "."));
             return true;
         }
-        
-        String articleName = material.toString().replace('_', ' ').toLowerCase();
+    
+        ItemName itemName = new ItemName(item);
         
         int buyerID = citizen.getInt("id");
-        Database.addTransaction(buyerID, sellerID, price, "Bought " + amount + " " + articleName + " @ $" + price);
+        Database.addTransaction(buyerID, sellerID, price, "Bought " + amount + " " + itemName + " @ $" + price);
         
         setMessage(new Message(tr("Bought")
-            + " {value:" + amount + " " + articleName + "} @ $" + price + "."));
+            + " {value:" + amount + " " + itemName + "} @ $" + price + "."));
         
         return true;
     }
