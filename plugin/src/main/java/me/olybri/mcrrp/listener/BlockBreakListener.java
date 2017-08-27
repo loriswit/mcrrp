@@ -1,6 +1,7 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 8/22/2017.
 
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,26 +26,27 @@ public class BlockBreakListener implements Listener
     /**
      * Generates the block break rules and constructs the listener.
      *
-     * @throws Exception if the <i>tools.yml</i> file can't be read.
+     * @throws IOException                   if the <i>tools.yml</i> file cannot be read.
+     * @throws InvalidConfigurationException if the <i>tools.yml</i> file is ill-formed.
      */
-    public BlockBreakListener() throws Exception
+    public BlockBreakListener() throws IOException, InvalidConfigurationException
     {
         FileConfiguration config = new YamlConfiguration();
-        config.load("../tools.yml");
+        config.load("../data/item/tools.yml");
         
         for(String toolNameList : config.getKeys(false))
         {
             for(String blockName : config.getStringList(toolNameList))
             {
-                Material block = Material.matchMaterial(blockName);
+                Material block = Material.getMaterial(blockName);
                 if(block == null)
                     continue;
                 
                 blocks.putIfAbsent(block, new HashSet<>());
                 
-                for(String toolName : toolNameList.split("/"))
+                for(String toolName : toolNameList.split("\\s"))
                 {
-                    Material tool = Material.matchMaterial(toolName.trim());
+                    Material tool = Material.getMaterial(toolName.trim());
                     if(tool != null)
                         blocks.get(block).add(tool);
                 }

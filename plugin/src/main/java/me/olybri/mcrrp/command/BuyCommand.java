@@ -63,7 +63,7 @@ public class BuyCommand extends PlayerCommand
             return true;
         }
         
-        Material material = Material.matchMaterial(args.get(3));
+        Material material = Material.getMaterial(args.get(3));
         if(material == null)
         {
             setMessage(new Message(tr("Invalid article") + "."));
