@@ -54,6 +54,7 @@ public final class MCRRP extends JavaPlugin
             getServer().getPluginManager().registerEvents(new InteractionListener(), this);
             getServer().getPluginManager().registerEvents(new DeathListener(), this);
             getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
+            getServer().getPluginManager().registerEvents(new PickupItemListener(), this);
             
             getLogger().info("Registering command executors...");
             getCommand("identity").setExecutor(new IdentityCommand());
@@ -61,6 +62,7 @@ public final class MCRRP extends JavaPlugin
             getCommand("show").setExecutor(new ShowCommand());
             getCommand("sell").setExecutor(new SellCommand());
             getCommand("buy").setExecutor(new BuyCommand());
+            getCommand("drop").setExecutor(new DropCommand());
         }
         catch(Exception e)
         {

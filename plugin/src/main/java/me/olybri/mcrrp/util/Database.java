@@ -88,20 +88,35 @@ public class Database
         statement.setString(4, description);
         statement.executeUpdate();
         
-        statement = conn.prepareStatement("UPDATE citizen SET balance = ? WHERE id = ?");
+        statement = conn.prepareStatement("UPDATE citizen SET balance = balance + ? WHERE id = ?");
         
-        int buyerBalance = citizen(buyerID).getInt("balance") - amount;
-        statement.setInt(1, buyerBalance);
+        statement.setInt(1, -amount);
         statement.setInt(2, buyerID);
         statement.executeUpdate();
         
-        int sellerBalance = citizen(sellerID).getInt("balance") + amount;
-        statement.setInt(1, sellerBalance);
+        statement.setInt(1, amount);
         statement.setInt(2, sellerID);
         statement.executeUpdate();
         
         conn.commit();
         conn.setAutoCommit(true);
+    }
+    
+    /**
+     * Adds money to a specific citizen.
+     *
+     * @param player The player associated to the citizen
+     * @param amount The amount of money to add (can be negative)
+     */
+    public static void addMoney(Player player, int amount) throws SQLException
+    {
+        
+        PreparedStatement statement =
+            conn.prepareStatement("UPDATE citizen SET balance = balance + ? WHERE player = ?");
+        
+        statement.setInt(1, amount);
+        statement.setString(2, player.getUniqueId().toString());
+        statement.executeUpdate();
     }
     
     /**
