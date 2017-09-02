@@ -2,11 +2,8 @@ package me.olybri.mcrrp.command;// Created by Loris Witschard on 8/25/2017.
 
 import me.olybri.mcrrp.util.Database;
 import me.olybri.mcrrp.util.Message;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import me.olybri.mcrrp.util.Wallet;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -47,18 +44,7 @@ public class DropCommand extends PlayerCommand
             return true;
         }
         
-        ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
-        
-        BookMeta book = (BookMeta) item.getItemMeta();
-        book.setAuthor("wallet");
-        book.setTitle("$" + amount);
-        book.addPage(tr("This wallet contains") + " $" + amount + ".");
-        item.setItemMeta(book);
-        
-        Database.addMoney(player, -amount);
-        player.getInventory().addItem(item);
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
-        
+        new Wallet(amount).drop(player);
         setMessage(new Message(tr("Dropped") + " {value:$" + amount + "}."));
         
         return true;
