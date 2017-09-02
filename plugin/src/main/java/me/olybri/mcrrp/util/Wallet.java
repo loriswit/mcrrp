@@ -56,7 +56,7 @@ public class Wallet
     }
     
     /**
-     * Drops the wallet in the player's inventory.
+     * Drops the wallet in the player's inventory (or on the ground if the player is dead).
      *
      * @param player The player dropping the wallet
      */
@@ -78,9 +78,15 @@ public class Wallet
         book.setTitle("$" + amount);
         book.addPage(tr("This wallet contains") + " $" + amount + ".");
         item.setItemMeta(book);
+    
+        if(player.isDead())
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
         
-        player.getInventory().addItem(item);
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
+        else
+        {
+            player.getInventory().addItem(item);
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
+        }
     }
     
     /**

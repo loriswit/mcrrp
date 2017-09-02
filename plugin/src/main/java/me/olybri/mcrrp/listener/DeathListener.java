@@ -2,6 +2,7 @@ package me.olybri.mcrrp.listener;// Created by Loris Witschard on 8/22/2017.
 
 import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.util.Database;
+import me.olybri.mcrrp.util.Wallet;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,7 +29,9 @@ public class DeathListener implements Listener
         {
             ResultSet citizen = Database.citizen(player);
             String name = citizen.getString("first_name") + " " + citizen.getString("last_name");
+            int balance = citizen.getInt("balance");
             
+            new Wallet(balance).drop(player);
             Database.killCitizen(player);
             
             player.kickPlayer(tr("You died") + ".\n\n"
