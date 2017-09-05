@@ -1,6 +1,7 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.MCRRP;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
@@ -64,6 +65,40 @@ public class Database
         PreparedStatement statement = conn.prepareStatement("SELECT * FROM state WHERE id = ?");
         statement.setInt(1, stateID);
         return result(statement);
+    }
+    
+    /**
+     * Tells if a citizen is authorized to interact with a block at a specific location.
+     *
+     * @param player   The player associated to the citizen
+     * @param location The location of the block
+     * @return <i>true</i> if the player is authorized to interact, <i>false</i> if not
+     */
+    public static boolean authorized(Player player, Location location) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "SELECT id, owner_id FROM `lock` WHERE x = ? AND y = ? AND z = ?");
+        
+        statement.setInt(1, location.getBlockX());
+        statement.setInt(2, location.getBlockY());
+        statement.setInt(3, location.getBlockZ());
+        ResultSet lock = statement.executeQuery();
+        if(!lock.first())
+            return true;
+        
+        int id = citizen(player).getInt("id");
+        if(id == lock.getInt("owner_id"))
+            return true;
+        
+        statement = conn.prepareStatement("SELECT citizen_id FROM authorized WHERE lock_id = ?");
+        statement.setInt(1, lock.getInt("id"));
+        ResultSet authorized = statement.executeQuery();
+        
+        while(authorized.next())
+            if(id == authorized.getInt("citizen_id"))
+                return true;
+        
+        return false;
     }
     
     /**

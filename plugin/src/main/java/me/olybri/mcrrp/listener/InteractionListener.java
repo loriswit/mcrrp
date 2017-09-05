@@ -1,9 +1,11 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 7/4/2017.
 
 import me.olybri.mcrrp.interaction.Interaction;
+import me.olybri.mcrrp.util.Lockable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -41,7 +43,18 @@ public class InteractionListener implements Listener
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        applyInteraction(event);
+        Action action = event.getAction();
+        if(action == Action.RIGHT_CLICK_BLOCK)
+        {
+            applyInteraction(event);
+            
+            if(!event.isCancelled())
+            {
+                Lockable lockable = Lockable.create(event.getClickedBlock(), event.getPlayer());
+                if(lockable != null && lockable.locked())
+                    event.setCancelled(true);
+            }
+        }
     }
     
     /**
