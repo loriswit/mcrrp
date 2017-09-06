@@ -52,6 +52,7 @@ class Database
             "SELECT DISTINCT receiver_id FROM message WHERE sender_id = ?",
             "SELECT DISTINCT buyer_id FROM transaction WHERE buyer_state = 0 AND seller_state = 0 AND seller_id = ?",
             "SELECT DISTINCT seller_id FROM transaction WHERE buyer_state = 0 AND seller_state = 0 AND buyer_id = ?",
+            "SELECT DISTINCT citizen_id FROM authorized WHERE lock_id IN (SELECT id FROM `lock` WHERE owner_id = ?)",
         ];
         
         $codes = array();
@@ -404,8 +405,53 @@ class Database
      */
     public function readTransactions($sellerID, $sellerState)
     {
-        $st = $this->pdo->prepare("UPDATE transaction SET seen = UNIX_TIMESTAMP(NOW()) ".
-            "WHERE seller_id = ? AND seller_state = ? AND seen = 0");
+        $st = $this->pdo->prepare("UPDATE transaction SET seen = UNIX_TIMESTAMP(NOW()) "
+            ."WHERE seller_id = ? AND seller_state = ? AND seen = 0");
         $st->execute([$sellerID, $sellerState]);
+    }
+    
+    //////////////////////
+    //      LOCKS       //
+    //////////////////////
+    
+    /**
+     * Returns all locks of a specific citizen.
+     *
+     * @param int $ownerID The ID of a valid citizen
+     * @return array An array containing all locks
+     */
+    public function locks($ownerID)
+    {
+        $st = $this->pdo->prepare("SELECT * FROM `lock` WHERE owner_id = ?");
+        $st->execute([$ownerID]);
+        return $st->fetchAll();
+    }
+    
+    /**
+     * Returns all authorized citizens of a specific lock.
+     *
+     * @param int $lockID The ID of a valid lock
+     * @return array An array containing all authorized citizens
+     */
+    public function authorized($lockID)
+    {
+        $st = $this->pdo->prepare("SELECT citizen_id FROM authorized WHERE lock_id = ?");
+        $st->execute([$lockID]);
+        return $st->fetchAll(PDO::FETCH_COLUMN);
+    }
+    
+    /**
+     * Authorises a citizen to interact with a lock.
+     *
+     * @param int $lockID The ID of a valid lock
+     * @param int $citizenID The ID of a valid citizen
+     */
+    public function addAuthorized($lockID, $citizenID)
+    {
+        if(!in_array($citizenID, $this->authorized($lockID)))
+        {
+            $st = $this->pdo->prepare("INSERT INTO authorized (lock_id, citizen_id) VALUES (?, ?)");
+            $st->execute([$lockID, $citizenID]);
+        }
     }
 }
