@@ -1,7 +1,7 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.MCRRP;
-import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
@@ -68,20 +68,38 @@ public class Database
     }
     
     /**
-     * Tells if a citizen is authorized to interact with a block at a specific location.
+     * Tells if a block is locked.
      *
-     * @param player   The player associated to the citizen
-     * @param location The location of the block
-     * @return <i>true</i> if the player is authorized to interact, <i>false</i> if not
+     * @param block The lockable block
+     * @return <i>true</i> if the block is locked, <i>false</i> if not
      */
-    public static boolean authorized(Player player, Location location) throws SQLException
+    public static boolean locked(Block block) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "SELECT COUNT(*) AS count FROM `lock` WHERE x = ? AND y = ? AND z = ?");
+        
+        statement.setInt(1, block.getX());
+        statement.setInt(2, block.getY());
+        statement.setInt(3, block.getZ());
+        
+        return result(statement).getInt("count") != 0;
+    }
+    
+    /**
+     * Tells if a citizen is authorized to interact with a block.
+     *
+     * @param block  The lockable block
+     * @param player The player associated to the citizen
+     * @return <i>true</i> if the citizen is authorized to interact, <i>false</i> if not
+     */
+    public static boolean authorized(Block block, Player player) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement(
             "SELECT id, owner_id FROM `lock` WHERE x = ? AND y = ? AND z = ?");
         
-        statement.setInt(1, location.getBlockX());
-        statement.setInt(2, location.getBlockY());
-        statement.setInt(3, location.getBlockZ());
+        statement.setInt(1, block.getX());
+        statement.setInt(2, block.getY());
+        statement.setInt(3, block.getZ());
         ResultSet lock = statement.executeQuery();
         if(!lock.first())
             return true;
@@ -99,6 +117,29 @@ public class Database
                 return true;
         
         return false;
+    }
+    
+    /**
+     * Locks a block for a specific citizen.
+     *
+     * @param player The player associated to the citizen
+     * @param block  The target block
+     * @param name   The name of the lock
+     */
+    public static void lock(Player player, Block block, String name) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "INSERT INTO `lock` (owner_id, name, type, x, y, z) "
+                + "VALUES (?, ?, ?, ?, ?, ?)");
+        
+        statement.setInt(1, citizen(player).getInt("id"));
+        statement.setString(2, name);
+        statement.setString(3, block.getType().name());
+        statement.setInt(4, block.getX());
+        statement.setInt(5, block.getY());
+        statement.setInt(6, block.getZ());
+        
+        statement.executeUpdate();
     }
     
     /**
@@ -145,7 +186,6 @@ public class Database
      */
     public static void addMoney(Player player, int amount) throws SQLException
     {
-        
         PreparedStatement statement =
             conn.prepareStatement("UPDATE citizen SET balance = balance + ? WHERE player = ?");
         

@@ -1,7 +1,5 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 9/5/2017.
 
-import me.olybri.mcrrp.MCRRP;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -13,24 +11,15 @@ import org.bukkit.material.Openable;
 import java.sql.SQLException;
 
 /**
- * Class representing a lockable block.
+ * Class representing a lockable block that behaves according to a specific player.
  */
 public class Lockable
 {
-    private boolean locked;
+    private Block block;
+    private Player player;
     
     /**
-     * Constructs a lockable block.
-     *
-     * @param locked <i>true</i> if the block is already locked, <i>false</i> if not
-     */
-    public Lockable(boolean locked)
-    {
-        this.locked = locked;
-    }
-    
-    /**
-     * Creates a lockable block that behaves according to a specific player.
+     * Creates a lockable block
      *
      * @param block  The lockable block
      * @param player The player interacting with the block
@@ -43,24 +32,10 @@ public class Lockable
         if(!(data instanceof DirectionalContainer) && !(data instanceof Openable))
             return null;
         
-        Location location;
-        
         if(data instanceof Door && ((Door) data).isTopHalf())
-            location = block.getRelative(BlockFace.DOWN).getLocation();
+            return new Lockable(block.getRelative(BlockFace.DOWN), player);
         else
-            location = block.getLocation();
-        
-        try
-        {
-            boolean locked = !Database.authorized(player, location);
-            return new Lockable(locked);
-        }
-        catch(SQLException e)
-        {
-            MCRRP.error(e, player);
-        }
-        
-        return null;
+            return new Lockable(block, player);
     }
     
     /**
@@ -68,8 +43,34 @@ public class Lockable
      *
      * @return <i>true</i> if the block is locked, <i>false</i> if not
      */
-    public boolean locked()
+    public boolean locked() throws SQLException
     {
-        return locked;
+        return Database.locked(block);
+    }
+    
+    /**
+     * Tells if the player can interact with the block.
+     *
+     * @return <i>true</i> if the player is authorized to interact, <i>false</i> if not
+     */
+    public boolean authorized() throws SQLException
+    {
+        return Database.authorized(block, player);
+    }
+    
+    /**
+     * Locks the block.
+     *
+     * @param name The name of the lock
+     */
+    public void lock(String name) throws SQLException
+    {
+        Database.lock(player, block, name);
+    }
+    
+    private Lockable(Block block, Player player)
+    {
+        this.block = block;
+        this.player = player;
     }
 }

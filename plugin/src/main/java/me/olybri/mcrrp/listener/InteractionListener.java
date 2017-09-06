@@ -1,7 +1,9 @@
 package me.olybri.mcrrp.listener;// Created by Loris Witschard on 7/4/2017.
 
+import me.olybri.mcrrp.MCRRP;
 import me.olybri.mcrrp.interaction.Interaction;
 import me.olybri.mcrrp.util.Lockable;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,6 +12,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,9 +53,19 @@ public class InteractionListener implements Listener
             
             if(!event.isCancelled())
             {
-                Lockable lockable = Lockable.create(event.getClickedBlock(), event.getPlayer());
-                if(lockable != null && lockable.locked())
-                    event.setCancelled(true);
+                Player player = event.getPlayer();
+                Block block = event.getClickedBlock();
+                
+                try
+                {
+                    Lockable lockable = Lockable.create(block, player);
+                    if(lockable != null && !lockable.authorized())
+                        event.setCancelled(true);
+                }
+                catch(SQLException e)
+                {
+                    MCRRP.error(e, player);
+                }
             }
         }
     }

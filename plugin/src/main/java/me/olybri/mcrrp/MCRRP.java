@@ -63,6 +63,7 @@ public final class MCRRP extends JavaPlugin
             getCommand("sell").setExecutor(new SellCommand());
             getCommand("buy").setExecutor(new BuyCommand());
             getCommand("drop").setExecutor(new DropCommand());
+            getCommand("lock").setExecutor(new LockCommand());
         }
         catch(Exception e)
         {
