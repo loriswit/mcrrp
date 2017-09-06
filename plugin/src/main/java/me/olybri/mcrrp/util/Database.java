@@ -142,6 +142,17 @@ public class Database
         statement.executeUpdate();
     }
     
+    public static void unlock(Block block) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "DELETE FROM `lock` WHERE x = ? AND y = ? AND z = ?");
+        
+        statement.setInt(1, block.getX());
+        statement.setInt(2, block.getY());
+        statement.setInt(3, block.getZ());
+        statement.executeUpdate();
+    }
+    
     /**
      * Adds a transaction to the database.
      *

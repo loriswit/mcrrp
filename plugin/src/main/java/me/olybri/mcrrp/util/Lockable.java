@@ -68,6 +68,14 @@ public class Lockable
         Database.lock(player, block, name);
     }
     
+    /**
+     * Unlocks the block.
+     */
+    public void unlock() throws SQLException
+    {
+        Database.unlock(block);
+    }
+    
     private Lockable(Block block, Player player)
     {
         this.block = block;
