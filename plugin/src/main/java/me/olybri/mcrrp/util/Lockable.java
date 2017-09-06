@@ -1,8 +1,8 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 9/5/2017.
 
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
@@ -27,15 +27,23 @@ public class Lockable
      */
     public static Lockable create(Block block, Player player)
     {
-        MaterialData data = block.getState().getData();
+        BlockState state = block.getState();
+        MaterialData data = state.getData();
         
         if(!(data instanceof DirectionalContainer) && !(data instanceof Openable))
             return null;
         
         if(data instanceof Door && ((Door) data).isTopHalf())
             return new Lockable(block.getRelative(BlockFace.DOWN), player);
-        else
-            return new Lockable(block, player);
+        
+        if(state instanceof Chest)
+        {
+            InventoryHolder holder = ((Chest) state).getInventory().getHolder();
+            if(holder instanceof DoubleChest)
+                return new Lockable(((DoubleChest) holder).getLocation().getBlock(), player);
+        }
+        
+        return new Lockable(block, player);
     }
     
     /**
