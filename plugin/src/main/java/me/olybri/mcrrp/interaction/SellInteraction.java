@@ -62,7 +62,8 @@ public class SellInteraction extends BlockInteraction
         
         String materialName = item.getType().name();
         short dataValue = item.getDurability();
-        ItemName itemName = new ItemName(item);
+        String itemName = new ItemName(item).toString();
+        String[] lines = (itemName + '\n').replaceAll("(.{1,15})\\s+", "$1\n").split("\n");
         
         Block signBlock = block.getRelative(face);
         signBlock.setType(Material.WALL_SIGN);
@@ -70,10 +71,12 @@ public class SellInteraction extends BlockInteraction
         
         org.bukkit.material.Sign signMaterial = new org.bukkit.material.Sign(Material.WALL_SIGN);
         signMaterial.setFacingDirection(face);
-    
+        
         sign.setData(signMaterial);
-        sign.setLine(0, ChatColor.YELLOW + itemName.toString());
-        sign.setLine(1, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
+        sign.setLine(0, ChatColor.YELLOW + lines[0]);
+        if(lines.length > 1)
+            sign.setLine(1, ChatColor.YELLOW + lines[1]);
+        sign.setLine(2, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
         sign.update();
         
         String chestLocation = block.getLocation().getBlockX() + " "
@@ -90,7 +93,7 @@ public class SellInteraction extends BlockInteraction
             "buy " + chestLocation + materialName + " " + amount + " " + dataValue + " " + price + " " + sellerID;
         
         String dataTag =
-            "{Text3:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
+            "{Text4:\"{'text':'','clickEvent':{'action':'run_command','value':'" + buyCommand + "'}}\"}";
         
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
             "blockdata " + signLocation + dataTag.replace("'", "\\\""));

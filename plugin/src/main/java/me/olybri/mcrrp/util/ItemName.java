@@ -7,8 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 
-import static me.olybri.mcrrp.util.Translation.tr;
-
 /**
  * Class representing an item name.
  */
@@ -37,14 +35,13 @@ public class ItemName
     public ItemName(ItemStack item)
     {
         name = items.getString(item.getType() + "." + item.getDurability());
+        if(name == null)
+            name = items.getString(item.getType() + ".0") + " (damaged)";
     }
     
     @Override
     public String toString()
     {
-        if(name == null)
-            return tr("Invalid item");
-        
         return name;
     }
 }
