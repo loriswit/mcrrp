@@ -123,7 +123,7 @@ public class Database
      * Locks a block for a specific citizen.
      *
      * @param player The player associated to the citizen
-     * @param block  The target block
+     * @param block  The lockable block
      * @param name   The name of the lock
      */
     public static void lock(Player player, Block block, String name) throws SQLException
@@ -142,15 +142,31 @@ public class Database
         statement.executeUpdate();
     }
     
+    /**
+     * Unlocks a block and removes all authorizations.
+     *
+     * @param block The lockable block
+     */
     public static void unlock(Block block) throws SQLException
     {
-        PreparedStatement statement = conn.prepareStatement(
-            "DELETE FROM `lock` WHERE x = ? AND y = ? AND z = ?");
+        String[] sqls = {
+            "DELETE FROM authorized WHERE lock_id = (SELECT id FROM `lock` WHERE x = ? AND y = ? AND z = ?)",
+            "DELETE FROM `lock` WHERE x = ? AND y = ? AND z = ?"
+        };
         
-        statement.setInt(1, block.getX());
-        statement.setInt(2, block.getY());
-        statement.setInt(3, block.getZ());
-        statement.executeUpdate();
+        conn.setAutoCommit(false);
+        
+        for(String sql : sqls)
+        {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, block.getX());
+            statement.setInt(2, block.getY());
+            statement.setInt(3, block.getZ());
+            statement.executeUpdate();
+        }
+        
+        conn.commit();
+        conn.setAutoCommit(true);
     }
     
     /**
