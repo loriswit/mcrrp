@@ -26,7 +26,7 @@ class Lock extends Page
             $name = $lock["name"];
             $type = $lock["type"];
             
-            $locks .= "<option value=$lockID>$name</option>";
+            $locks .= "<option value=$lockID>$name</option>\n";
             $authorized .= "<tr>\n"
                 ."<td>$type</td>\n"
                 ."<td>$name</td>\n"
@@ -51,8 +51,10 @@ class Lock extends Page
         $code = strtoupper($_POST["code"]);
         if($code == $this->citizen["code"])
             return;
-    
+        
         $authorized = $this->db->citizenByCode($code);
+        if(empty($authorized))
+            throw new InvalidInputException("Invalid citizen's code.");
         
         if($_POST["submit"] == "add")
             $this->db->addAuthorized($_POST["lock"], $authorized["id"]);
