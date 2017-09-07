@@ -50,10 +50,14 @@ class Lock extends Page
     {
         $code = strtoupper($_POST["code"]);
         if($code == $this->citizen["code"])
-            throw new InvalidInputException("You cannot authorize yourself.");
-        
+            return;
+    
         $authorized = $this->db->citizenByCode($code);
         
-        $this->db->addAuthorized($_POST["lock"], $authorized["id"]);
+        if($_POST["submit"] == "add")
+            $this->db->addAuthorized($_POST["lock"], $authorized["id"]);
+        
+        else if($_POST["submit"] == "remove")
+            $this->db->removeAuthorized($_POST["lock"], $authorized["id"]);
     }
 }

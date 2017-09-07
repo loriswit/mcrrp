@@ -441,7 +441,7 @@ class Database
     }
     
     /**
-     * Authorises a citizen to interact with a lock.
+     * Authorizes a citizen to interact with a lock.
      *
      * @param int $lockID The ID of a valid lock
      * @param int $citizenID The ID of a valid citizen
@@ -453,5 +453,17 @@ class Database
             $st = $this->pdo->prepare("INSERT INTO authorized (lock_id, citizen_id) VALUES (?, ?)");
             $st->execute([$lockID, $citizenID]);
         }
+    }
+    
+    /**
+     * Removes a citizen's authorization to interact with a lock.
+     *
+     * @param int $lockID The ID of a valid lock
+     * @param int $citizenID The ID of a valid citizen
+     */
+    public function removeAuthorized($lockID, $citizenID)
+    {
+        $st = $this->pdo->prepare("DELETE FROM authorized WHERE lock_id = ? AND citizen_id = ?");
+        $st->execute([$lockID, $citizenID]);
     }
 }
