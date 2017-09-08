@@ -55,6 +55,7 @@ public final class MCRRP extends JavaPlugin
             getServer().getPluginManager().registerEvents(new DeathListener(), this);
             getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
             getServer().getPluginManager().registerEvents(new PickupItemListener(), this);
+            getServer().getPluginManager().registerEvents(new EditBookListener(), this);
             
             getLogger().info("Registering command executors...");
             getCommand("identity").setExecutor(new IdentityCommand());
