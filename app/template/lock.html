@@ -2,12 +2,12 @@
 <form method="post">
     <label for="code">[@New authorization]:</label>
     <select name="lock" id="lock">
-        {@locks}
+        <option value={@lock_ids}>{@lock_names}</option>
     </select>
     <input name="code" type="text" pattern="[A-Za-z\d]{4}"
            placeholder="[@Citizen's code]" id="code" list="contacts" required>
     <datalist id="contacts">
-        {@codes}
+        <option value='{@codes}'>:{@codes}:</option>
     </datalist>
     <button name="submit" type="submit" value="add">[@Add]</button>
     <button name="submit" type="submit" value="remove">[@Remove]</button>
@@ -19,5 +19,5 @@
         <th>Description</th>
         <th>Authorized</th>
     </tr>
-    {@authorized}
+    <tr> <td>{@lock_types}</td> <td>{@lock_names}</td> <td>{@authorized}</td> </tr>
 </table>

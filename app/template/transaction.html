@@ -5,12 +5,12 @@
     <select name="receiver" id="receiver" onchange="hideCode()">
         <option value="citizen">[@Citizen]</option>
         <optgroup label="[@State]">
-            {@states}
+            <option value={@state_ids}>{@state_names}</option>
         </optgroup>
     </select>
     <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Receiver's code]" id="code" list="contacts" required>
     <datalist id="contacts">
-        {@codes}
+        <option value='{@codes}'>:{@codes}:</option>
     </datalist>
     <input name="amount" type="number" step=1 min=1 placeholder="[@Amount]" id="amount" required>
     <input name="description" type="text" placeholder="[@Description]" id="description" required>
@@ -18,8 +18,14 @@
 </form>
 <br>
 <table>
-    {@header}
-    {@transactions}
+    <tr>
+        <th>Date</th>
+        <th>Buyer</th>
+        <th>Seller</th>
+        <th>Amount</th>
+        <th>Description</th>
+    </tr>
+    <tr> <td>{@dates}</td> <td>{@buyers}</td> <td>{@sellers}</td> <td>{@amounts}</td> <td title={@seen}>{@descriptions}</td> </tr>
 </table>
 
 <script>

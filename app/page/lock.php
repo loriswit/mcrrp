@@ -14,35 +14,25 @@ class Lock extends Page
     
     protected function run()
     {
-        $codes = "";
-        foreach($this->db->knownCodes($this->citizen["id"]) as $code)
-            $codes .= "<option value='$code'>:@$code:</options>";
+        $codes = $this->db->knownCodes($this->citizen["id"]);
+        $locks = $this->db->locks($this->citizen["id"]);
         
-        $locks = "";
-        $authorized = "";
-        foreach($this->db->locks($this->citizen["id"]) as $lock)
+        $authorized = array();
+        foreach($locks as $lock)
         {
-            $lockID = $lock["id"];
-            $name = $lock["name"];
-            $type = $lock["type"];
-            
-            $locks .= "<option value=$lockID>$name</option>\n";
-            $authorized .= "<tr>\n"
-                ."<td>$type</td>\n"
-                ."<td>$name</td>\n"
-                ."<td>";
-            
-            foreach($this->db->authorized($lockID) as $citizenID)
+            $citizenList = "";
+            foreach($this->db->authorized($lock["id"]) as $citizenID)
             {
                 $citizen = $this->db->citizen($citizenID);
-                $authorized .= ":".$citizen["code"].":; ";
+                $citizenList .= ":".$citizen["code"].":; ";
             }
-            
-            $authorized .= "</td>\n</tr>\n";
+            $authorized[] = rtrim($citizenList, "; ");
         }
         
-        $this->tpl->set("locks", $locks);
+        $this->tpl->set("lock_ids", array_column($locks, "id"));
         $this->tpl->set("codes", $codes);
+        $this->tpl->set("lock_types", array_column($locks, "type"));
+        $this->tpl->set("lock_names", array_column($locks, "name"));
         $this->tpl->set("authorized", $authorized);
     }
     

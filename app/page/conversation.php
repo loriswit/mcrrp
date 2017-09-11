@@ -29,7 +29,7 @@ class Conversation extends Page
             if($day < $msgDay)
             {
                 $day = $msgDay;
-                $messageList .= "<p align='center'><b>".strftime("%e %B %Y", $day)."</b></p>";
+                $messageList .= "<p align='center'>*".strftime("%e %B %Y", $day)."*</p>";
             }
             
             $seen = "";

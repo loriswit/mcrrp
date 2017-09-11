@@ -29,7 +29,10 @@ class Template
      */
     public function set($key, $value)
     {
-        $this->values[$key] = $value;
+        if(is_array($value))
+            $this->values[$key] = array_values($value);
+        else
+            $this->values[$key] = $value;
     }
     
     /**
@@ -74,7 +77,33 @@ class Template
         // replace {@...} tags by values
         foreach($this->values as $key => $value)
         {
-            $html = str_replace("{@$key}", $value, $html, $count);
+            if(is_array($value))
+            {
+                if(empty($value))
+                    $html = str_replace("{@$key}", "", $html, $count);
+                else
+                {
+                    $regex = "/^.*{@$key}.*$/m";
+                    $count = preg_match_all($regex, $html, $matches);
+                    $diff = count($value) - count($matches[0]);
+                    if($diff > 0)
+                    {
+                        $line = end($matches[0]);
+                        $html = str_replace("$line\n", str_repeat("$line\n", $diff + 1), $html);
+                        preg_match_all($regex, $html, $matches);
+                    }
+                    
+                    for($i = 0; $i < count($matches[0]); ++$i)
+                    {
+                        $line = str_replace("{@$key}", $value[$i % count($value)], $matches[0][$i]);
+                        $pos = strpos($html, $matches[0][$i]);
+                        $html = substr_replace($html, $line, $pos, strlen($matches[0][$i]));
+                    }
+                }
+            }
+            else
+                $html = str_replace("{@$key}", $value, $html, $count);
+            
             if($count == 0)
                 throw new Exception("<i>$key</i> does not match any tag in template file <i>$filename</i>.");
         }
@@ -86,7 +115,7 @@ class Template
             foreach(array_unique($matches[1]) as $match)
                 $error .= "<li>$match</li>";
             $error .= "</ul>";
-            
+
             throw new Exception($error);
         }
         

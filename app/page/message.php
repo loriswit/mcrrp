@@ -14,49 +14,51 @@ class Message extends Page
     
     protected function run()
     {
-        $codes = "";
-        foreach($this->db->knownCodes($this->citizen["id"]) as $code)
-            $codes .= "<option value='$code'>:@$code:</options>";
+        $codes = $this->db->knownCodes($this->citizen["id"]);
         
-        $contact_list = "";
+        $dates = array();
+        $names = array();
+        $messages = array();
+        
         foreach($this->db->conversations($this->citizen["id"]) as $conversation)
         {
-            $date = strftime("%e %B %Y, %H:%M", $conversation["timestamp"]);
+            $dates[] = strftime("%e %B %Y, %H:%M", $conversation["timestamp"]);
             
             if($conversation["sender_id"] == $this->citizen["id"])
             {
                 $contactID = $conversation["receiver_id"];
                 if($conversation["seen"])
-                    $status = "&#10003";
+                    $message = ":icon_seen:";
                 else
-                    $status = "&#11208";
+                    $message = ":icon_sent:";
             }
             else
             {
                 $contactID = $conversation["sender_id"];
                 if($conversation["seen"])
-                    $status = "";
+                    $message = "";
                 else
-                    $status = "[".tr("new")."]";
+                    $message = "[".tr("new")."]";
             }
             
             $contact = $this->db->citizen($contactID);
-            $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
-            $body = htmlspecialchars($conversation["body"]);
-            $body = str_replace("@", "&#64;", $body);
+            $name = ":".$contact["code"].":";
             
-            $contact_list .= "<tr>\n"
-                ."<td>$date</td>\n"
-                ."<td>:".$contact["code"].":".($unreadMessages > 0 ? " ($unreadMessages)" : "")."</td>\n"
-                ."<td>$status ".$body."</td>\n"
-                ."</tr>\n";
+            $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
+            if($unreadMessages > 0)
+                $name .= " ($unreadMessages)";
+            
+            $message .= " ".htmlspecialchars($conversation["body"]);
+            $message = str_replace("@", "&#64;", $message);
+            
+            $names[] = $name;
+            $messages[] = $message;
         }
         
-        if($this->db->messageCount($this->citizen["id"]) == 0)
-            $this->tpl->set("contacts", "<tr><td colspan=5>".tr("No messages").".</td></tr>");
-        else
-            $this->tpl->set("contacts", $contact_list);
         $this->tpl->set("codes", $codes);
+        $this->tpl->set("dates", $dates);
+        $this->tpl->set("names", $names);
+        $this->tpl->set("messages", $messages);
     }
     
     protected function submit()
