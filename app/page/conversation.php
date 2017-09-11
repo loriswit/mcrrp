@@ -25,11 +25,11 @@ class Conversation extends Page
         foreach($this->db->messages($this->citizen["id"], $contact["id"]) as $message)
         {
             $date = $message["timestamp"];
-            $msgDay = $date - $date % 86400;
-            if($day < $msgDay)
+            $msgDay = strftime("%e", $date);
+            if($day != $msgDay)
             {
                 $day = $msgDay;
-                $messageList .= "<p align='center'>*".strftime("%e %B %Y", $day)."*</p>";
+                $messageList .= "<p align='center'>*".strftime("%e %B %Y", $date)."*</p>";
             }
             
             $seen = "";
