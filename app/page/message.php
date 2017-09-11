@@ -16,7 +16,7 @@ class Message extends Page
     {
         $codes = "";
         foreach($this->db->knownCodes($this->citizen["id"]) as $code)
-            $codes .= "<option value='$code'>:$code:</options>";
+            $codes .= "<option value='$code'>:@$code:</options>";
         
         $contact_list = "";
         foreach($this->db->conversations($this->citizen["id"]) as $conversation)
@@ -43,10 +43,11 @@ class Message extends Page
             $contact = $this->db->citizen($contactID);
             $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
             $body = htmlspecialchars($conversation["body"]);
+            $body = str_replace("@", "&#64;", $body);
             
             $contact_list .= "<tr>\n"
                 ."<td>$date</td>\n"
-                ."<td>:@".$contact["code"].":".($unreadMessages > 0 ? " ($unreadMessages)" : "")."</td>\n"
+                ."<td>:".$contact["code"].":".($unreadMessages > 0 ? " ($unreadMessages)" : "")."</td>\n"
                 ."<td>$status ".$body."</td>\n"
                 ."</tr>\n";
         }

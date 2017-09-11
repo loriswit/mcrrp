@@ -22,7 +22,7 @@ class Transaction extends Page
         
         $codes = "";
         foreach($this->db->knownCodes($this->citizen["id"]) as $code)
-            $codes .= "<option value='$code'>:$code:</options>";
+            $codes .= "<option value='$code'>:@$code:</options>\n";
         
         if(isset($_GET["sortby"]))
             $this->sortBy = $_GET["sortby"];
@@ -77,7 +77,7 @@ class Transaction extends Page
                 throw new InvalidInputException("You cannot pay to yourself.");
             
             $receiver = $this->db->citizenByCode($code);
-            $sellerName = ":@".$receiver["code"].":";
+            $sellerName = ":".$receiver["code"].":";
         }
         
         if(empty($receiver))
@@ -126,7 +126,7 @@ class Transaction extends Page
                         $status = "&#11208";
                 }
                 else
-                    $buyerName = ":@".$buyer["code"].":";
+                    $buyerName = ":".$buyer["code"].":";
             }
             
             if($transaction["seller_state"])
@@ -145,7 +145,7 @@ class Transaction extends Page
                         $status = "[".tr("new")."]";
                 }
                 else
-                    $sellerName = ":@".$receiver["code"].":";
+                    $sellerName = ":".$receiver["code"].":";
             }
             
             $date = strftime("%A %e %B %Y, %H:%M", $transaction["timestamp"]);

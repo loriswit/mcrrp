@@ -9,7 +9,7 @@ class Conversation extends Page
     
     protected function title()
     {
-        return ":".$_GET["data"].":";
+        return ":@".$_GET["data"].":";
     }
     
     protected function run()
@@ -39,11 +39,11 @@ class Conversation extends Page
                 $align = "right";
                 if($message["seen"])
                 {
-                    $status = "&#10003";
+                    $status = ":icon_seen:";
                     $seen = tr("read").": ".strftime("%e %B %Y, %H:%M", $message["seen"]);
                 }
                 else
-                    $status = "&#11208";
+                    $status = ":icon_sent:";
             }
             else
             {
@@ -54,7 +54,8 @@ class Conversation extends Page
                     $status = "[".tr("new")."]";
             }
             
-            $body = htmlspecialchars($message["body"]);
+            $body = nl2br(htmlspecialchars($message["body"]));
+            $body = str_replace("@", "&#64;", $body);
             
             $messageList .= "<p align='$align' title='$seen'>".$body
                 ."<br>\n$status [".strftime("%H:%M", $date)."]</p>\n";

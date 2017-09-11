@@ -16,7 +16,7 @@ class Lock extends Page
     {
         $codes = "";
         foreach($this->db->knownCodes($this->citizen["id"]) as $code)
-            $codes .= "<option value='$code'>:$code:</options>";
+            $codes .= "<option value='$code'>:@$code:</options>";
         
         $locks = "";
         $authorized = "";
@@ -35,7 +35,7 @@ class Lock extends Page
             foreach($this->db->authorized($lockID) as $citizenID)
             {
                 $citizen = $this->db->citizen($citizenID);
-                $authorized .= ":@".$citizen["code"].":; ";
+                $authorized .= ":".$citizen["code"].":; ";
             }
             
             $authorized .= "</td>\n</tr>\n";

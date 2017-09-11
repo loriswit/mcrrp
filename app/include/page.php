@@ -79,7 +79,7 @@ abstract class Page
         {
             $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
-    
+            
             $state = $this->db->state($this->citizen["state_id"]);
             $headerTpl = new Template("user");
             $headerTpl->set("uuid", $this->citizen["player"]);
@@ -102,18 +102,28 @@ abstract class Page
         $mainTpl->set("content", $this->tpl->html());
         $mainTpl->set("en", LANG == "en" ? "selected" : "");
         $mainTpl->set("fr", LANG == "fr" ? "selected" : "");
-        $html = $mainTpl->html();
         
+        return $this->format($mainTpl->html());
+    }
+    
+    /**
+     * Formats the given text.
+     *
+     * @param string $str The input text
+     * @return string The formatted code
+     */
+    private function format($str)
+    {
         // replace :XXXX: codes by names
-        preg_match_all("/:(@?[a-zA-Z\d]{4}):/", $html, $matches);
+        preg_match_all("/:(@?[a-zA-Z\d]{4}):/", $str, $matches);
         foreach(array_unique($matches[1]) as $match)
         {
-            $link = strlen($match) == 5;
+            $link = strlen($match) == 4;
             
             if($link)
-                $code = substr($match, 1);
-            else
                 $code = $match;
+            else
+                $code = substr($match, 1);
             
             $otherCitizen = $this->db->citizenByCode(strtoupper($code));
             if(empty($otherCitizen))
@@ -121,11 +131,18 @@ abstract class Page
             
             $name = $otherCitizen["first_name"]." ".$otherCitizen["last_name"];
             if($link && $this->citizen["id"] != $otherCitizen["id"])
-                $html = str_replace(":$match:", "<a href='/conversation/".$otherCitizen["code"]."'>$name</a>", $html);
+                $str = str_replace(":$match:", "<a href='/conversation/".$otherCitizen["code"]."'>$name</a>", $str);
             else
-                $html = str_replace(":$match:", $name, $html);
+                $str = str_replace(":$match:", $name, $str);
         }
         
-        return $html;
+        $str = str_replace(":icon_seen:", "&#10003", $str);
+        $str = str_replace(":icon_sent:", "&#11208", $str);
+        
+        $str = preg_replace("/(>.*)_([^_\n]*)_(.*<)/", "$1<i>$2</i>$3", $str);
+        $str = preg_replace("/(>.*)\*([^\*\n]*)\*(.*<)/", "$1<b>$2</b>$3", $str);
+        $str = preg_replace("/(>.*)~([^~\n]*)~(.*<)/", "$1<del>$2</del>$3", $str);
+        
+        return $str;
     }
 }
