@@ -52,7 +52,14 @@ abstract class Page
             header("Location: /");
         
         if(LOGGED)
+        {
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
+            if(empty($this->citizen))
+            {
+                session_unset();
+                header("Location: /");
+            }
+        }
     }
     
     /**
