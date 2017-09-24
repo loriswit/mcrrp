@@ -90,7 +90,7 @@ public class BuyCommand extends PlayerCommand
         }
         
         ItemStack item = new ItemStack(material, amount, dataValue);
-        Inventory chestInventory = ((Chest) block.getState()).getBlockInventory();
+        Inventory chestInventory = ((Chest) block.getState()).getInventory();
         Inventory playerInventory = player.getInventory();
         
         ItemStack notRemoved = chestInventory.removeItem(item.clone()).get(0);
