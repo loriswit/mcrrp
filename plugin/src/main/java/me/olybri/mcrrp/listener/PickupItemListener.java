@@ -10,6 +10,9 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 import static me.olybri.mcrrp.util.Translation.tr;
 
+/**
+ * Class listening to pickup item events so that picked up wallets are added to the citizen's balance.
+ */
 public class PickupItemListener implements Listener
 {
     @EventHandler

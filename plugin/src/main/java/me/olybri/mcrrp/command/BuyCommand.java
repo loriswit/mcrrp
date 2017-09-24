@@ -111,14 +111,13 @@ public class BuyCommand extends PlayerCommand
             setMessage(new Message(tr("Not enough space in your inventory") + "."));
             return true;
         }
-    
-        ItemName itemName = new ItemName(item);
         
         int buyerID = citizen.getInt("id");
-        Database.addTransaction(buyerID, sellerID, price, "Bought " + amount + " " + itemName + " @ $" + price);
+        Database.addTransaction(buyerID, sellerID, price,
+            "Bought " + amount + " :" + item.getType().name() + "." + item.getDurability() + ": @ $" + price);
         
         setMessage(new Message(tr("Bought")
-            + " {value:" + amount + " " + itemName + "} @ $" + price + "."));
+            + " {value:" + amount + " " + new ItemName(item) + "} @ $" + price + "."));
         
         return true;
     }

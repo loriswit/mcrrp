@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Abstract class representing a web page.
  */
@@ -143,12 +145,30 @@ abstract class Page
                 $str = str_replace(":$match:", $name, $str);
         }
         
+        // replace :MATERIAL.DAMAGE: by item name
+        preg_match_all("/:([a-zA-Z_]+\.?\d*):/", $str, $matches);
+        if(count($matches) != 0)
+        {
+            $itemNames = Yaml::parse(file_get_contents("../data/item/names.yml"));
+            
+            foreach(array_unique($matches[1]) as $match)
+            {
+                $args = explode(".", $match);
+                $material = strtoupper($args[0]);
+                $damage = (count($args) == 2 ? $args[1] : 0);
+                
+                if(isset($itemNames[$material][$damage]))
+                    $str = str_replace(":$match:", $itemNames[$material][$damage], $str);
+            }
+        }
+        
         $str = str_replace(":icon_seen:", "&#10003", $str);
         $str = str_replace(":icon_sent:", "&#11208", $str);
         
         $str = preg_replace("/(>.*)_([^_\n]*)_(.*<)/", "$1<i>$2</i>$3", $str);
         $str = preg_replace("/(>.*)\*([^\*\n]*)\*(.*<)/", "$1<b>$2</b>$3", $str);
         $str = preg_replace("/(>.*)~([^~\n]*)~(.*<)/", "$1<del>$2</del>$3", $str);
+        
         
         return $str;
     }
