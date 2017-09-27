@@ -41,15 +41,19 @@ class Transaction extends Page
             if($transaction["buyer_state"])
             {
                 $buyer = $this->db->state($transaction["buyer_id"]);
+                $currency = $buyer["currency"];
+                
                 $buyers[] = tr("State").": ".$buyer["name"];
             }
             else
             {
                 $buyer = $this->db->citizen($transaction["buyer_id"]);
+                $currency = $this->db->state($buyer["state_id"])["currency"];
+                
                 if($buyer["id"] == $this->citizen["id"])
                 {
                     $buyers[] = "*".tr("You")."*";
-                    $amount = "- ".$transaction["amount"];
+                    $amount = "- ".$currency." ".$transaction["amount"];
                     if($transaction["seen"])
                     {
                         $read = tr("read").": ".strftime("%e %B %Y, %H:%M", $transaction["seen"]);
@@ -73,7 +77,7 @@ class Transaction extends Page
                 if($receiver["id"] == $this->citizen["id"])
                 {
                     $sellers[] = "*".tr("You")."*";
-                    $amount = "+ ".$transaction["amount"];
+                    $amount = "+ ".$currency." ".$transaction["amount"];
                     if(!$transaction["seen"])
                         $description = "[".tr("new")."]";
                 }
@@ -129,8 +133,11 @@ class Transaction extends Page
         if($this->citizen["balance"] - $_POST["amount"] < 0)
             throw new InvalidInputException("Your balance is too low for this transaction.");
         
-        $this->db->addTransaction($this->citizen["id"], false, $receiver["id"], $sellerState, $_POST["amount"], $_POST["description"]);
-        $this->tpl->set("info", tr("You paid")." ".$_POST["amount"]." ".tr("to")." ".$sellerName.".");
+        $this->db->addTransaction(
+            $this->citizen["id"], false, $receiver["id"], $sellerState, $_POST["amount"], $_POST["description"]);
+        
+        $currency = $this->db->state($this->citizen["state_id"])["currency"];
+        $this->tpl->set("info", tr("You paid")." ".$currency." ".$_POST["amount"]." ".tr("to")." ".$sellerName.".");
         
         // reload citizen
         $this->citizen = $this->db->citizen($this->citizen["id"]);

@@ -112,12 +112,15 @@ public class BuyCommand extends PlayerCommand
             return true;
         }
         
+        String currency = Database.currency(sellerID);
+        
         int buyerID = citizen.getInt("id");
         Database.addTransaction(buyerID, sellerID, price,
-            "Bought " + amount + " :" + item.getType().name() + "." + item.getDurability() + ": @ $" + price);
+            "Bought " + amount + " :" + item.getType().name() + "." + item.getDurability()
+                + ": @ " + currency + " " + price);
         
         setMessage(new Message(tr("Bought")
-            + " {value:" + amount + " " + new ItemName(item) + "} @ $" + price + "."));
+            + " {value:" + amount + " " + new ItemName(item) + "} @ " + currency + " " + price + "."));
         
         return true;
     }

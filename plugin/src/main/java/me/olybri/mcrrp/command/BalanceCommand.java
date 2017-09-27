@@ -26,8 +26,10 @@ public class BalanceCommand extends PlayerCommand
     protected boolean run(Player player, List<String> args) throws Exception
     {
         ResultSet citizen = Database.citizen(player);
+        String currency = Database.currency(player);
+        
         Message msg = new Message("",
-            tr("Current balance") + ": {value:" + (citizen.getInt("balance")) + "}");
+            tr("Current balance") + ": {value:" + currency + " " + citizen.getInt("balance") + "}");
         
         setMessage(msg);
         return true;

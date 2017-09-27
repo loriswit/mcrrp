@@ -76,7 +76,9 @@ public class SellInteraction extends BlockInteraction
         sign.setLine(0, ChatColor.YELLOW + lines[0]);
         if(lines.length > 1)
             sign.setLine(1, ChatColor.YELLOW + lines[1]);
-        sign.setLine(2, ChatColor.WHITE + "BUY " + amount + " @ $" + price);
+        
+        String currency = Database.currency(player);
+        sign.setLine(2, ChatColor.WHITE + "BUY " + amount + " @ " + currency + " " + price);
         sign.update();
         
         String chestLocation = block.getLocation().getBlockX() + " "
@@ -98,7 +100,7 @@ public class SellInteraction extends BlockInteraction
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
             "blockdata " + signLocation + dataTag.replace("'", "\\\""));
         
-        new Message(tr("Selling") + " {value:" + amount + " " + itemName + "} @ $" + price + ".")
+        new Message(tr("Selling") + " {value:" + amount + " " + itemName + "} @ " + currency + " " + price + ".")
             .send(player);
         
         return true;

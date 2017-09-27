@@ -44,8 +44,10 @@ public class DropCommand extends PlayerCommand
             return true;
         }
         
+        String currency = Database.currency(player);
+        
         new Wallet(amount).drop(player);
-        setMessage(new Message(tr("Dropped") + " {value:$" + amount + "}."));
+        setMessage(new Message(tr("Dropped") + " {value:" + currency + " " + amount + "}."));
         
         return true;
     }

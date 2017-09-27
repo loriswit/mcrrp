@@ -68,6 +68,34 @@ public class Database
     }
     
     /**
+     * Returns the state's currency of a citizen.
+     *
+     * @param citizenID The ID of a valid citizen
+     * @return The state's currency
+     */
+    public static String currency(int citizenID) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "SELECT currency FROM state WHERE id = (SELECT state_id FROM citizen WHERE id = ?)");
+        statement.setInt(1, citizenID);
+        return result(statement).getString("currency");
+    }
+    
+    /**
+     * Returns the state's currency associated with a player.
+     *
+     * @param player The player associated to the citizen
+     * @return The state's currency
+     */
+    public static String currency(Player player) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "SELECT currency FROM state WHERE id = (SELECT state_id FROM citizen WHERE player = ?)");
+        statement.setString(1, player.getUniqueId().toString());
+        return result(statement).getString("currency");
+    }
+    
+    /**
      * Tells if a block is locked.
      *
      * @param block The lockable block

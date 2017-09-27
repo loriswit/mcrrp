@@ -94,6 +94,7 @@ abstract class Page
             $headerTpl->set("uuid", $this->citizen["player"]);
             $headerTpl->set("code", $this->citizen["code"]);
             $headerTpl->set("role", "n/a");
+            $headerTpl->set("currency", $state["currency"]);
             $headerTpl->set("balance", $this->citizen["balance"]);
             $headerTpl->set("state", $state["name"]);
             $headerTpl->set("msg_count", $unreadMessages > 0 ? " ($unreadMessages)" : "");

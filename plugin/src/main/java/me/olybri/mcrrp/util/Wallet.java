@@ -1,6 +1,5 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 9/2/2017.
 
-import me.olybri.mcrrp.MCRRP;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -60,25 +59,19 @@ public class Wallet
      *
      * @param player The player dropping the wallet
      */
-    public void drop(Player player)
+    public void drop(Player player) throws SQLException
     {
-        try
-        {
-            Database.addMoney(player, -amount);
-        }
-        catch(SQLException e)
-        {
-            MCRRP.error(e, player);
-        }
+        Database.addMoney(player, -amount);
         
         ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
+        String currency = Database.currency(player);
         
         BookMeta book = (BookMeta) item.getItemMeta();
         book.setAuthor(identifier);
-        book.setTitle("$" + amount);
-        book.addPage(tr("This wallet contains") + " $" + amount + ".");
+        book.setTitle(currency + amount);
+        book.addPage(tr("This wallet contains") + " " + currency + " " + amount + ".");
         item.setItemMeta(book);
-    
+        
         if(player.isDead())
             player.getWorld().dropItemNaturally(player.getLocation(), item);
         
@@ -94,17 +87,9 @@ public class Wallet
      *
      * @param player The player picking up the wallet
      */
-    public void pickup(Player player)
+    public void pickup(Player player) throws SQLException
     {
-        try
-        {
-            Database.addMoney(player, amount);
-        }
-        catch(SQLException e)
-        {
-            MCRRP.error(e, player);
-        }
-        
+        Database.addMoney(player, amount);
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
     }
     

@@ -33,5 +33,6 @@ database:
 
 # Initial city data
 city:
-   name: Toblerone
-   governor: Olybri
+  name: Toblerone
+  governor: Olybri
+  currency: $
