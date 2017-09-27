@@ -43,7 +43,7 @@ cd ..
 bin/build.sh
 
 echo -n "Downloading Spigot... "
-curl -sS -o server/spigot.jar https://cdn.getbukkit.org/spigot/spigot-1.12.1.jar
+curl -sS -o server/spigot.jar https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar
 
 echo "Done!"
 echo -n "Installing Spigot... "
