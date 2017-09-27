@@ -466,4 +466,92 @@ class Database
         $st = $this->pdo->prepare("DELETE FROM authorized WHERE lock_id = ? AND citizen_id = ?");
         $st->execute([$lockID, $citizenID]);
     }
+    
+    //////////////////////
+    //      COMPANY     //
+    //////////////////////
+    
+    /**
+     * Returns all companies that have a specific type of permissions.
+     *
+     * @param string $type The permissions type (government, press, bank)
+     * @return array An array containing all companies
+     */
+    private function companies($type)
+    {
+        return $this->pdo->query(
+            "SELECT id, name, description FROM company "
+            ."WHERE $type = TRUE ORDER BY name")->fetchAll();
+    }
+    
+    /**
+     * Returns all companies that have government permissions.
+     *
+     * @return array An array containing all companies
+     */
+    public function governments()
+    {
+        return $this->companies("government");
+    }
+    
+    /**
+     * Returns all companies that have bank permissions.
+     *
+     * @return array An array containing all companies
+     */
+    public function banks()
+    {
+        return $this->companies("bank");
+    }
+    
+    /**
+     * Returns all companies that have press permissions.
+     *
+     * @return array An array containing all companies
+     */
+    public function presses()
+    {
+        return $this->companies("press");
+    }
+    
+    /**
+     * Returns all companies that don't have special permissions.
+     *
+     * @return array An array containing all companies
+     */
+    public function otherCompanies()
+    {
+        return $this->pdo->query(
+            "SELECT id, name, description FROM company "
+            ."WHERE (government, bank, press) = (FALSE, FALSE, FALSE) "
+            ."ORDER BY name")->fetchAll();
+    }
+    
+    /**
+     * Return a company record.
+     *
+     * @param int $id The ID of a valid company
+     * @return array An array containing all fields of the record
+     */
+    public function company($id)
+    {
+        $st = $this->pdo->prepare("SELECT * FROM company WHERE id = ?");
+        $st->execute([$id]);
+        return $st->fetch();
+    }
+    
+    /**
+     * Returns all citizens that are leaders of a specific company
+     *
+     * @param int $companyID The ID of a valid company
+     * @return array An array containing all leaders
+     */
+    public function leaders($companyID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT * FROM citizen WHERE id IN "
+            ."(SELECT citizen_id FROM worker WHERE company_id = ? AND leader = TRUE)");
+        $st->execute([$companyID]);
+        return $st->fetchAll();
+    }
 }
