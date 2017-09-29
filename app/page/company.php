@@ -6,6 +6,7 @@
 class Company extends Page
 {
     protected $userOnly = true;
+    protected $argsCount = 1;
     
     private $company;
     
@@ -16,8 +17,11 @@ class Company extends Page
     
     protected function run()
     {
-        $id = $_GET["data"];
+        $id = $this->args[0];
         $this->company = $this->db->company($id);
+        
+        if(empty($id) || empty($this->company))
+            header("Location: /employment");
         
         $founder = $this->db->citizen($this->company["founder_id"])["code"];
         $leaders = array_column($this->db->leaders($id), "code");

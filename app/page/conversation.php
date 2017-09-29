@@ -6,15 +6,16 @@
 class Conversation extends Page
 {
     protected $userOnly = true;
+    protected $argsCount = 1;
     
     protected function title()
     {
-        return ":@".$_GET["data"].":";
+        return ":@".$this->args[0].":";
     }
     
     protected function run()
     {
-        $code = $_GET["data"];
+        $code = $this->args[0];
         $contact = $this->db->citizenByCode($code);
         
         if(empty($code) || empty($contact) || $this->citizen["id"] == $contact["id"])

@@ -41,17 +41,19 @@ function tr($text)
 define("LANG", $translator->lang());
 define("LOGGED", isset($_SESSION["logged"]));
 
-if(empty($_GET["class"]))
+$args = explode("/", $_SERVER["REQUEST_URI"]);
+$class = ucfirst($args[1]);
+$args = array_filter(array_slice($args, 2));
+
+if(empty($class))
     $class = LOGGED ? "Home" : "Login";
-else
-    $class = ucfirst($_GET["class"]);
 
 try
 {
     if(class_exists($class))
-        $page = new $class();
+        $page = new $class($args);
     else
-        $page = new NotFound();
+        $page = new NotFound($args);
     
     $html = $page->render();
 }

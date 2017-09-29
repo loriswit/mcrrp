@@ -19,6 +19,12 @@ abstract class Page
     /** @var Template Object representing the page's HTML template */
     protected $tpl;
     
+    /** @var array Array containing all page arguments */
+    protected $args;
+    
+    /** @var int Number of arguments needed to run the page */
+    protected $argsCount = 0;
+    
     /** @var bool TRUE if the page is for visitor only, FALSE if not */
     protected $visitorOnly = false;
     
@@ -44,11 +50,23 @@ abstract class Page
     
     /**
      * Creates a web page instance.
+     *
+     * @param array $args The page arguments
      */
-    public function __construct()
+    public function __construct($args)
     {
         $this->db = new Database();
         $this->tpl = new Template(get_class($this));
+        $this->args = $args;
+        
+        if(count($this->args) > $this->argsCount)
+        {
+            $page = strtolower(get_class($this));
+            $this->args = array_slice($args, 0, $this->argsCount);
+            array_unshift($this->args, $page);
+            header("Location: /".implode("/", $this->args));
+            exit();
+        }
         
         if($this->userOnly && !LOGGED || $this->visitorOnly && LOGGED)
             header("Location: /");

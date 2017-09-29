@@ -4,10 +4,5 @@ RewriteEngine On
 # if not already redirected
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
-# if not requesting an existing CSS
-RewriteCond %{REQUEST_URI} !^.*\.css$ [or]
-RewriteCond %{REQUEST_FILENAME} !-f
-
 # redirect to index.php
-RewriteRule ^([^/]*)$ /index.php?class=$1 [QSA,L]
-RewriteRule ^([^/]*)/(.*)$ /index.php?class=$1&data=$2 [QSA,L]
+RewriteRule ^ / [QSA,L]
