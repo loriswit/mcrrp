@@ -26,10 +26,10 @@ class Login extends Page
         else
             $json = @file_get_contents("https://www.fabianwennink.nl/projects/OfflineUUID/api/$name");
         
-        if($json === false || empty($json))
-            throw new InvalidInputException("Invalid username. Please try again.");
-        
         $data = json_decode($json, true);
+        
+        if($data == false || isset($data["error"]))
+            throw new InvalidInputException("Invalid username. Please try again.");
         
         if($online)
         {
