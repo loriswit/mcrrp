@@ -1,23 +1,48 @@
-<p>{@error}</p>
-<form method="post">
-    <label for="lock">[@New authorization]:</label>
-    <select name="lock" id="lock">
-        <option value={@lock_ids}>{@lock_names}</option>
-    </select>
-    <input name="code" type="text" pattern="[A-Za-z\d]{4}"
-           placeholder="[@Citizen's code]" id="code" list="contacts" required>
-    <datalist id="contacts">
-        <option value='{@codes}'>:{@codes}:</option>
-    </datalist>
-    <button name="submit" type="submit" value="add">[@Add]</button>
-    <button name="submit" type="submit" value="remove">[@Remove]</button>
-</form>
-<br>
-<table>
-    <tr>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Authorized</th>
-    </tr>
-    <tr> <td>:{@lock_types}:</td> <td>{@lock_names}</td> <td>{@authorized}</td> </tr>
-</table>
+{% extends template %}
+
+{% block content %}
+    {% if error is defined %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <label for="lock">[@New authorization]:</label>
+        <select name="lock" id="lock">
+            {% for lock in locks %}
+                <option value={{ lock.id }}>{{ lock.name }}</option>
+            {% endfor %}
+        </select>
+        <input name="code" type="text" pattern="[A-Za-z\d]{4}"
+               placeholder="[@Citizen's code]" id="code" list="contacts" required>
+        <datalist id="contacts">
+            {% for code in codes %}
+                <option value="{{ code }}">:@{{ code }}:</option>
+            {% endfor %}
+        </datalist>
+        <button name="submit" type="submit" value="add">[@Add]</button>
+        <button name="submit" type="submit" value="remove">[@Remove]</button>
+    </form>
+    {% if locks is empty %}
+        <p>No locks.</p>
+    {% else %}
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Authorized</th>
+            </tr>
+            {% for lock in locks %}
+                <tr>
+                    <td>:{{ lock.type }}:</td>
+                    <td>{{ lock.name }}</td>
+                    <td>
+                        {% for citizen in lock.authorized %}
+                            :{{ citizen.code }}: {{ loop.last ? "": "&" }}
+                        {% else %}
+                            Nobody is authorized
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

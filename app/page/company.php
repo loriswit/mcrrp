@@ -23,16 +23,11 @@ class Company extends Page
         if(empty($id) || empty($this->company))
             header("Location: /employment");
         
-        $founder = $this->db->citizen($this->company["founder_id"])["code"];
-        $leaders = array_column($this->db->leaders($id), "code");
-        if(empty($leaders))
-            $leaders = "none";
+        $this->company["founder"] = $this->db->citizen($this->company["founder_id"]);
+        $leaders = $this->db->leaders($id);
         
-        $this->tpl->set("description", $this->company["description"]);
-        $this->tpl->set("date", strftime("%e %B %Y", $this->company["founded"]));
-        $this->tpl->set("founder", $founder);
-        $this->tpl->set("codes", $leaders);
-        $this->tpl->set("presentation", $this->company["presentation"]);
+        $this->set("company", $this->company);
+        $this->set("leaders", $leaders);
     }
     
     protected function submit()

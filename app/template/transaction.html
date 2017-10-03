@@ -1,49 +1,94 @@
-<p>{@info}</p>
-<p>{@error}</p>
-<form method="post">
-    <label for="code">[@Make a payment]:</label>
-    <select name="receiver" id="receiver" onchange="hideCode()">
-        <option value="citizen">[@Citizen]</option>
-        <optgroup label="[@State]">
-            <option value={@state_ids}>{@state_names}</option>
-        </optgroup>
-    </select>
-    <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Receiver's code]" id="code" list="contacts" required>
-    <datalist id="contacts">
-        <option value='{@codes}'>:{@codes}:</option>
-    </datalist>
-    <input name="amount" type="number" step=1 min=1 placeholder="[@Amount]" id="amount" required>
-    <input name="description" type="text" placeholder="[@Description]" id="description" required>
-    <button name="submit" type="submit">[@Send]</button>
-</form>
-<br>
-<table>
-    <tr>
-        <th>Date</th>
-        <th>Buyer</th>
-        <th>Seller</th>
-        <th>Amount</th>
-        <th>Description</th>
-    </tr>
-    <tr> <td>{@dates}</td> <td>{@buyers}</td> <td>{@sellers}</td> <td>{@amounts}</td> <td title={@seen}>{@descriptions}</td> </tr>
-</table>
+{% extends template %}
 
-<script>
-    function hideCode()
-    {
-        var select = document.getElementById("receiver");
-        var value = select.options[select.selectedIndex].value;
-        var input = document.getElementById("code");
-        if(value === "citizen")
+{% block content %}
+    {% if info is defined %}
+        <p>{{ info }}</p>
+    {% elseif error is defined %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        <label for="receiver">[@Make a payment]:</label>
+        <select name="receiver" id="receiver" onchange="hideCode()">
+            <option value="citizen">[@Citizen]</option>
+            <optgroup label="[@State]">
+                {% for state in states %}
+                    <option value={{ state.id }}>{{ state.name }}</option>
+                {% endfor %}
+            </optgroup>
+        </select>
+        <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Receiver's code]" id="code"
+               list="contacts" required>
+        <datalist id="contacts">
+            {% for code in codes %}
+                <option value="{{ code }}">:@{{ code }}:</option>
+            {% endfor %}
+        </datalist>
+        <input name="amount" type="number" step=1 min=1 placeholder="[@Amount]" id="amount" required>
+        <input name="description" type="text" placeholder="[@Description]" id="description" required>
+        <button name="submit" type="submit">[@Send]</button>
+    </form>
+    {% if transactions is empty %}
+        <p>No transactions.</p>
+    {% else %}
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Buyer</th>
+                <th>Seller</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.timestamp|date("j F Y, H:i") }}</td>
+                    <td>
+                        {% if transaction.buyer_state %}
+                            [@State]: {{ transaction.buyer.name }}
+                        {% else %}
+                            :{{ transaction.buyer.code }}:
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.seller_state %}
+                            [@State]: {{ transaction.seller.name }}
+                        {% else %}
+                            :{{ transaction.seller.code }}:
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ transaction.bought ? "-" : "+" }}
+                        {{ transaction.buyer.currency }}
+                        {{ transaction.amount }}
+                    </td>
+                    <td {% if transaction.bought and message.seen %}
+                        title="read: {{ message.seen|date("j F Y, H:i") }}"
+                    {% endif %}
+                    >
+                        {{ transaction.description }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <script>
+        function hideCode()
         {
-            input.removeAttribute("hidden");
-            input.setAttribute("required", "");
+            var select = document.getElementById("receiver");
+            var value = select.options[select.selectedIndex].value;
+            var input = document.getElementById("code");
+            if(value === "citizen")
+            {
+                input.removeAttribute("hidden");
+                input.setAttribute("required", "");
+            }
+            else
+            {
+                input.removeAttribute("required");
+                input.setAttribute("hidden", "");
+                input.value = "";
+            }
         }
-        else
-        {
-            input.removeAttribute("required");
-            input.setAttribute("hidden", "");
-            input.value = "";
-        }
-    }
-</script>
+    </script>
+{% endblock %}

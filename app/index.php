@@ -8,7 +8,7 @@ require_once "vendor/autoload.php";
 
 spl_autoload_register(function($class)
 {
-    $filename = "include/".strtolower($class).".php";
+    $filename = "util/".strtolower($class).".php";
     if(file_exists($filename))
         require_once $filename;
     

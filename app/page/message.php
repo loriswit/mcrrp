@@ -16,49 +16,22 @@ class Message extends Page
     {
         $codes = $this->db->knownCodes($this->citizen["id"]);
         
-        $dates = array();
-        $names = array();
-        $messages = array();
-        
-        foreach($this->db->conversations($this->citizen["id"]) as $conversation)
+        $conversations = $this->db->conversations($this->citizen["id"]);
+        foreach($conversations as &$conversation)
         {
-            $dates[] = strftime("%e %B %Y, %H:%M", $conversation["timestamp"]);
-            
-            if($conversation["sender_id"] == $this->citizen["id"])
-            {
+            $sent = $conversation["sender_id"] == $this->citizen["id"];
+            if($sent)
                 $contactID = $conversation["receiver_id"];
-                if($conversation["seen"])
-                    $message = ":icon_seen:";
-                else
-                    $message = ":icon_sent:";
-            }
             else
-            {
                 $contactID = $conversation["sender_id"];
-                if($conversation["seen"])
-                    $message = "";
-                else
-                    $message = "[".tr("new")."]";
-            }
             
-            $contact = $this->db->citizen($contactID);
-            $name = ":".$contact["code"].":";
-            
-            $unreadMessages = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
-            if($unreadMessages > 0)
-                $name .= " ($unreadMessages)";
-            
-            $message .= " ".htmlspecialchars($conversation["body"]);
-            $message = str_replace("@", "&#64;", $message);
-            
-            $names[] = $name;
-            $messages[] = $message;
+            $conversation["sent"] = $sent;
+            $conversation["contact"] = $this->db->citizen($contactID);
+            $conversation["unread"] = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
         }
         
-        $this->tpl->set("codes", $codes);
-        $this->tpl->set("dates", $dates);
-        $this->tpl->set("names", $names);
-        $this->tpl->set("messages", $messages);
+        $this->set("codes", $codes);
+        $this->set("conversations", $conversations);
     }
     
     protected function submit()

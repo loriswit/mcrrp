@@ -1,13 +1,40 @@
-<p>{@error}</p>
-<form method="post">
-    <label for="code">[@New conversation]:</label>
-    <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Contact's code]" id="code" list="contacts" required>
-    <datalist id="contacts">
-        <option value='{@codes}'>:{@codes}:</option>
-    </datalist>
-    <button name="submit" type="submit">[@Start]</button>
-</form>
-<br>
-<table>
-    <tr> <td>{@dates}</td> <td>{@names}</td> <td>{@messages}</td> </tr>
-</table>
+{% extends template %}
+
+{% block content %}
+    {% if error is defined %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <label for="code">[@New conversation]:</label>
+        <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Contact's code]" id="code" list="contacts"
+               required>
+        <datalist id="contacts">
+            {% for code in codes %}
+                <option value="{{ code }}">:@{{ code }}:</option>
+            {% endfor %}
+        </datalist>
+        <button name="submit" type="submit">[@Start]</button>
+    </form>
+    {% if conversations is empty %}
+        <p>No conversations.</p>
+    {% else %}
+        <table>
+            {% for conversation in conversations %}
+                <tr>
+                    <td>{{ conversation.timestamp|date("j F Y, H:i") }}</td>
+                    <td>:{{ conversation.contact.code }}:</td>
+                    <td>{% if conversation.sent %}
+                            {% if conversation.seen %}
+                                :icon_seen:
+                            {% else %}
+                                :icon_sent:
+                            {% endif %}
+                        {% elseif not conversation.seen %}
+                            [[@new]]
+                        {% endif %}
+                        {{ conversation.body }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

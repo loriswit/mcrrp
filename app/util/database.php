@@ -435,9 +435,10 @@ class Database
      */
     public function authorized($lockID)
     {
-        $st = $this->pdo->prepare("SELECT citizen_id FROM authorized WHERE lock_id = ?");
+        $st = $this->pdo->prepare(
+            "SELECT * FROM citizen WHERE id IN (SELECT citizen_id FROM authorized WHERE lock_id = ?)");
         $st->execute([$lockID]);
-        return $st->fetchAll(PDO::FETCH_COLUMN);
+        return $st->fetchAll();
     }
     
     /**

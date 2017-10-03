@@ -17,23 +17,11 @@ class Lock extends Page
         $codes = $this->db->knownCodes($this->citizen["id"]);
         $locks = $this->db->locks($this->citizen["id"]);
         
-        $authorized = array();
-        foreach($locks as $lock)
-        {
-            $citizenList = "";
-            foreach($this->db->authorized($lock["id"]) as $citizenID)
-            {
-                $citizen = $this->db->citizen($citizenID);
-                $citizenList .= ":".$citizen["code"].":; ";
-            }
-            $authorized[] = rtrim($citizenList, "; ");
-        }
+        foreach($locks as &$lock)
+            $lock["authorized"] = $this->db->authorized($lock["id"]);
         
-        $this->tpl->set("lock_ids", array_column($locks, "id"));
-        $this->tpl->set("codes", $codes);
-        $this->tpl->set("lock_types", array_column($locks, "type"));
-        $this->tpl->set("lock_names", array_column($locks, "name"));
-        $this->tpl->set("authorized", $authorized);
+        $this->set("codes", $codes);
+        $this->set("locks", $locks);
     }
     
     protected function submit()

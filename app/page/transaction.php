@@ -23,83 +23,33 @@ class Transaction extends Page
         
         $codes = $this->db->knownCodes($this->citizen["id"]);
         $states = $this->db->states();
-        $dates = array();
-        $buyers = array();
-        $sellers = array();
-        $amounts = array();
-        $seen = array();
-        $descriptions = array();
         
-        foreach($this->db->transactions($this->citizen["id"], false, $this->sortBy) as $transaction)
+        $transactions = $this->db->transactions($this->citizen["id"], false, $this->sortBy);
+        foreach($transactions as &$transaction)
         {
-            $dates[] = strftime("%A %e %B %Y, %H:%M", $transaction["timestamp"]);
-            
-            $description = "";
-            $amount = "";
-            $read = "";
-            
             if($transaction["buyer_state"])
-            {
                 $buyer = $this->db->state($transaction["buyer_id"]);
-                $currency = $buyer["currency"];
-                
-                $buyers[] = tr("State").": ".$buyer["name"];
-            }
+            
             else
             {
                 $buyer = $this->db->citizen($transaction["buyer_id"]);
-                $currency = $this->db->state($buyer["state_id"])["currency"];
-                
-                if($buyer["id"] == $this->citizen["id"])
-                {
-                    $buyers[] = "*".tr("You")."*";
-                    $amount = "- ".$currency." ".$transaction["amount"];
-                    if($transaction["seen"])
-                    {
-                        $read = tr("read").": ".strftime("%e %B %Y, %H:%M", $transaction["seen"]);
-                        $description = ":icon_seen:";
-                    }
-                    else
-                        $description = ":icon_sent:";
-                }
-                else
-                    $buyers[] = ":".$buyer["code"].":";
+                $buyer["currency"] = $this->db->state($buyer["state_id"])["currency"];
             }
             
             if($transaction["seller_state"])
-            {
-                $receiver = $this->db->state($transaction["seller_id"]);
-                $sellers[] = tr("State").": ".$receiver["name"];
-            }
-            else
-            {
-                $receiver = $this->db->citizen($transaction["seller_id"]);
-                if($receiver["id"] == $this->citizen["id"])
-                {
-                    $sellers[] = "*".tr("You")."*";
-                    $amount = "+ ".$currency." ".$transaction["amount"];
-                    if(!$transaction["seen"])
-                        $description = "[".tr("new")."]";
-                }
-                else
-                    $sellers[] = ":".$receiver["code"].":";
-            }
+                $seller = $this->db->state($transaction["seller_id"]);
             
-            $descriptions[] = $description." ".$transaction["description"];
-            $amounts[] = $amount;
-            $seen[] = $read;
+            else
+                $seller = $this->db->citizen($transaction["seller_id"]);
+            
+            $transaction["bought"] = !$transaction["buyer_state"] && $transaction["buyer_id"] == $this->citizen["id"];
+            $transaction["buyer"] = $buyer;
+            $transaction["seller"] = $seller;
         }
         
-        $this->tpl->setOptional("info");
-        $this->tpl->set("state_ids", array_column($states, "id"));
-        $this->tpl->set("state_names", array_column($states, "name"));
-        $this->tpl->set("codes", $codes);
-        $this->tpl->set("dates", $dates);
-        $this->tpl->set("buyers", $buyers);
-        $this->tpl->set("sellers", $sellers);
-        $this->tpl->set("amounts", $amounts);
-        $this->tpl->set("seen", $seen);
-        $this->tpl->set("descriptions", $descriptions);
+        $this->set("states", $states);
+        $this->set("codes", $codes);
+        $this->set("transactions", $transactions);
         
         // mark transactions as read
         $this->db->readTransactions($this->citizen["id"], false);
@@ -137,7 +87,7 @@ class Transaction extends Page
             $this->citizen["id"], false, $receiver["id"], $sellerState, $_POST["amount"], $_POST["description"]);
         
         $currency = $this->db->state($this->citizen["state_id"])["currency"];
-        $this->tpl->set("info", tr("You paid")." ".$currency." ".$_POST["amount"]." ".tr("to")." ".$sellerName.".");
+        $this->set("info", tr("You paid")." ".$currency." ".$_POST["amount"]." ".tr("to")." ".$sellerName.".");
         
         // reload citizen
         $this->citizen = $this->db->citizen($this->citizen["id"]);

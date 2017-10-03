@@ -21,10 +21,9 @@ class Join extends Page
         
         $states = $this->db->states();
         
-        $this->tpl->set("uuid", $uuid);
-        $this->tpl->set("name", $_SESSION["username"]);
-        $this->tpl->set("state_ids", array_column($states, "id"));
-        $this->tpl->set("state_names", array_column($states, "name"));
+        $this->set("uuid", $uuid);
+        $this->set("name", $_SESSION["username"]);
+        $this->set("states", $states);
     }
     
     protected function submit()

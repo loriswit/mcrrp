@@ -1,18 +1,23 @@
-<p><img src="https://crafatar.com/avatars/{@uuid}?size=16&overlay"> :{@code}:</p>
-<p>[@Code]: {@code}</p>
-<p>[@Role]: {@role}</p>
-<p>[@Balance]: {@currency} {@balance}</p>
-<p>[@State]: {@state}</p>
-<form action="/" method="post">
-    <button name="logout">[@Log out]</button>
-</form>
-<table>
-    <tr>
-        <td><a href="/">[@News]</a></td>
-        <td><a href="/message">[@Messages]{@msg_count}</a></td>
-        <td><a href="/transaction">[@Transactions]{@transac_count}</a></td>
-        <td><a href="/lock">[@Locks]</a></td>
-        <td><a href="/employment">[@Employment]</a></td>
-    </tr>
-</table>
-<h2>[@{@title}]</h2>
+{% extends "main.html" %}
+
+{% block header %}
+    {{ parent() }}
+    <p><img src="https://crafatar.com/avatars/{{ citizen.player }}?size=16&overlay"> :{{ citizen.code }}:</p>
+    <p>[@Code]: {{ citizen.code }}</p>
+    <p>[@Role]: {{ role }}</p>
+    <p>[@Balance]: {{ state.currency }} {{ citizen.balance }}</p>
+    <p>[@State]: {{ state.name }}</p>
+    <form action="/" method="post">
+        <button name="logout">[@Log out]</button>
+    </form>
+    <table>
+        <tr>
+            <td><a href="/">[@News]</a></td>
+            <td><a href="/message">[@Messages]{{ msg_count > 0 ? " (" ~ msg_count ~ ")" : "" }}</a></td>
+            <td><a href="/transaction">[@Transactions]{{ transac_count > 0 ? " (" ~ transac_count ~ ")" : "" }}</a></td>
+            <td><a href="/lock">[@Locks]</a></td>
+            <td><a href="/employment">[@Employment]</a></td>
+        </tr>
+    </table>
+    <h2>{{ title }}</h2>
+{% endblock %}

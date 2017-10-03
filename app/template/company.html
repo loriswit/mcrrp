@@ -1,8 +1,18 @@
-<p>{@description}</p>
-<h3>[@Leader(s)]</h3>
-<ul>
-    <li>:{@codes}:</li>
-</ul>
-<p>{@presentation}</p>
-<h3>[@Founded]</h3>
-<p>{@date} by :{@founder}:</p>
+{% extends template %}
+
+{% block content %}
+    <p>{{ company.description }}</p>
+    <h3>[@Leader(s)]</h3>
+    {% if leaders is empty %}
+        <p>No leaders.</p>
+    {% else %}
+        <ul>
+            {% for leader in leaders %}
+                <li>:{{ leader.code }}:</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>{{ company.presentation }}</p>
+    <h3>[@Founded]</h3>
+    <p>{{ company.founded|date("j F Y") }} by :{{ company.founder.code }}:</p>
+{% endblock %}

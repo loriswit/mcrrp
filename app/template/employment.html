@@ -1,16 +1,52 @@
-<h3>[@Government]</h3>
-<table>
-    <tr> <td><a href="company/{@gov_ids}">{@gov_names}</a></td> <td>{@gov_descriptions}</td> </tr>
-</table>
-<h3>[@Bank]</h3>
-<table>
-    <tr> <td><a href="company/{@bank_ids}">{@bank_names}</a></td> <td>{@bank_descriptions}</td> </tr>
-</table>
-<h3>[@Press]</h3>
-<table>
-    <tr> <td><a href="company/{@press_ids}">{@press_names}</a></td> <td>{@press_descriptions}</td> </tr>
-</table>
-<h3>[@Others]</h3>
-<table>
-    <tr> <td><a href="company/{@ids}">{@names}</a></td> <td>{@descriptions}</td> </tr>
-</table>
+{% extends template %}
+
+{% block content %}
+    <h3>[@Government]</h3>
+    {% if governments is empty %}
+        <p>No governments.</p>
+    {% endif %}
+    <table>
+        {% for government in governments %}
+            <tr>
+                <td><a href="company/{{ government.id }}">{{ government.name }}</a></td>
+                <td>{{ government.description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% if banks is not empty %}
+        <h3>[@Bank]</h3>
+        <table>
+            {% for bank in banks %}
+                <tr>
+                    <td><a href="company/{{ bank.id }}">{{ bank.name }}</a></td>
+                    <td>{{ bank.description }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if presses is not empty %}
+        <h3>[@Press]</h3>
+        <table>
+            {% for press in presses %}
+                <tr>
+                    <td><a href="company/{{ press.id }}">{{ press.name }}</a></td>
+                    <td>{{ press.description }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if companies is not empty %}
+        <h3>[@Others]</h3>
+        <table>
+            {% for company in companies %}
+                <tr>
+                    <td><a href="company/{{ company.id }}">{{ company.name }}</a></td>
+                    <td>{{ company.description }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

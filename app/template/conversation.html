@@ -1,13 +1,47 @@
-<p>[@Code]: {@code}</p>
-{@messages}
-<form method="post">
-    <label for="body">[@New message]:</label>
-    <br>
-    <textarea id="body" name="body" rows="5" cols="50" required></textarea>
-    <br>
-    <button name="submit" type="submit">[@Send]</button>
-</form>
+{% extends template %}
 
-<script>
-    window.onload = window.scrollTo(0, document.body.scrollHeight);
-</script>
+{% block content %}
+    <p>[@Code]: {{ code }}</p>
+
+    {% set day = 0 %}
+    {% for message in messages %}
+        {% if day != message.timestamp|date("j") %}
+            {% set day = message.timestamp|date("j") %}
+            <p align="center"><b>{{ message.timestamp|date("j F Y") }}</b></p>
+        {% endif %}
+
+        <p align="{{ message.sent ? "right" : "left" }}"
+                {% if message.sent and message.seen %}
+                    title="read: {{ message.seen|date("j F Y, H:i") }}"
+                {% endif %}
+        >
+
+            {{ message.body|nl2br }}
+            <br>
+
+            {% if message.sent %}
+                {% if message.seen %}
+                    :icon_seen:
+                {% else %}
+                    :icon_sent:
+                {% endif %}
+            {% elseif not message.seen %}
+                [[@new]]
+            {% endif %}
+
+            {{ message.timestamp|date("H:i") }}
+        </p>
+    {% endfor %}
+
+    <form method="post">
+        <label for="body">[@New message]:</label>
+        <br>
+        <textarea id="body" name="body" rows="5" cols="50" required></textarea>
+        <br>
+        <button name="submit" type="submit">[@Send]</button>
+    </form>
+
+    <script>
+        window.onload = window.scrollTo(0, document.body.scrollHeight);
+    </script>
+{% endblock %}

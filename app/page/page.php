@@ -16,9 +16,6 @@ abstract class Page
     /** @var Database Object representing the MCRRP Database */
     protected $db;
     
-    /** @var Template Object representing the page's HTML template */
-    protected $tpl;
-    
     /** @var array Array containing all page arguments */
     protected $args;
     
@@ -56,7 +53,8 @@ abstract class Page
     public function __construct($args)
     {
         $this->db = new Database();
-        $this->tpl = new Template(get_class($this));
+        $twig = new Twig_Environment(new Twig_Loader_Filesystem("template"));
+        $this->tpl = $twig->load(strtolower(get_class($this)).".html");
         $this->args = $args;
         
         if(count($this->args) > $this->argsCount)
@@ -83,6 +81,17 @@ abstract class Page
     }
     
     /**
+     * Defines a variable for the Twig template.
+     *
+     * @param string $key The variable name
+     * @param mixed $value The value of the variable
+     */
+    protected function set($key, $value)
+    {
+        $this->variables[$key] = $value;
+    }
+    
+    /**
      * Runs the page's script and generates HTML code.
      *
      * @return string The HTML code of the page
@@ -96,11 +105,10 @@ abstract class Page
             }
             catch(InvalidInputException $exception)
             {
-                $this->tpl->setError(tr($exception->getMessage()));
+                $this->variables["error"] = tr($exception->getMessage());
             }
         
         $this->run();
-        $mainTpl = new Template("main");
         
         if(LOGGED)
         {
@@ -108,30 +116,24 @@ abstract class Page
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
             
             $state = $this->db->state($this->citizen["state_id"]);
-            $headerTpl = new Template("user");
-            $headerTpl->set("uuid", $this->citizen["player"]);
-            $headerTpl->set("code", $this->citizen["code"]);
-            $headerTpl->set("role", "n/a");
-            $headerTpl->set("currency", $state["currency"]);
-            $headerTpl->set("balance", $this->citizen["balance"]);
-            $headerTpl->set("state", $state["name"]);
-            $headerTpl->set("msg_count", $unreadMessages > 0 ? " ($unreadMessages)" : "");
-            $headerTpl->set("transac_count", $unreadTransactions > 0 ? " ($unreadTransactions)" : "");
+            $this->variables["citizen"] = $this->citizen;
+            $this->variables["role"] = "n/a";
+            $this->variables["state"] = $state;
+            $this->variables["msg_count"] = $unreadMessages;
+            $this->variables["transac_count"] = $unreadTransactions;
+            
+            $this->variables["template"] = "user.html";
         }
         else
-            $headerTpl = new Template("visitor");
+            $this->variables["template"] = "visitor.html";
         
+        $this->variables["title"] = $this->title();
+        $this->variables["langs"] = [
+            ["id" => "en", "name" => "English"],
+            ["id" => "fr", "name" => "Français"],
+        ];
         
-        $headerTpl->set("title", $this->title());
-        
-        $mainTpl->set("lang", LANG);
-        $mainTpl->set("title", $this->title());
-        $mainTpl->set("header", $headerTpl->html());
-        $mainTpl->set("content", $this->tpl->html());
-        $mainTpl->set("en", LANG == "en" ? "selected" : "");
-        $mainTpl->set("fr", LANG == "fr" ? "selected" : "");
-        
-        return $this->format($mainTpl->html());
+        return $this->format($this->tpl->render($this->variables));
     }
     
     /**
@@ -184,11 +186,9 @@ abstract class Page
         $str = str_replace(":icon_seen:", "&#10003", $str);
         $str = str_replace(":icon_sent:", "&#11208", $str);
         
-        $str = preg_replace("/(>.*)_([^_\n]*)_(.*<)/", "$1<i>$2</i>$3", $str);
-        $str = preg_replace("/(>.*)\*([^\*\n]*)\*(.*<)/", "$1<b>$2</b>$3", $str);
-        $str = preg_replace("/(>.*)~([^~\n]*)~(.*<)/", "$1<del>$2</del>$3", $str);
-        
-        
         return $str;
     }
+    
+    private $tpl;
+    private $variables = array();
 }
