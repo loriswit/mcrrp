@@ -25,6 +25,7 @@ class Message extends Page
             else
                 $contactID = $conversation["sender_id"];
             
+            $conversation["date"] = new Date($conversation["timestamp"]);
             $conversation["sent"] = $sent;
             $conversation["contact"] = $this->db->citizen($contactID);
             $conversation["unread"] = $this->db->unreadMessageCountFrom($contactID, $this->citizen["id"]);
