@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 
-{% block header %}
-    {{ parent() }}
-    <h2>{{ title }}</h2>
+{% block button %}
+    <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" href="/login">
+        Log in
+    </a>
 {% endblock %}

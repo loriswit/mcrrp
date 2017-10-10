@@ -34,10 +34,11 @@ class Join extends Page
         $firstName = $_POST["first_name"];
         $lastName = $_POST["last_name"];
         
-        if(!preg_match("/^[\\pL-’' ]*$/u", $lastName) || !preg_match("/^[\\pL-’' ]*$/u", $firstName))
+        $nameRegex = "/^[\\pL-’' ]+$/u";
+        if(!preg_match($nameRegex, $lastName) || !preg_match($nameRegex, $firstName))
             throw new InvalidInputException("Your name must only contain letters, spaces, dashes and apostrophes.");
         
-        $sex = $_POST["sex"];
+        $sex = "N/A";
         $stateID = $_POST["state"];
         $balance = $this->db->state($stateID)["initial"];
         

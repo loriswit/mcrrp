@@ -5,4 +5,4 @@ RewriteEngine On
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
 # redirect to index.php
-RewriteRule ^ / [QSA,L]
+RewriteRule ^(?!res/).+$ / [QSA,L]

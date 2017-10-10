@@ -1,18 +1,48 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/login.css">
+{% endblock %}
+
 {% block content %}
-    {% if error is defined %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form method="post">
-        {% if online %}
-            <label for="username">[@Mojang credentials]:</label><br>
-            <input name="username" type="text" placeholder="[@Email]" id="username" required><br>
-            <input name="password" type="password" placeholder="[@Password]" required><br>
-        {% else %}
-            <label for="username">[@Enter your username]:</label><br>
-            <input name="username" type="text" placeholder="[@Username]" id="username" required><br>
-        {% endif %}
-        <button name="submit" type="submit">[@Log in]</button>
-    </form>
+    <div class="mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-cell mdl-cell--middle mdl-cell--4-col mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">{{ online ? "Mojang credentials" : "Minecraft username" }}:</h2>
+            </div>
+
+            <form method="post">
+                <div class="mdl-card__supporting-text">
+                    {% if error is defined %}
+                        <p class="error"><i class="material-icons">error</i> {{ error }}</p>
+                    {% endif %}
+                    {% if online %}
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input name="username" class="mdl-textfield__input" type="email" id="username" required>
+                            <label class="mdl-textfield__label" for="username">Email</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input name="password" class="mdl-textfield__input" type="password" id="password" required>
+                            <label class="mdl-textfield__label" for="password">Password</label>
+                        </div>
+                    {% else %}
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input name="username" class="mdl-textfield__input" type="text" id="username"
+                                   pattern="^[a-zA-Z0-9_-]{3,15}$" required>
+                            <label class="mdl-textfield__label" for="username">Username</label>
+                            <span class="mdl-textfield__error">Invalid username!</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mdl-card__actions mdl-card--border bg-teal">
+                    <div class="mdl-layout-spacer"></div>
+                    <button class="mdl-button--colored mdl-button mdl-js-button mdl-js-ripple-effect"
+                            name="submit" type="submit">[@Log in]
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="mdl-layout-spacer"></div>
+    </div>
 {% endblock %}

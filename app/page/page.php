@@ -63,7 +63,7 @@ abstract class Page
             $this->args = array_slice($args, 0, $this->argsCount);
             array_unshift($this->args, $page);
             header("Location: /".implode("/", $this->args));
-            exit();
+            exit;
         }
         
         if($this->userOnly && !LOGGED || $this->visitorOnly && LOGGED)
@@ -73,10 +73,7 @@ abstract class Page
         {
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
             if(empty($this->citizen))
-            {
-                session_unset();
-                header("Location: /");
-            }
+                header("Location: /logout");
         }
     }
     
@@ -161,7 +158,7 @@ abstract class Page
             
             $name = $otherCitizen["first_name"]." ".$otherCitizen["last_name"];
             if($link && $this->citizen["id"] != $otherCitizen["id"])
-                $str = str_replace(":$match:", "<a href='/conversation/".$otherCitizen["code"]."'>$name</a>", $str);
+                $str = str_replace(":$match:", "<a class='link' href='/conversation/".$otherCitizen["code"]."'>$name</a>", $str);
             else
                 $str = str_replace(":$match:", $name, $str);
         }
@@ -183,8 +180,8 @@ abstract class Page
             }
         }
         
-        $str = str_replace(":icon_seen:", "&#10003", $str);
-        $str = str_replace(":icon_sent:", "&#11208", $str);
+        $str = str_replace(":icon_seen:", "<i class='material-icons small-icon'>done</i>", $str);
+        $str = str_replace(":icon_sent:", "<i class='material-icons small-icon'>play_arrow</i>", $str);
         
         return $str;
     }

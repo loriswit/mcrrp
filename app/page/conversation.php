@@ -34,6 +34,10 @@ class Conversation extends Page
     
     protected function submit()
     {
+        $body = trim($_POST["body"]);
+        if(empty($body))
+            return;
+        
         $receiver = $this->db->citizenByCode($this->args[0]);
         $this->db->addMessage($this->citizen["id"], $receiver["id"], trim($_POST["body"]));
     }

@@ -1,0 +1,124 @@
+.message-grid
+{
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.mdl-cell
+{
+    margin: 4px;
+}
+
+.message-card
+{
+    min-height: 0;
+    width: auto;
+    max-width: 60%;
+    min-width: 250px;
+}
+
+.message-sent
+{
+    margin-left: 30%;
+    float: right;
+}
+
+.message-received
+{
+    margin-right: 30%;
+    float: left;
+}
+
+.message-body
+{
+    padding: 10px;
+    word-wrap: break-word;
+    color: black;
+}
+
+.message-body-last
+{
+    margin-bottom: 65px;
+}
+
+.message-info
+{
+    color: #bbb;
+    font-size: 0.8em;
+}
+
+.message-date-card
+{
+    max-width: 200px;
+    min-height: 0;
+    text-align: center;
+    margin: 15px auto;
+    background: #ffb;
+    font-weight: bold;
+}
+
+.bg-blue
+{
+    background: #bdf;
+}
+
+.message-date
+{
+    width: 95%;
+    padding: 5px;
+}
+
+.message-input
+{
+    width: 95%;
+}
+
+.new-message-card
+{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.new-message-grid
+{
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: 68px;
+}
+
+textarea
+{
+    resize: none;
+}
+
+.unread-message
+{
+    animation: unread-animation 5s;
+}
+
+@keyframes unread-animation
+{
+    0%
+    {
+        background-color: #dfe;
+    }
+    60%
+    {
+        background-color: #dfe;
+    }
+    100%
+    {
+        background-color: white;
+    }
+}
+
+.small-icon
+{
+    font-size: 1em;
+}

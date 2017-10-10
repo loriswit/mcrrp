@@ -1,47 +1,105 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/conversation.css">
+{% endblock %}
+
 {% block content %}
-    <p>[@Code]: {{ code }}</p>
+    <div class="mdl-grid message-grid">
 
-    {% set day = 0 %}
-    {% for message in messages %}
-        {% if day != message.timestamp|date("j") %}
-            {% set day = message.timestamp|date("j") %}
-            <p align="center"><b>{{ message.timestamp|date("j F Y") }}</b></p>
-        {% endif %}
+        {% set day = 0 %}
+        {% set unread = false %}
+        {% for message in messages %}
 
-        <p align="{{ message.sent ? "right" : "left" }}"
-                {% if message.sent and message.seen %}
-                    title="read: {{ message.seen|date("j F Y, H:i") }}"
-                {% endif %}
-        >
-
-            {{ message.body|nl2br }}
-            <br>
-
-            {% if message.sent %}
-                {% if message.seen %}
-                    :icon_seen:
-                {% else %}
-                    :icon_sent:
-                {% endif %}
-            {% elseif not message.seen %}
-                [[@new]]
+            {% if day != message.timestamp|date("j") %}
+                {% set day = message.timestamp|date("j") %}
+                <div class="mdl-cell mdl-cell--12-col">
+                    <div class="mdl-card mdl-shadow--3dp message-date-card">
+                        <div class="mdl-card__supporting-text message-date">
+                            {{ message.timestamp|date("j F Y") }}
+                        </div>
+                    </div>
+                </div>
             {% endif %}
 
-            {{ message.timestamp|date("H:i") }}
-        </p>
-    {% endfor %}
+            {% if not unread and not message.sent and not message.seen %}
+                {% set unread = true %}
+                <div class="mdl-cell mdl-cell--12-col">
+                    <div class="mdl-card mdl-shadow--3dp message-date-card bg-blue">
+                        <div class="mdl-card__supporting-text message-date">NEW MESSAGES</div>
+                    </div>
+                </div>
+            {% endif %}
 
-    <form method="post">
-        <label for="body">[@New message]:</label>
-        <br>
-        <textarea id="body" name="body" rows="5" cols="50" required></textarea>
-        <br>
-        <button name="submit" type="submit">[@Send]</button>
-    </form>
+            <div class="mdl-cell mdl-cell--10-col mdl-cell--1-offset-desktop">
+                <div class="mdl-card mdl-shadow--2dp message-card
+                    {% if not message.sent and not message.seen %}unread-message{% endif %}
+                    {% if loop.last %}message-body-last{% endif %}
+                    {{ message.sent ? "message-sent" : "message-received" }}">
+
+                    <div class="mdl-card__supporting-text message-body">
+                        {{ message.body|nl2br }}
+                    </div>
+
+                    <div id="{{ message.id }}" class="mdl-card__actions mdl-card--border message-info">
+                        {% if message.sent %}
+                            {{ message.seen ? ":icon_seen:" : ":icon_sent:" }}
+                        {% else %}
+                            :@{{ code }}:
+                        {% endif %}
+                        <div class="mdl-layout-spacer"></div>
+                        <div class="time">
+                            <i class="material-icons small-icon">access_time</i>
+                            {{ message.timestamp|date("H:i") }}
+                        </div>
+                    </div>
+
+                    {% if message.sent and message.seen %}
+                        <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="{{ message.id }}">
+                            read: {{ message.seen|date("j F Y, H:i") }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+
+        {% else %}
+            <div class="mdl-cell mdl-cell--12-col">
+                <div class="mdl-card mdl-shadow--3dp message-date-card">
+                    <div class="mdl-card__supporting-text message-date">No messages</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mdl-card mdl-shadow--16dp new-message-card">
+        <form method="post">
+            <div class="mdl-grid new-message-grid">
+                <div class="mdl-layout-spacer"></div>
+                <div class="mdl-cell mdl-cell--5-col mdl-cell--3-col-phone">
+                    <div class="mdl-textfield mdl-js-textfield message-input">
+                        <textarea id="body" name="body" class="mdl-textfield__input" rows=1 required></textarea>
+                        <label class="mdl-textfield__label" for="body">New message</label>
+                    </div>
+                </div>
+                <div class="mdl-cell mdl-cell--1-col">
+                    <button name="submit" type="submit"
+                            class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                        <i class="material-icons">send</i>
+                    </button>
+                </div>
+                <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+            </div>
+        </form>
+    </div>
 
     <script>
-        window.onload = window.scrollTo(0, document.body.scrollHeight);
+        function scrollToBottom()
+        {
+            var content = document.getElementsByTagName("main")[0];
+            content.scrollTop = content.scrollHeight;
+        }
+
+        setTimeout(scrollToBottom, 0);
     </script>
 {% endblock %}

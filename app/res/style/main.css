@@ -1,0 +1,32 @@
+main
+{
+    background-color: #f0f2ea;
+}
+
+a.link
+{
+    color: #0c6;
+    text-decoration: none;
+    transition: all 0.3s ease-out;
+}
+
+a.link:hover
+{
+    text-decoration: underline;
+    color: #5af;
+}
+
+.mdl-grid
+{
+    margin-top: 12px;
+}
+
+.mdl-card__actions
+{
+    display: flex;
+}
+
+.error
+{
+    color: #dd4444;
+}

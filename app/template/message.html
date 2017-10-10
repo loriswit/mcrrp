@@ -1,40 +1,97 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/message.css">
+{% endblock %}
+
 {% block content %}
-    {% if error is defined %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form method="post">
-        <label for="code">[@New conversation]:</label>
-        <input name="code" type="text" pattern="[A-Za-z\d]{4}" placeholder="[@Contact's code]" id="code" list="contacts"
-               required>
-        <datalist id="contacts">
-            {% for code in codes %}
-                <option value="{{ code }}">:@{{ code }}:</option>
-            {% endfor %}
-        </datalist>
-        <button name="submit" type="submit">[@Start]</button>
-    </form>
-    {% if conversations is empty %}
-        <p>No conversations.</p>
-    {% else %}
-        <table>
-            {% for conversation in conversations %}
-                <tr>
-                    <td>{{ conversation.timestamp|date("j F Y, H:i") }}</td>
-                    <td>:{{ conversation.contact.code }}:</td>
-                    <td>{% if conversation.sent %}
-                            {% if conversation.seen %}
-                                :icon_seen:
-                            {% else %}
-                                :icon_sent:
-                            {% endif %}
-                        {% elseif not conversation.seen %}
-                            [[@new]]
-                        {% endif %}
-                        {{ conversation.body }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+    <div class="mdl-grid conversation-grid">
+        {% if error is defined %}
+            <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+            <div class="mdl-cell mdl-cell--3-col mdl-cell--middle">
+                <span class="error"><i class="material-icons">error</i> {{ error }}</span>
+            </div>
+        {% endif %}
+
+        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-cell mdl-cell--1-col">
+            <button id="new-dialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                <i class="material-icons">add</i>
+            </button>
+        </div>
+        <div class="mdl-tooltip" data-mdl-for="new-dialog">
+            New conversation
+        </div>
+        <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+
+        <div class="mdl-cell mdl-cell--12-col">
+            {% if conversations is empty %}
+                <div class="mdl-card mdl-shadow--2dp info-card">
+                    <span class="mdl-card__supporting-text">No conversations.</span>
+                </div>
+            {% else %}
+                <table class="message-table mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    {% for conversation in conversations %}
+                        <tr class="clickable {% if conversation.unread > 0 %}unread{% endif %}"
+                            onclick="location.href = '/conversation/{{ conversation.contact.code }}';">
+                            <td class="contact-col mdl-data-table__cell--non-numeric">
+                                {% if conversation.unread > 0 %}
+                                    <button class="unread-badge mdl-button mdl-button--fab mdl-button--colored">
+                                        {{ conversation.unread }}
+                                    </button>
+                                {% endif %}
+                                <div class="contact">:@{{ conversation.contact.code }}:</div>
+                                <div class="date">{{ conversation.date }}</div>
+                            </td>
+                            <td class="last-message-col mdl-data-table__cell--non-numeric">
+                                {% if conversation.sent %}
+                                    {{ conversation.seen ? ":icon_seen:" : ":icon_sent:" }}
+                                {% endif %}
+                                {{ conversation.body }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">New conversation</h4>
+        <form method="post">
+            <div class="mdl-dialog__content">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" name="code" type="text" pattern="[A-Za-z\d]{4}"
+                           id="code" list="contacts" required>
+                    <label class="mdl-textfield__label" for="code">Contact's code</label>
+                    <datalist id="contacts">
+                        {% for code in codes %}
+                            <option value="{{ code }}">:@{{ code }}:</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button class="mdl-button" name="submit" type="submit">Start</button>
+                <button class="mdl-button close">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        var dialog = document.querySelector("dialog");
+        var showDialogButton = document.querySelector("#new-dialog");
+        if(!dialog.showModal)
+        {
+            dialogPolyfill.registerDialog(dialog);
+        }
+        showDialogButton.addEventListener("click", function()
+        {
+            dialog.showModal();
+        });
+        dialog.querySelector(".close").addEventListener("click", function()
+        {
+            dialog.close();
+        });
+    </script>
 {% endblock %}

@@ -1,36 +1,67 @@
 {% extends template %}
 
-{% block content %}
-    <p><img src="https://crafatar.com/avatars/{{ uuid }}?size=16&overlay"> {{ name }}</p>
-    {% if error is defined %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form method="post">
-        <fieldset>
-            <legend>[@Profile]</legend>
-            <label for="first_name">[@First name(s)]</label>
-            <input name="first_name" type="text" id="first_name" required>
-            <br>
-            <label for="last_name">[@Last name(s)]</label>
-            <input name="last_name" type="text" id="last_name" required>
-            <br>
-            <label for="sex">[@Sex]</label>
-            <select name="sex" id="sex">
-                <option value="F">[@Female]</option>
-                <option value="M">[@Male]</option>
-            </select>
-            <br>
-            <label for="state">[@State]</label>
-            <select name="state" id="state">
-                {% for state in states %}
-                    <option value={{ state.id }}>{{ state.name }}</option>
-                {% endfor %}
-            </select>
-            <br>
-            <button name="submit" type="submit">[@Submit]</button>
-        </fieldset>
-    </form>
-    <form action="/" method="post">
-        <button name="logout" type="submit">[@Back]</button>
-    </form>
+{% block style %}
+    <link rel="stylesheet" href="/res/style/login.css">
 {% endblock %}
+
+{% block content %}
+    <div class="mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-cell mdl-cell--middle mdl-cell--4-col mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">{{ name }}</h2>
+            </div>
+
+            <form method="post">
+                <div class="mdl-card__supporting-text">
+                    {% if error is defined %}
+                        <p class="error"><i class="material-icons">error</i> {{ error }}</p>
+                    {% endif %}
+                    <fieldset>
+                        <legend>[@Profile]:</legend>
+
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input name="first_name" class="mdl-textfield__input" type="text" id="first_name"
+                                   pattern="^[^\d]+$" required>
+                            <label class="mdl-textfield__label" for="first_name">[@First name(s)]</label>
+                        </div>
+                        <br>
+
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input name="last_name" class="mdl-textfield__input" type="text" id="last_name"
+                                   pattern="^[^\d]+$" required>
+                            <label class="mdl-textfield__label" for="last_name">[@Last name(s)]</label>
+                        </div>
+                        <br>
+
+                        <legend>[@State]:</legend>
+
+                        {% for state in states %}
+                            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="state-{{ state.id }}">
+                                <input type="radio" id="state-{{ state.id }}" class="mdl-radio__button" name="state"
+                                       value={{ state.id }} {{ loop.first ? "checked" : "" }}>
+                                <span class="mdl-radio__label">{{ state.name }}</span>
+                            </label>
+                            {{ loop.last ? "" : "<br>" }}
+                        {% endfor %}
+                    </fieldset>
+                </div>
+
+                <div class="mdl-card__actions mdl-card--border bg-teal">
+                    <a class="mdl-button--colored mdl-button mdl-js-button mdl-js-ripple-effect" href="/logout">
+                        [@Back]
+                    </a>
+                    <div class="mdl-layout-spacer"></div>
+                    <button class="mdl-button--colored mdl-button mdl-js-button mdl-js-ripple-effect"
+                            name="submit" type="submit">[@Join]
+                    </button>
+                </div>
+            </form>
+            <div class="mdl-card__menu">
+                <img src="https://crafatar.com/avatars/{{ uuid }}?size=32&overlay">
+            </div>
+        </div>
+        <div class="mdl-layout-spacer"></div>
+    </div>
+{% endblock %}
+

@@ -48,6 +48,13 @@ $args = array_filter(array_slice($args, 2));
 if(empty($class))
     $class = LOGGED ? "Home" : "Login";
 
+if($class == "Logout")
+{
+    session_unset();
+    header("Location: /");
+    exit;
+}
+
 try
 {
     if(class_exists($class))

@@ -1,23 +1,65 @@
 {% extends "main.html" %}
 
-{% block header %}
-    {{ parent() }}
-    <p><img src="https://crafatar.com/avatars/{{ citizen.player }}?size=16&overlay"> :{{ citizen.code }}:</p>
-    <p>[@Code]: {{ citizen.code }}</p>
-    <p>[@Role]: {{ role }}</p>
-    <p>[@Balance]: {{ state.currency }} {{ citizen.balance }}</p>
-    <p>[@State]: {{ state.name }}</p>
-    <form action="/" method="post">
-        <button name="logout">[@Log out]</button>
-    </form>
-    <table>
-        <tr>
-            <td><a href="/">[@News]</a></td>
-            <td><a href="/message">[@Messages]{{ msg_count > 0 ? " (" ~ msg_count ~ ")" : "" }}</a></td>
-            <td><a href="/transaction">[@Transactions]{{ transac_count > 0 ? " (" ~ transac_count ~ ")" : "" }}</a></td>
-            <td><a href="/lock">[@Locks]</a></td>
-            <td><a href="/employment">[@Employment]</a></td>
-        </tr>
-    </table>
-    <h2>{{ title }}</h2>
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout__drawer-button">
+            <i class="material-icons
+            {% if msg_count + transac_count > 0 %}
+                mdl-badge mdl-badge--overlap" data-badge="{{ msg_count + transac_count }}
+            {% endif %}
+            ">menu</i>
+        </span>
+
+        <span class="mdl-layout-title">
+            <img src="https://crafatar.com/avatars/{{ citizen.player }}?size=32&overlay">
+            :{{ citizen.code }}:
+        </span>
+
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/message">
+                <i class="material-icons
+                    {% if msg_count > 0 %}
+                        mdl-badge mdl-badge--overlap" data-badge="{{ msg_count }}
+                    {% endif %}
+                ">mail</i> Messages</a>
+            <a class=" mdl-navigation__link" href="/transaction">
+                <i class="material-icons
+                    {% if transac_count > 0 %}
+                        mdl-badge mdl-badge--overlap" data-badge="{{ transac_count }}
+                    {% endif %}
+                ">attach_money</i> Transactions</a>
+            <a class="mdl-navigation__link" href="/lock"><i class="material-icons">lock</i> Locks</a>
+            <a class="mdl-navigation__link" href="/employment"><i class="material-icons">work</i> Employment</a>
+        </nav>
+
+        <div class="mdl-layout-spacer"></div>
+
+        <ul class="mdl-list">
+            <li class="mdl-list__item">
+                <code class="mdl-list__item-primary-content">
+                    <i class="material-icons mdl-list__item-icon">contact_mail</i>
+                    {{ citizen.code }}
+                </code>
+            </li>
+            <li class="mdl-list__item">
+                <code class="mdl-list__item-primary-content">
+                    <i class="material-icons mdl-list__item-icon">account_balance_wallet</i>
+                    {{ state.currency }} {{ citizen.balance }}
+                </code>
+            </li>
+            <li class="mdl-list__item">
+                <code class="mdl-list__item-primary-content">
+                    <i class="material-icons mdl-list__item-icon">location_city</i>
+                    {{ state.name }}
+                </code>
+            </li>
+        </ul>
+
+        <span class="mdl-menu__item--full-bleed-divider"></span>
+
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/logout">
+                <i class="material-icons">exit_to_app</i> Log out</a>
+        </nav>
+    </div>
 {% endblock %}
