@@ -30,3 +30,44 @@ a.link:hover
 {
     color: #dd4444;
 }
+
+.info
+{
+    color: #5577ee;
+}
+
+.info-card
+{
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+
+    min-height: 0;
+    text-align: center;
+}
+
+.small-icon
+{
+    font-size: 1em;
+}
+
+.unread-message
+{
+    animation: unread-animation 5s;
+}
+
+@keyframes unread-animation
+{
+    0%
+    {
+        background-color: #dfe;
+    }
+    60%
+    {
+        background-color: #dfe;
+    }
+    100%
+    {
+        background-color: white;
+    }
+}

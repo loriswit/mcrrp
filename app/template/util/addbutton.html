@@ -1,0 +1,35 @@
+{% if error is defined or info is defined %}
+    <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-phone"></div>
+    <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-phone mdl-cell--middle">
+        <span class="{{ error is defined ? "error" : "info" }}">
+            <i class="material-icons">{{ error is defined ? "error" : "info" }}</i>
+            {{ error is defined ? error : info }}
+        </span>
+    </div>
+{% endif %}
+
+<div class="mdl-layout-spacer"></div>
+<div class="mdl-cell mdl-cell--1-col">
+    <button id="new-dialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+        <i class="material-icons">add</i>
+    </button>
+</div>
+<div class="mdl-tooltip" data-mdl-for="new-dialog">
+    {{ tooltip }}
+</div>
+<div class="mdl-cell mdl-cell--1-col mdl-cell--hide-phone"></div>
+
+<script>
+    var dialog = document.querySelector("dialog");
+    var showDialogButton = document.querySelector("#new-dialog");
+    if(!dialog.showModal)
+    {
+        dialogPolyfill.registerDialog(dialog);
+    }
+    showDialogButton.addEventListener("click", function() {
+        dialog.showModal();
+    });
+    dialog.querySelector(".close").addEventListener("click", function() {
+        dialog.close();
+    });
+</script>

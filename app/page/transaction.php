@@ -42,6 +42,7 @@ class Transaction extends Page
             else
                 $seller = $this->db->citizen($transaction["seller_id"]);
             
+            $transaction["date"] = new Date($transaction["timestamp"]);
             $transaction["bought"] = !$transaction["buyer_state"] && $transaction["buyer_id"] == $this->citizen["id"];
             $transaction["buyer"] = $buyer;
             $transaction["seller"] = $seller;
@@ -82,6 +83,9 @@ class Transaction extends Page
         
         if($this->citizen["balance"] - $_POST["amount"] < 0)
             throw new InvalidInputException("Your balance is too low for this transaction.");
+        
+        if(empty($_POST["description"]))
+            throw new InvalidInputException("Please provide a description.");
         
         $this->db->addTransaction(
             $this->citizen["id"], false, $receiver["id"], $sellerState, $_POST["amount"], $_POST["description"]);

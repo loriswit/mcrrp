@@ -1,0 +1,49 @@
+dialog.mdl-dialog
+{
+    width: 25%;
+    min-width: 300px;
+    margin: auto;
+}
+
+.red-cell
+{
+    background-color: rgba(255, 0, 0, 0.08);
+}
+
+.blue-cell
+{
+    background-color: rgba(0, 100, 255, 0.08);
+}
+
+.red-text
+{
+    color: #dd4444;
+}
+
+.blue-text
+{
+    color: #5577ee;
+}
+
+.amount
+{
+    margin-top: 10px;
+    font-size: 1.2em;
+    float: right;
+}
+
+.contact a
+{
+    font-weight: bold;
+    color: #00aa44;
+}
+
+.arrow-icon
+{
+    margin-right: 8px;
+}
+
+.description
+{
+    white-space: normal;
+}

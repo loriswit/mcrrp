@@ -1,4 +1,4 @@
-.message-grid
+.table-grid
 {
     padding-top: 0;
     margin-top: 0;
@@ -95,30 +95,4 @@
 textarea
 {
     resize: none;
-}
-
-.unread-message
-{
-    animation: unread-animation 5s;
-}
-
-@keyframes unread-animation
-{
-    0%
-    {
-        background-color: #dfe;
-    }
-    60%
-    {
-        background-color: #dfe;
-    }
-    100%
-    {
-        background-color: white;
-    }
-}
-
-.small-icon
-{
-    font-size: 1em;
 }

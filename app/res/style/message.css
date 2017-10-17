@@ -1,54 +1,6 @@
-.conversation-grid
-{
-    margin-top: 0;
-}
-
-.message-table
-{
-    width: 100%;
-    max-width: 1000px;
-    table-layout: fixed;
-    margin: auto;
-}
-
-.last-message-col
-{
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.clickable
-{
-    cursor: pointer;
-    height: 100px;
-}
-
-.contact-col
-{
-    width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .unread
 {
     background-color: #dfe;
-}
-
-.contact
-{
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.date
-{
-    color: #888;
-}
-
-#show-dialog
-{
-    text-align: center;
 }
 
 .unread-badge
@@ -69,14 +21,4 @@
 .unread-badge:hover, .unread-badge:active
 {
     box-shadow: none;
-}
-
-.info-card
-{
-    width: 100%;
-    max-width: 1000px;
-    margin: auto;
-
-    min-height: 0;
-    text-align: center;
 }

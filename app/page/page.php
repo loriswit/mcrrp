@@ -54,7 +54,7 @@ abstract class Page
     {
         $this->db = new Database();
         $twig = new Twig_Environment(new Twig_Loader_Filesystem("template"));
-        $this->tpl = $twig->load(strtolower(get_class($this)).".html");
+        $this->tpl = $twig->load("page/".strtolower(get_class($this)).".html");
         $this->args = $args;
         
         if(count($this->args) > $this->argsCount)
@@ -182,6 +182,9 @@ abstract class Page
         
         $str = str_replace(":icon_seen:", "<i class='material-icons small-icon'>done</i>", $str);
         $str = str_replace(":icon_sent:", "<i class='material-icons small-icon'>play_arrow</i>", $str);
+        $str = str_replace(":icon_forward:", "<i class='material-icons small-icon'>arrow_forward</i>", $str);
+        $str = str_replace(":icon_back:", "<i class='material-icons small-icon'>arrow_back</i>", $str);
+        $str = str_replace(":icon_mail:", "<i class='material-icons small-icon'>email</i>", $str);
         
         return $str;
     }

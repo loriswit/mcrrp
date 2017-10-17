@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="mdl-grid message-grid">
+    <div class="mdl-grid conversation-grid">
 
         {% set day = 0 %}
         {% set unread = false %}
@@ -61,7 +61,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+            <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-phone"></div>
 
         {% else %}
             <div class="mdl-cell mdl-cell--12-col">
@@ -88,7 +88,7 @@
                         <i class="material-icons">send</i>
                     </button>
                 </div>
-                <div class="mdl-cell mdl mdl-cell--1-col-desktop mdl-cell--hide-phone"></div>
+                <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-phone"></div>
             </div>
         </form>
     </div>

@@ -31,8 +31,8 @@ class Join extends Page
         if(!isset($_SESSION["uuid"]))
             header("Location: /");
         
-        $firstName = $_POST["first_name"];
-        $lastName = $_POST["last_name"];
+        $firstName = trim($_POST["first_name"]);
+        $lastName = trim($_POST["last_name"]);
         
         $nameRegex = "/^[\\pL-’' ]+$/u";
         if(!preg_match($nameRegex, $lastName) || !preg_match($nameRegex, $firstName))
@@ -45,6 +45,9 @@ class Join extends Page
         // format names
         $firstName = str_replace("'", "’", $firstName);
         $lastName = str_replace("'", "’", $lastName);
+        
+        $firstName = preg_replace("/\s+/", " ", $firstName);
+        $lastName = preg_replace("/\s+/", " ", $lastName);
         
         $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
         $lastName = mb_convert_case($lastName, MB_CASE_TITLE);

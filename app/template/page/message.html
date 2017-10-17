@@ -1,0 +1,73 @@
+{% extends template %}
+
+{% block style %}
+    <link rel="stylesheet" href="/res/style/message.css">
+    <link rel="stylesheet" href="/res/style/table.css">
+{% endblock %}
+
+{% block content %}
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">New conversation</h4>
+        <form method="post">
+            <div class="mdl-dialog__content">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" name="code" type="text" pattern="[A-Za-z\d]{4}"
+                           id="code" list="contacts" required>
+                    <label class="mdl-textfield__label" for="code">Contact's code</label>
+                    <datalist id="contacts">
+                        {% for code in codes %}
+                            <option value="{{ code }}">:@{{ code }}:</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button class="mdl-button" name="submit" type="submit">Start</button>
+                <button class="mdl-button close">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="table-grid mdl-grid">
+        {% include "util/addbutton.html" with {"tooltip": "New conversation"} %}
+
+        <div class="mdl-cell mdl-cell--12-col">
+            {% if conversations is empty %}
+                <div class="info-card mdl-card mdl-shadow--2dp">
+                    <span class="mdl-card__supporting-text">No conversations.</span>
+                </div>
+            {% else %}
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    {% for conversation in conversations %}
+                        <tr class="clickable {% if conversation.unread > 0 %}unread{% endif %}"
+                            onclick="location.href = '/conversation/{{ conversation.contact.code }}';">
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                    <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                        {% if conversation.unread > 0 %}
+                                            <button class="unread-badge mdl-button mdl-button--fab mdl-button--colored">
+                                                {{ conversation.unread }}
+                                            </button>
+                                        {% endif %}
+                                        <div class="contact">:@{{ conversation.contact.code }}:</div>
+                                        <div class="date">{{ conversation.date }}</div>
+                                    </div>
+                                    <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                        {% if conversation.sent %}
+                                            <div class="message-icon">
+                                                {{ conversation.seen ? ":icon_seen:" : ":icon_sent:" }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="message-body">
+                                            {{ conversation.body }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
