@@ -1,0 +1,37 @@
+.lock-type
+{
+    float: right;
+}
+
+.lock-name
+{
+    margin-top: 5px;
+}
+
+.mdl-chip
+{
+    margin-right: 5px;
+}
+
+.mdl-button
+{
+    margin-left: 5px;
+}
+
+.mdl-textfield__expandable-holder
+{
+    margin-left: 45px;
+}
+
+.chips
+{
+    white-space: normal;
+}
+
+.nobody
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    font-style: italic;
+    color: #888888;
+}

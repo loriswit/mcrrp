@@ -98,7 +98,7 @@
                                         <div class="date">{{ transaction.date }}</div>
                                     </div>
 
-                                    <div class="mdl-tooltip" data-mdl-for="{{ transaction.id }}">
+                                    <div class="mdl-tooltip mdl-tooltip--right" data-mdl-for="{{ transaction.id }}">
                                         sent: {{ transaction.timestamp|date("j F Y, H:i") }}
                                         {% if transaction.seen %}
                                             <br>seen: {{ transaction.seen|date("j F Y, H:i") }}

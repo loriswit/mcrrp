@@ -1,48 +1,83 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/table.css">
+    <link rel="stylesheet" href="/res/style/lock.css">
+{% endblock %}
+
 {% block content %}
-    {% if error is defined %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form method="post">
-        <label for="lock">[@New authorization]:</label>
-        <select name="lock" id="lock">
-            {% for lock in locks %}
-                <option value={{ lock.id }}>{{ lock.name }}</option>
-            {% endfor %}
-        </select>
-        <input name="code" type="text" pattern="[A-Za-z\d]{4}"
-               placeholder="[@Citizen's code]" id="code" list="contacts" required>
-        <datalist id="contacts">
-            {% for code in codes %}
-                <option value="{{ code }}">:@{{ code }}:</option>
-            {% endfor %}
-        </datalist>
-        <button name="submit" type="submit" value="add">[@Add]</button>
-        <button name="submit" type="submit" value="remove">[@Remove]</button>
-    </form>
-    {% if locks is empty %}
-        <p>No locks.</p>
-    {% else %}
-        <table>
-            <tr>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Authorized</th>
-            </tr>
-            {% for lock in locks %}
-                <tr>
-                    <td>:{{ lock.type }}:</td>
-                    <td>{{ lock.name }}</td>
-                    <td>
-                        {% for citizen in lock.authorized %}
-                            :{{ citizen.code }}: {{ loop.last ? "": "&" }}
-                        {% else %}
-                            Nobody is authorized
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+    <div class="table-grid mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            {% if locks is empty %}
+                <div class="info-card mdl-card mdl-shadow--2dp">
+                    <span class="mdl-card__supporting-text">No locks.</span>
+                </div>
+            {% else %}
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    {% for lock in locks %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                    <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                        <div id="icon-{{ lock.id }}" class="lock-type">
+                                            <img src="https://olybri.github.io/bing/icons/{{ lock.type }}-0.png">
+                                        </div>
+
+                                        <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="icon-{{ lock.id }}">
+                                            :{{ lock.type }}:
+                                        </div>
+
+                                        <div class="lock-name contact">{{ lock.name }}</div>
+                                    </div>
+
+                                    <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                        <div class="chips" id="chips-{{ lock.id }}">
+                                            {% for citizen in lock.authorized %}
+                                                <form method="post" class="mdl-chip mdl-chip--deletable">
+                                                    <span class="mdl-chip__text">:@{{ citizen.code }}:</span>
+                                                    <button type="submit" name="submit" value="remove"
+                                                            class="mdl-chip__action">
+                                                        <i class="material-icons">cancel</i>
+                                                    </button>
+                                                    <input type="hidden" name="lock" value="{{ lock.id }}">
+                                                    <input type="hidden" name="code" value="{{ citizen.code }}">
+                                                </form>
+                                            {% else %}
+                                                <span class="nobody">Nobody is authorized.</span>
+                                            {% endfor %}
+                                        </div>
+
+                                        <form method="post"
+                                              class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+                                            <label class="mdl-button mdl-js-button mdl-button--icon mdl-button--fab"
+                                                   for="code-{{ lock.id }}">
+                                                <i class="material-icons">add</i>
+                                            </label>
+
+                                            <div class="mdl-textfield__expandable-holder">
+                                                <input class="mdl-textfield__input" name="code" type="text"
+                                                       pattern="[A-Za-z\d]{4}" id="code-{{ lock.id }}"
+                                                       list="contacts" required>
+                                                <label class="mdl-textfield__label" for="code-{{ lock.id }}">
+                                                    Receiver's code
+                                                </label>
+                                                <datalist id="contacts">
+                                                    {% for code in codes %}
+                                                        <option value="{{ code }}">:@{{ code }}:</option>
+                                                    {% endfor %}
+                                                </datalist>
+                                            </div>
+
+                                            <input type="hidden" name="lock" value="{{ lock.id }}">
+                                            <input type="hidden" name="submit" value="add">
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
