@@ -29,7 +29,7 @@
                     {% else %}
                         <div class="mdl-textfield mdl-js-textfield">
                             <input name="username" class="mdl-textfield__input" type="text" id="username"
-                                   pattern="^[a-zA-Z0-9_-]{3,15}$" required>
+                                   pattern="^\w{3,16}$" required>
                             <label class="mdl-textfield__label" for="username">Username</label>
                             <span class="mdl-textfield__error">Invalid username!</span>
                         </div>

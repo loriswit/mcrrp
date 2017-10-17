@@ -19,7 +19,7 @@ class Login extends Page
     
     protected function submit()
     {
-        $name = $_POST["username"];
+        $username = $_POST["username"];
         
         if(CONFIG["settings"]["online"])
         {
@@ -27,7 +27,7 @@ class Login extends Page
             
             try
             {
-                $account = $MCAuth->sendAuth($name, $_POST["password"]);
+                $account = $MCAuth->sendAuth($username, $_POST["password"]);
             }
             catch(Exception $e)
             {
@@ -35,23 +35,23 @@ class Login extends Page
             }
             
             $uuid = $account->uuid;
-            $uuid = substr_replace($uuid, "-", 8, 0);
-            $uuid = substr_replace($uuid, "-", 13, 0);
-            $uuid = substr_replace($uuid, "-", 18, 0);
-            $uuid = substr_replace($uuid, "-", 23, 0);
             $username = $account->username;
         }
         else
         {
-            $json = @file_get_contents("https://www.fabianwennink.nl/projects/OfflineUUID/api/$name");
-            $data = json_decode($json, true);
-            
-            if($data == false || isset($data["error"]))
+            if(!preg_match("/^\w{3,16}$/", $username))
                 throw new InvalidInputException("Invalid username.");
             
-            $uuid = $data["uuid"];
-            $username = $data["username"];
+            // generate an offline UUID
+            $uuid = md5("OfflinePlayer:$username");
+            $uuid[12] = '3';
+            $uuid[16] = dechex(intval($uuid[16], 16) % 4 + 8);
         }
+        
+        $uuid = substr_replace($uuid, "-", 8, 0);
+        $uuid = substr_replace($uuid, "-", 13, 0);
+        $uuid = substr_replace($uuid, "-", 18, 0);
+        $uuid = substr_replace($uuid, "-", 23, 0);
         
         $_SESSION["uuid"] = $uuid;
         $_SESSION["username"] = $username;
