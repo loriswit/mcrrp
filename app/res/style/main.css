@@ -46,6 +46,12 @@ a.link:hover
     text-align: center;
 }
 
+.contact-input
+{
+    font-family: "Lucida Console", Monaco, monospace;
+    text-transform: uppercase;
+}
+
 .small-icon
 {
     font-size: 1em;

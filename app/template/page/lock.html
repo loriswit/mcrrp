@@ -20,7 +20,7 @@
                                 <div class="row-grid mdl-grid mdl-grid--no-spacing">
                                     <div class="contact-cell mdl-cell mdl-cell--4-col">
                                         <div id="icon-{{ lock.id }}" class="lock-type">
-                                            <img src="https://olybri.github.io/bing/icons/{{ lock.type }}-0.png">
+                                            <img src="api/icon/{{ lock.type }}">
                                         </div>
 
                                         <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="icon-{{ lock.id }}">
@@ -54,19 +54,8 @@
                                                 <i class="material-icons">add</i>
                                             </label>
 
-                                            <div class="mdl-textfield__expandable-holder">
-                                                <input class="mdl-textfield__input" name="code" type="text"
-                                                       pattern="[A-Za-z\d]{4}" id="code-{{ lock.id }}"
-                                                       list="contacts" required>
-                                                <label class="mdl-textfield__label" for="code-{{ lock.id }}">
-                                                    Receiver's code
-                                                </label>
-                                                <datalist id="contacts">
-                                                    {% for code in codes %}
-                                                        <option value="{{ code }}">:@{{ code }}:</option>
-                                                    {% endfor %}
-                                                </datalist>
-                                            </div>
+                                            {% include "util/contactfield.html"
+                                            with {"id": lock.id, "expandable": true, "script": loop.first } %}
 
                                             <input type="hidden" name="lock" value="{{ lock.id }}">
                                             <input type="hidden" name="submit" value="add">

@@ -54,8 +54,11 @@ abstract class Page
     {
         $this->db = new Database();
         $twig = new Twig_Environment(new Twig_Loader_Filesystem("template"));
-        $this->tpl = $twig->load("page/".strtolower(get_class($this)).".html");
         $this->args = $args;
+        
+        $templateFile = "page/".strtolower(get_class($this)).".html";
+        if(file_exists("template/$templateFile"))
+            $this->tpl = $twig->load($templateFile);
         
         if(count($this->args) > $this->argsCount)
         {

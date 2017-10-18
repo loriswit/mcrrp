@@ -10,16 +10,7 @@
         <h4 class="mdl-dialog__title">New conversation</h4>
         <form method="post">
             <div class="mdl-dialog__content">
-                <div class="mdl-textfield mdl-js-textfield">
-                    <input class="mdl-textfield__input" name="code" type="text" pattern="[A-Za-z\d]{4}"
-                           id="code" list="contacts" required>
-                    <label class="mdl-textfield__label" for="code">Contact's code</label>
-                    <datalist id="contacts">
-                        {% for code in codes %}
-                            <option value="{{ code }}">:@{{ code }}:</option>
-                        {% endfor %}
-                    </datalist>
-                </div>
+                {% include "util/contactfield.html" %}
             </div>
             <div class="mdl-dialog__actions">
                 <button class="mdl-button" name="submit" type="submit">Start</button>

@@ -142,6 +142,19 @@ class Database
         $st->execute([$code, $firstName, $lastName, $sex, $stateID, $balance, $player]);
     }
     
+    /**
+     * Tells if a citizen with a given code exists.
+     *
+     * @param string $code A valid or invalid code
+     * @return bool TRUE if a citizen exists, FALSE if not
+     */
+    public function citizenExists($code)
+    {
+        $st = $this->pdo->prepare("SELECT COUNT(*) FROM citizen WHERE code = ?");
+        $st->execute([strtoupper($code)]);
+        return $st->fetchColumn() > 0;
+    }
+    
     //////////////////////
     //      STATES      //
     //////////////////////

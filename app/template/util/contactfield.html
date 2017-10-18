@@ -1,0 +1,52 @@
+{% set id = id is defined ? "code-" ~ id : "code" %}
+{% set script = script is defined ? script : true %}
+
+<div id="{{ id }}-field" class="mdl-js-textfield
+    {% if expandable is defined %}
+        mdl-textfield__expandable-holder
+    {% else %}
+        mdl-textfield
+    {% endif %}">
+
+    <input class="mdl-textfield__input contact-input" id={{ id }} list="contacts" name="code" type="text"
+           pattern="[A-Za-z\d]{4}" maxlength=4 required
+           onchange="validate(this)" onkeypress="this.onchange();" oninput="this.onchange()">
+    <label class="mdl-textfield__label" for={{ id }}>Citizen's code</label>
+    {% if script == true %}
+        <datalist id="contacts">
+            {% for code in codes %}
+                <option value="{{ code }}">:@{{ code }}:</option>
+            {% endfor %}
+        </datalist>
+    {% endif %}
+</div>
+
+{% if script == true %}
+    <script>
+        function validate(input)
+        {
+            if(input.value.length === 4 && input.value.match(/[A-Za-z\d]{4}/))
+            {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if(this.readyState === 4 && this.status === 200)
+                    {
+                        var field = document.getElementById("{{ id }}-field");
+                        if(this.responseText === "1")
+                        {
+                            field.classList.remove("is-invalid");
+                            input.setCustomValidity("");
+                        }
+                        else
+                        {
+                            field.classList.add("is-invalid");
+                            input.setCustomValidity("Invalid citizen's code.");
+                        }
+                    }
+                };
+                xhttp.open("GET", "api/code/" + input.value, true);
+                xhttp.send();
+            }
+        }
+    </script>
+{% endif %}
