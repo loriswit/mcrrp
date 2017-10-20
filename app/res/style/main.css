@@ -78,7 +78,22 @@ a.link:hover
     }
 }
 
-img
+.avatar
 {
+    width: 32px;
+    height: 32px;
     image-rendering: pixelated;
+    float: right;
+}
+
+.avatar.margin
+{
+    margin: 15px;
+}
+
+.mdl-layout-title
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

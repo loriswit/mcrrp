@@ -11,7 +11,7 @@
         </span>
 
         <span class="mdl-layout-title">
-            <img src="https://crafatar.com/avatars/{{ citizen.player }}?size=32&overlay">
+            <span class="avatar margin" style="background-image: url('api/avatar/{{ citizen.player }}')"></span>
             :{{ citizen.code }}:
         </span>
 
@@ -45,12 +45,6 @@
                 <code class="mdl-list__item-primary-content">
                     <i class="material-icons mdl-list__item-icon">account_balance_wallet</i>
                     {{ state.currency }} {{ citizen.balance|number_format(0) }}
-                </code>
-            </li>
-            <li class="mdl-list__item">
-                <code class="mdl-list__item-primary-content">
-                    <i class="material-icons mdl-list__item-icon">location_city</i>
-                    {{ state.name }}
                 </code>
             </li>
         </ul>

@@ -1,5 +1,8 @@
 .lock-type
 {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
     float: right;
 }
 
