@@ -7,7 +7,7 @@ class NotFound extends Page
 {
     protected function title()
     {
-        return "Error";
+        return "Not found";
     }
     
     protected function run()

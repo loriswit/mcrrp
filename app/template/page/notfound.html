@@ -1,6 +1,25 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/notfound.css">
+{% endblock %}
+
 {% block content %}
-    <p>[@The requested page no longer exists].</p>
-    <a href="/">[@Back]</a>
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <div class="not-found-card mdl-card mdl-shadow--3dp">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">404</h2>
+                </div>
+                <div class="mdl-card__supporting-text">The requested page no longer exists</div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <div class="mdl-layout-spacer"></div>
+                    <a class="mdl-button--colored mdl-button mdl-js-button mdl-js-ripple-effect"
+                       href="/" name="submit" type="submit">
+                        Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
