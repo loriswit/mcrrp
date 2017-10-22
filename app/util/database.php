@@ -14,7 +14,7 @@ class Database
     {
         $dbInfo = CONFIG["database"];
         
-        $host = "localhost";
+        $host = $dbInfo["host"];
         $name = $dbInfo["name"];
         $user = $dbInfo["user"];
         $pass = $dbInfo["pass"];

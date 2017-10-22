@@ -7,20 +7,25 @@ trap 'echo -e "\e[1;31mInstallation failed!\e[0m" ; exit' ERR
 
 echo -n "Installing web app... "
 cd ../app
-composer -q install
+if type "composer" &> /dev/null; then
+    composer -q install
+else
+    php composer.phar -q install
+fi
 
 echo "Done!"
 echo -n "Creating database... "
 cd ..
+host=$(bin/config.sh database host)
 name=$(bin/config.sh database name)
 user=$(bin/config.sh database user)
 pass=$(bin/config.sh database pass)
 statement="CREATE DATABASE IF NOT EXISTS $name"
 
 if [ -z $pass ]; then
-    mysql -u $user -e "$statement"
+    mysql -h $host -u $user -e "$statement"
 else
-    mysql -u $user -p$pass -e "$statement"
+    mysql -h $host -u $user -p$pass -e "$statement"
 fi
 
 echo "Done!"
@@ -31,6 +36,7 @@ if [ -f phinx.yml ]; then
 fi
 vendor/bin/phinx -q init
 
+sed -i "s/localhost/$host/g" phinx.yml
 sed -i "s/development_db/$name/g" phinx.yml
 sed -i "s/root/$user/g" phinx.yml
 if [ ! -z $pass ]; then
@@ -56,4 +62,3 @@ sed -i "s/tab-complete:.*$/tab-complete: -1/m" spigot.yml
 
 echo "Done!"
 echo "Installation finished!"
-echo -e "You need to set Apache's document root to the \e[33m./app\e[0m directory."
