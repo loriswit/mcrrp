@@ -40,7 +40,6 @@ class Join extends Page
         
         $sex = "N/A";
         $stateID = $_POST["state"];
-        $balance = $this->db->state($stateID)["initial"];
         
         // format names
         $firstName = str_replace("'", "’", $firstName);
@@ -68,7 +67,10 @@ class Join extends Page
             while(!$this->db->codeAvailable($code));
         
         // send to database
-        $this->db->addCitizen($code, $firstName, $lastName, $sex, $stateID, $balance, $_SESSION["uuid"]);
+        $citizenID = $this->db->addCitizen($code, $firstName, $lastName, $sex, $stateID, $_SESSION["uuid"]);
+        $state = $this->db->state($stateID);
+        $this->db->addTransaction($stateID, true, $citizenID, false, $state["initial"],
+            "Welcome gift from state ".$state["name"].".");
         
         $_SESSION["logged"] = true;
         header("Location: /");

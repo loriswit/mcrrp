@@ -131,15 +131,16 @@ class Database
      * @param string $lastName The last name(s) of the citizen
      * @param string $sex The sex of the citizen ("M" or "F")
      * @param int $stateID The ID of a valid state
-     * @param int $balance The initial balance of the citizen
      * @param string $player The UUID of a unregistered player
+     * @return string The ID of the new citizen
      */
-    public function addCitizen($code, $firstName, $lastName, $sex, $stateID, $balance, $player)
+    public function addCitizen($code, $firstName, $lastName, $sex, $stateID, $player)
     {
         $st = $this->pdo->prepare(
             "INSERT INTO citizen (code, first_name, last_name, sex, state_id, balance, player) "
-            ."VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $st->execute([$code, $firstName, $lastName, $sex, $stateID, $balance, $player]);
+            ."VALUES (?, ?, ?, ?, ?, 0, ?)");
+        $st->execute([$code, $firstName, $lastName, $sex, $stateID, $player]);
+        return $this->pdo->lastInsertId();
     }
     
     /**
