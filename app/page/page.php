@@ -179,7 +179,7 @@ abstract class Page
                 $damage = (count($args) == 2 ? $args[1] : 0);
                 
                 if(isset($itemNames[$material][$damage]))
-                    $str = str_replace(":$match:", $itemNames[$material][$damage], $str);
+                    $str = str_replace(":$match:", strtolower($itemNames[$material][$damage]), $str);
             }
         }
         
