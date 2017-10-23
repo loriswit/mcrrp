@@ -1,0 +1,10 @@
+.company-title
+{
+    text-align: center;
+    margin-top: 40px;
+}
+
+.company-title.first
+{
+    margin-top: 0;
+}

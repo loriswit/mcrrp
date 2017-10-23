@@ -1,52 +1,68 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/table.css">
+    <link rel="stylesheet" href="/res/style/employment.css">
+{% endblock %}
+
 {% block content %}
-    <h3>[@Government]</h3>
-    {% if governments is empty %}
-        <p>No governments.</p>
-    {% endif %}
-    <table>
-        {% for government in governments %}
-            <tr>
-                <td><a href="company/{{ government.id }}">{{ government.name }}</a></td>
-                <td>{{ government.description }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+    <dialog class="mdl-dialog large-dialog">
+        <h4 class="mdl-dialog__title">Found a company</h4>
+        <form method="post">
+            <div class="mdl-dialog__content">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" name="name" type="text" id="name" required>
+                    <label class="mdl-textfield__label" for="name">Company name</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" name="description" type="text" id="description" required>
+                    <label class="mdl-textfield__label" for="description">Description</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield message-input">
+                    <textarea id="presentation" name="presentation" class="mdl-textfield__input"
+                              rows=5 required></textarea>
+                    <label class="mdl-textfield__label" for="presentation">Presentation</label>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button class="mdl-button" name="submit" type="submit">Send request</button>
+                <button class="mdl-button close">Cancel</button>
+            </div>
+        </form>
+    </dialog>
 
-    {% if banks is not empty %}
-        <h3>[@Bank]</h3>
-        <table>
-            {% for bank in banks %}
-                <tr>
-                    <td><a href="company/{{ bank.id }}">{{ bank.name }}</a></td>
-                    <td>{{ bank.description }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+    <div class="table-grid mdl-grid">
+        {% include "util/addbutton.html" with {"tooltip": "New company"} %}
 
-    {% if presses is not empty %}
-        <h3>[@Press]</h3>
-        <table>
-            {% for press in presses %}
-                <tr>
-                    <td><a href="company/{{ press.id }}">{{ press.name }}</a></td>
-                    <td>{{ press.description }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-
-    {% if companies is not empty %}
-        <h3>[@Others]</h3>
-        <table>
-            {% for company in companies %}
-                <tr>
-                    <td><a href="company/{{ company.id }}">{{ company.name }}</a></td>
-                    <td>{{ company.description }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+        <div class="mdl-cell mdl-cell--12-col">
+            {% if employment is empty %}
+                <div class="info-card mdl-card mdl-shadow--2dp">
+                    <span class="mdl-card__supporting-text">No companies.</span>
+                </div>
+            {% else %}
+                {% for type, companies in employment %}
+                    <h4 class="company-title {{ loop.first ? "first" : "" }}">{{ type }}</h4>
+                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                        {% for company in companies %}
+                            <tr class="clickable" onclick="location.href = 'company/{{ company.id }}'">
+                                <td class="mdl-data-table__cell--non-numeric">
+                                    <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                        <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                            <div class="contact">{{ company.name }}</div>
+                                            <div class="date">{{ company.founded|date("F Y") }}</div>
+                                        </div>
+                                        <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                            <div class="message-body">
+                                                {{ company.description }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

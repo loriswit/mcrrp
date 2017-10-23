@@ -14,10 +14,14 @@ class Employment extends Page
     
     protected function run()
     {
-        $this->set("governments", $this->db->governments());
-        $this->set("banks", $this->db->banks());
-        $this->set("presses", $this->db->presses());
-        $this->set("companies", $this->db->otherCompanies());
+        $employment = [
+            "Governments" => $this->db->governments(),
+            "Banks" => $this->db->banks(),
+            "Presses" => $this->db->presses(),
+            "Other companies" => $this->db->otherCompanies()
+        ];
+        
+        $this->set("employment", $employment);
     }
     
     protected function submit()

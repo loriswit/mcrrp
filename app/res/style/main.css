@@ -97,3 +97,10 @@ a.link:hover
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.large-dialog
+{
+    width: 25%;
+    min-width: 300px;
+    margin: auto;
+}
