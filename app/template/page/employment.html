@@ -36,31 +36,31 @@
 
         <div class="mdl-cell mdl-cell--12-col">
             {% if employment is empty %}
-                <div class="info-card mdl-card mdl-shadow--2dp">
-                    <span class="mdl-card__supporting-text">No companies.</span>
-                </div>
+                {% include "util/infobox.html" with {"info": "No companies." } %}
             {% else %}
                 {% for type, companies in employment %}
-                    <h4 class="company-title {{ loop.first ? "first" : "" }}">{{ type }}</h4>
-                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-                        {% for company in companies %}
-                            <tr class="clickable" onclick="location.href = 'company/{{ company.id }}'">
-                                <td class="mdl-data-table__cell--non-numeric">
-                                    <div class="row-grid mdl-grid mdl-grid--no-spacing">
-                                        <div class="contact-cell mdl-cell mdl-cell--4-col">
-                                            <div class="contact">{{ company.name }}</div>
-                                            <div class="date">{{ company.founded|date("F Y") }}</div>
-                                        </div>
-                                        <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
-                                            <div class="message-body">
-                                                {{ company.description }}
+                    <h4 class="company-title{{ loop.first ? " first" : "" }}">{{ type|capitalize }}</h4>
+                    {% if companies is empty %}
+                        {% include "util/infobox.html" with {"info": "No " ~ type ~ "." } %}
+                    {% else %}
+                        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                            {% for company in companies %}
+                                <tr class="clickable" onclick="location.href = 'company/{{ company.id }}'">
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                            <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                                <div class="contact">{{ company.name }}</div>
+                                                <div class="date">{{ company.founded|date("F Y") }}</div>
+                                            </div>
+                                            <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                                <div class="message-body">{{ company.description }}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </table>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </div>

@@ -9,9 +9,7 @@
     <div class="table-grid mdl-grid">
         <div class="mdl-cell mdl-cell--12-col">
             {% if locks is empty %}
-                <div class="info-card mdl-card mdl-shadow--2dp">
-                    <span class="mdl-card__supporting-text">No locks.</span>
-                </div>
+                {% include "util/infobox.html" with {"info": "No locks." } %}
             {% else %}
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     {% for lock in locks %}

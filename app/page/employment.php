@@ -15,10 +15,10 @@ class Employment extends Page
     protected function run()
     {
         $employment = [
-            "Governments" => $this->db->governments(),
-            "Banks" => $this->db->banks(),
-            "Presses" => $this->db->presses(),
-            "Other companies" => $this->db->otherCompanies()
+            "governments" => $this->db->governments(),
+            "banks" => $this->db->banks(),
+            "presses" => $this->db->presses(),
+            "other companies" => $this->db->otherCompanies()
         ];
         
         $this->set("employment", $employment);

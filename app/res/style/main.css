@@ -46,6 +46,11 @@ a.link:hover
     text-align: center;
 }
 
+.info-card-text
+{
+    width: auto;
+}
+
 .contact-input
 {
     font-family: "Lucida Console", Monaco, monospace;

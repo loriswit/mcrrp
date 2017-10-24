@@ -24,9 +24,7 @@
 
         <div class="mdl-cell mdl-cell--12-col">
             {% if conversations is empty %}
-                <div class="info-card mdl-card mdl-shadow--2dp">
-                    <span class="mdl-card__supporting-text">No conversations.</span>
-                </div>
+                {% include "util/infobox.html" with {"info": "No conversations." } %}
             {% else %}
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     {% for conversation in conversations %}
