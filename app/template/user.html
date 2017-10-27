@@ -4,8 +4,8 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout__drawer-button">
             <i class="material-icons
-            {% if msg_count + transac_count > 0 %}
-                mdl-badge mdl-badge--overlap" data-badge="{{ msg_count + transac_count }}
+            {% if msg_count + transac_count + request_count > 0 %}
+                mdl-badge mdl-badge--overlap" data-badge="{{ msg_count + transac_count + request_count }}
             {% endif %}
             ">menu</i>
         </span>
@@ -30,6 +30,14 @@
                 ">attach_money</i> Transactions</a>
             <a class="mdl-navigation__link" href="/lock"><i class="material-icons">lock</i> Locks</a>
             <a class="mdl-navigation__link" href="/employment"><i class="material-icons">work</i> Employment</a>
+            {% if citizen.governor %}
+                <a class="mdl-navigation__link" href="/request">
+                    <i class="material-icons
+                    {% if request_count > 0 %}
+                        mdl-badge mdl-badge--overlap" data-badge="{{ request_count }}
+                    {% endif %}
+                ">verified_user</i> Requests</a>
+            {% endif %}
         </nav>
 
         <div class="mdl-layout-spacer"></div>

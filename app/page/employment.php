@@ -26,6 +26,10 @@ class Employment extends Page
     
     protected function submit()
     {
+        $this->db->addRequest($_POST["name"], $_POST["description"], $_POST["presentation"],
+            $this->citizen["state_id"], $this->citizen["id"]);
+        
+        $this->set("info", "Request sent successfully.");
     }
 }
 

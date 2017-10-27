@@ -1,0 +1,33 @@
+{% extends template %}
+
+{% block style %}
+    <link rel="stylesheet" href="/res/style/table.css">
+{% endblock %}
+
+{% block content %}
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            {% if requests is empty %}
+                {% include "util/infobox.html" with {"info": "No requests." } %}
+            {% else %}
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    {% for request in requests %}
+                        <tr class="clickable" onclick="location.href = 'company/{{ request.id }}'">
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                    <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                        <div class="contact">:{{ request.founder.code }}:</div>
+                                        <div class="date">{{ request.date }}</div>
+                                    </div>
+                                    <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                        <div class="message-body">{{ request.name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

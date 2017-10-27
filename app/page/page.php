@@ -112,15 +112,28 @@ abstract class Page
         
         if(LOGGED)
         {
+            $state = $this->db->state($this->citizen["state_id"]);
+            
             $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
             
-            $state = $this->db->state($this->citizen["state_id"]);
+            if($this->db->isGovernor($this->citizen["id"]))
+            {
+                $this->citizen["governor"] = true;
+                $requestCount = $this->db->requestCount($state["id"]);
+            }
+            else
+            {
+                $this->citizen["governor"] = false;
+                $requestCount = 0;
+            }
+            
             $this->variables["citizen"] = $this->citizen;
             $this->variables["role"] = "n/a";
             $this->variables["state"] = $state;
             $this->variables["msg_count"] = $unreadMessages;
             $this->variables["transac_count"] = $unreadTransactions;
+            $this->variables["request_count"] = $requestCount;
             
             $this->variables["template"] = "user.html";
         }

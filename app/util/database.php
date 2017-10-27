@@ -496,7 +496,7 @@ class Database
     {
         return $this->pdo->query(
             "SELECT id, name, description FROM company "
-            ."WHERE $type = TRUE ORDER BY name")->fetchAll();
+            ."WHERE $type = TRUE AND request = FALSE ORDER BY name")->fetchAll();
     }
     
     /**
@@ -538,7 +538,7 @@ class Database
     {
         return $this->pdo->query(
             "SELECT id, name, description FROM company "
-            ."WHERE (government, bank, press) = (FALSE, FALSE, FALSE) "
+            ."WHERE (government, bank, press) = (FALSE, FALSE, FALSE) AND request = FALSE "
             ."ORDER BY name")->fetchAll();
     }
     
@@ -568,5 +568,70 @@ class Database
             ."(SELECT citizen_id FROM worker WHERE company_id = ? AND leader = TRUE)");
         $st->execute([$companyID]);
         return $st->fetchAll();
+    }
+    
+    /**
+     * Tells if a specific citizen has governor permissions.
+     *
+     * @param int $citizenID The ID of a valid citizen
+     * @return bool TRUE if the citizen is a governor, FALSE if not
+     */
+    public function isGovernor($citizenID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT citizen_id FROM worker WHERE company_id IN "
+            ."(SELECT id FROM company WHERE government = TRUE) "
+            ."AND citizen_id = ?");
+        
+        $st->execute([$citizenID]);
+        return $st->fetchColumn() > 0;
+    }
+    
+    /**
+     * Returns the number of company requests in a specific state.
+     *
+     * @param int $stateID The ID of a valid state
+     * @return int The number of requests
+     */
+    public function requestCount($stateID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM company WHERE request = TRUE AND state_id = ?");
+        
+        $st->execute([$stateID]);
+        return $st->fetchColumn();
+    }
+    
+    /**
+     * Returns all company requests in a specific state.
+     *
+     * @param int $stateID The ID of a valid state
+     * @return array An array containing all requests
+     */
+    public function requests($stateID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT id, name, founder_id, founded FROM company "
+            ."WHERE request = TRUE AND state_id = ? ORDER BY founded DESC");
+        
+        $st->execute([$stateID]);
+        return $st->fetchAll();
+    }
+    
+    /**
+     * Adds a new company request to the database.
+     *
+     * @param string $name The company name
+     * @param string $description The company short description
+     * @param string $presentation The company presentation
+     * @param int $state_id The ID of a valid state
+     * @param int $founder_id The ID of a valid citizen
+     */
+    public function addRequest($name, $description, $presentation, $state_id, $founder_id)
+    {
+        $st = $this->pdo->prepare(
+            "INSERT INTO company (name, description, profession, presentation, state_id, founder_id, request, founded) "
+            ."VALUES (?, ?, '', ?, ?, ?, TRUE, UNIX_TIMESTAMP(NOW()))");
+        $st->execute([$name, $description, $presentation, $state_id, $founder_id]);
     }
 }
