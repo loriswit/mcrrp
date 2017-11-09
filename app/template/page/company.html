@@ -1,18 +1,73 @@
 {% extends template %}
 
+{% block style %}
+    <link rel="stylesheet" href="/res/style/company.css">
+{% endblock %}
+
 {% block content %}
-    <p>{{ company.description }}</p>
-    <h3>[@Leader(s)]</h3>
-    {% if leaders is empty %}
-        <p>No leaders.</p>
-    {% else %}
-        <ul>
-            {% for leader in leaders %}
-                <li>:{{ leader.code }}:</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <p>{{ company.presentation }}</p>
-    <h3>[@Founded]</h3>
-    <p>{{ company.founded|date("j F Y") }} by :{{ company.founder.code }}:</p>
+    <div class="company">
+        <div class="company-card mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">{{ company.name }}</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <h3>{{ company.description }}</h3>
+                <div class="mdl-grid">
+                    <div class="company-cell mdl-cell mdl-cell--12-col">
+                        <h3>Presentation</h3>
+                        <p>{{ company.presentation }}</p>
+                    </div>
+                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--top">
+                        {% if leaders is empty %}
+                            <h3>No leaders</h3>
+                        {% else %}
+                            <h3>Leader(s)</h3>
+                            <ul class="mdl-list">
+                                {% for leader in leaders %}
+                                    <li class="mdl-list__item">
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-icon">person</i>
+                                            :{{ leader.code }}:
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--order-8">
+                        <h3>Informations</h3>
+                        <p>Founded on {{ company.founded|date("j F Y") }} by :{{ company.founder.code }}:.</p>
+                    </div>
+                </div>
+
+            </div>
+            {% if company.request %}
+                <div class="mdl-card__actions mdl-card--border">
+                    <div class="mdl-layout-spacer"></div>
+                    <form method="post">
+                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised bg-green"
+                                name="submit" type="submit" value="accept">Accept
+                        </button>
+                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised bg-red"
+                                name="submit" type="submit" value="reject">Reject
+                        </button>
+                    </form>
+                </div>
+            {% elseif citizen.governor %}
+                <div class="mdl-card__actions mdl-card--border">
+                    <form method="post">
+                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect"
+                                name="submit" type="submit" value="edit">Edit
+                        </button>
+                    </form>
+                    <div class="mdl-layout-spacer"></div>
+                    <form method="post">
+                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
+                                name="submit" type="submit" value="close">Close company
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

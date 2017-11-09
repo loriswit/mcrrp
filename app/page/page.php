@@ -108,8 +108,6 @@ abstract class Page
                 $this->variables["error"] = tr($exception->getMessage());
             }
         
-        $this->run();
-        
         if(LOGGED)
         {
             $state = $this->db->state($this->citizen["state_id"]);
@@ -140,11 +138,8 @@ abstract class Page
         else
             $this->variables["template"] = "visitor.html";
         
+        $this->run();
         $this->variables["title"] = $this->title();
-        $this->variables["langs"] = [
-            ["id" => "en", "name" => "English"],
-            ["id" => "fr", "name" => "Français"],
-        ];
         
         return $this->format($this->tpl->render($this->variables));
     }

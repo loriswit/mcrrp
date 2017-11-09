@@ -1,0 +1,84 @@
+.company
+{
+    margin: 16px;
+}
+
+.company-card
+{
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.company-cell
+{
+    padding: 16px;
+    border: 1px solid #dddddd;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.mdl-list
+{
+    margin: 0;
+}
+
+.mdl-list__item
+{
+    padding: 8px;
+}
+
+.mdl-card__supporting-text
+{
+    width: auto;
+    padding-top: 0;
+}
+
+.mdl-card__supporting-text h3
+{
+    font-size: 1.2em;
+    line-height: normal;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.company-cell h3
+{
+    text-align: center;
+
+    font-size: 1.5em;
+    line-height: normal;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.company-cell p
+{
+    margin-bottom: 4px;
+}
+
+.bg-green
+{
+    color: white;
+    background-color: #33cc66;
+}
+
+.bg-green:hover
+{
+    background-color: #55ee88;
+}
+
+.bg-red
+{
+    color: white;
+    background-color: #dd5555;
+}
+
+.bg-red:hover
+{
+    background-color: #ff7777;
+}
+
+form
+{
+    margin: 4px;
+}

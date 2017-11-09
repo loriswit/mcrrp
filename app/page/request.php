@@ -32,6 +32,5 @@ class Request extends Page
     
     protected function submit()
     {
-        // TODO: Implement submit() method.
     }
 }
