@@ -3,6 +3,16 @@ main
     background-color: #f0f2ea;
 }
 
+p
+{
+    margin-bottom: 12px;
+}
+
+p:last-child
+{
+    margin-bottom: 0;
+}
+
 a.link
 {
     color: #0c6;

@@ -38,7 +38,7 @@
                     {{ message.sent ? "message-sent" : "message-received" }}">
 
                     <div class="mdl-card__supporting-text message-body">
-                        {{ message.body|nl2br }}
+                        {{ message.body|markdown }}
                     </div>
 
                     <div id="{{ message.id }}" class="mdl-card__actions mdl-card--border message-info">

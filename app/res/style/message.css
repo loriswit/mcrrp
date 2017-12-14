@@ -22,3 +22,9 @@
 {
     box-shadow: none;
 }
+
+.message-body p, pre
+{
+    display: inline;
+    white-space: nowrap;
+}

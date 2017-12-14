@@ -1,5 +1,9 @@
 <?php
 
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -53,8 +57,15 @@ abstract class Page
     public function __construct($args)
     {
         $this->db = new Database();
-        $twig = new Twig_Environment(new Twig_Loader_Filesystem("template"));
         $this->args = $args;
+        
+        $environment = Environment::createCommonMarkEnvironment();
+        $environment->addInlineRenderer("League\CommonMark\Inline\Element\Link", new LinkRenderer());
+        $converter = new CommonMarkConverter(["html_input" => "escape"], $environment);
+        $engine = new MarkdownEngine\PHPLeagueCommonMarkEngine($converter);
+        
+        $twig = new Twig_Environment(new Twig_Loader_Filesystem("template"));
+        $twig->addExtension(new MarkdownExtension($engine));
         
         $templateFile = "page/".strtolower(get_class($this)).".html";
         if(file_exists("template/$templateFile"))
