@@ -26,6 +26,17 @@ a.link:hover
     color: #5af;
 }
 
+img
+{
+    max-width: 100%;
+}
+
+blockquote
+{
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
 .mdl-grid
 {
     margin-top: 12px;

@@ -96,3 +96,8 @@ textarea
 {
     resize: none;
 }
+
+p:last-child
+{
+    display: inline;
+}

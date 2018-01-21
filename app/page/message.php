@@ -25,6 +25,7 @@ class Message extends Page
             else
                 $contactID = $conversation["sender_id"];
             
+            $conversation["body"] = preg_replace("/!\[.*\]\(.+\)/", "*Image*", $conversation["body"]);
             $conversation["date"] = new Date($conversation["timestamp"]);
             $conversation["sent"] = $sent;
             $conversation["contact"] = $this->db->citizen($contactID);

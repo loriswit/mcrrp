@@ -28,3 +28,8 @@
     display: inline;
     white-space: nowrap;
 }
+
+blockquote
+{
+    display: inline;
+}
