@@ -9,6 +9,10 @@
         <div class="company-card mdl-card mdl-shadow--2dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text">{{ company.name }}</h2>
+                {% if company.closed %}
+                    <div class="mdl-layout-spacer"></div>
+                    <h2 class="mdl-card__title-text closed-tag">CLOSED</h2>
+                {% endif %}
             </div>
             <div class="mdl-card__supporting-text">
                 <h3>{{ company.description }}</h3>
@@ -17,13 +21,13 @@
                         <h3>Presentation</h3>
                         <p>{{ company.presentation|markdown }}</p>
                     </div>
-                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--top">
-                        {% if leaders is empty %}
+                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--top">
+                        {% if company.leaders is empty %}
                             <h3>No leaders</h3>
                         {% else %}
                             <h3>Leader(s)</h3>
                             <ul class="mdl-list">
-                                {% for leader in leaders %}
+                                {% for leader in company.leaders %}
                                     <li class="mdl-list__item">
                                         <span class="mdl-list__item-primary-content">
                                             <i class="material-icons mdl-list__item-icon">person</i>
@@ -34,9 +38,12 @@
                             </ul>
                         {% endif %}
                     </div>
-                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--order-8">
+                    <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--order-8">
                         <h3>Informations</h3>
                         <p>Founded on {{ company.founded|date("j F Y") }} by :{{ company.founder.code }}:.</p>
+                        {% if company.closed %}
+                            <p>Closed on {{ company.closed|date("j F Y") }}.</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -53,13 +60,16 @@
                         </button>
                     </form>
                 </div>
-            {% elseif citizen.governor %}
+            {% elseif (citizen.governor or citizen.leader) and not company.closed %}
                 <div class="mdl-card__actions mdl-card--border">
-                    <form method="post">
-                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect"
-                                name="submit" type="submit" value="edit">Edit
+                    <button id="open-edit-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                        Edit informations
+                    </button>
+                    {% if citizen.governor %}
+                        <button id="open-permission-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                            Edit permissions
                         </button>
-                    </form>
+                    {% endif %}
                     <div class="mdl-layout-spacer"></div>
                     <form method="post">
                         <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
@@ -70,4 +80,100 @@
             {% endif %}
         </div>
     </div>
+
+    {% if citizen.governor or citizen.leader %}
+        <dialog id="edit-dialog" class="mdl-dialog large-dialog">
+            <h4 class="mdl-dialog__title">Edit informations</h4>
+            <form method="post">
+                <div class="mdl-dialog__content">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" name="name" type="text" id="name" required
+                               value="{{ company.name }}">
+                        <label class="mdl-textfield__label" for="name">Company name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" name="description" type="text" id="description" required
+                               value="{{ company.description }}">
+                        <label class="mdl-textfield__label" for="description">Short description</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" name="profession" type="text" id="profession" required
+                               value="{{ company.profession }}">
+                        <label class="mdl-textfield__label" for="profession">Profession</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <textarea id="presentation" name="presentation" class="mdl-textfield__input" rows=10
+                                  required>{{ company.presentation }}</textarea>
+                        <label class="mdl-textfield__label" for="presentation">Presentation</label>
+                    </div>
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button class="mdl-button" name="submit" type="submit" value="edit">Save</button>
+                    <button class="mdl-button close">Cancel</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script>
+            var editDialog = document.querySelector("#edit-dialog");
+            var editDialogButton = document.querySelector("#open-edit-dialog");
+            if(!editDialog.showModal)
+                dialogPolyfill.registerDialog(editDialog);
+
+            editDialogButton.addEventListener("click", function() {
+                editDialog.showModal();
+            });
+            editDialog.querySelector(".close").addEventListener("click", function() {
+                editDialog.close();
+            });
+        </script>
+    {% endif %}
+
+    {% if citizen.governor %}
+        <dialog id="permission-dialog" class="mdl-dialog large-dialog">
+            <h4 class="mdl-dialog__title">Edit permissions</h4>
+            <form method="post">
+                <div class="mdl-dialog__content">
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="government">
+                        <input type="checkbox" id="government" name="government" class="mdl-checkbox__input"
+                                {{ company.government ? "checked" : "" }}>
+                        <span class="mdl-checkbox__label">Government</span>
+                    </label>
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="bank">
+                        <input type="checkbox" id="bank" name="bank" class="mdl-checkbox__input"
+                                {{ company.bank ? "checked" : "" }}>
+                        <span class="mdl-checkbox__label">Bank</span>
+                    </label>
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="press">
+                        <input type="checkbox" id="press" name="press" class="mdl-checkbox__input"
+                                {{ company.press ? "checked" : "" }}>
+                        <span class="mdl-checkbox__label">Press</span>
+                    </label>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <textarea id="materials" name="materials" class="mdl-textfield__input"
+                                  rows=5>{% for material in company.materials %}:{{ material }}:&#13;&#10;{% endfor %}</textarea>
+                        <label class="mdl-textfield__label" for="materials">Craftable materials</label>
+                    </div>
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button class="mdl-button" name="submit" type="submit" value="permission">Save</button>
+                    <button class="mdl-button close">Cancel</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script>
+            var permissionDialog = document.querySelector("#permission-dialog");
+            var permissionDialogButton = document.querySelector("#open-permission-dialog");
+            if(!permissionDialog.showModal)
+                dialogPolyfill.registerDialog(permissionDialog);
+
+            permissionDialogButton.addEventListener("click", function() {
+                permissionDialog.showModal();
+            });
+            permissionDialog.querySelector(".close").addEventListener("click", function() {
+                permissionDialog.close();
+            });
+        </script>
+    {% endif %}
 {% endblock %}

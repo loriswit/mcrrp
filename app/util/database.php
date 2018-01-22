@@ -495,7 +495,7 @@ class Database
     private function companies($type)
     {
         return $this->pdo->query(
-            "SELECT id, name, description FROM company "
+            "SELECT id, name, description, founded FROM company "
             ."WHERE $type = TRUE AND request = FALSE ORDER BY name")->fetchAll();
     }
     
@@ -537,7 +537,7 @@ class Database
     public function otherCompanies()
     {
         return $this->pdo->query(
-            "SELECT id, name, description FROM company "
+            "SELECT id, name, description, founded FROM company "
             ."WHERE (government, bank, press) = (FALSE, FALSE, FALSE) AND request = FALSE "
             ."ORDER BY name")->fetchAll();
     }
@@ -556,7 +556,7 @@ class Database
     }
     
     /**
-     * Returns all citizens that are leaders of a specific company
+     * Returns all citizens that are leaders of a specific company.
      *
      * @param int $companyID The ID of a valid company
      * @return array An array containing all leaders
@@ -568,6 +568,22 @@ class Database
             ."(SELECT citizen_id FROM worker WHERE company_id = ? AND leader = TRUE)");
         $st->execute([$companyID]);
         return $st->fetchAll();
+    }
+    
+    /**
+     * Tells if a specific citizen is a leader of a specific company.
+     *
+     * @param int $citizenID The ID of a valid citizen
+     * @param int $companyID The ID of a valid company
+     * @return bool TRUE if the citizen is a leader, FALSE if not
+     */
+    public function isLeader($citizenID, $companyID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM worker WHERE leader = TRUE AND citizen_id = ? AND company_id = ?");
+        
+        $st->execute([$citizenID, $companyID]);
+        return $st->fetchColumn() > 0;
     }
     
     /**
@@ -629,9 +645,100 @@ class Database
      */
     public function addRequest($name, $description, $presentation, $state_id, $founder_id)
     {
+        $this->pdo->beginTransaction();
+        
         $st = $this->pdo->prepare(
             "INSERT INTO company (name, description, profession, presentation, state_id, founder_id, request, founded) "
-            ."VALUES (?, ?, '', ?, ?, ?, TRUE, UNIX_TIMESTAMP(NOW()))");
+            ."VALUES (?, ?, 'worker', ?, ?, ?, TRUE, UNIX_TIMESTAMP(NOW()))");
         $st->execute([$name, $description, $presentation, $state_id, $founder_id]);
+        
+        $st = $this->pdo->prepare(
+            "INSERT INTO worker (company_id, citizen_id, leader, hired) "
+            ."VALUES(LAST_INSERT_ID(), ?, TRUE, UNIX_TIMESTAMP(NOW()))");
+        $st->execute([$founder_id]);
+        
+        $this->pdo->commit();
+    }
+    
+    /**
+     * Accepts or rejects a company request.
+     *
+     * @param int $id The ID of a valid company
+     * @param bool $accept TRUE to accept the request, FALSE to reject
+     */
+    public function acceptRequest($id, $accept)
+    {
+        if($accept)
+            $st = $this->pdo->prepare("UPDATE company SET request = FALSE WHERE id = ?");
+        else
+            $st = $this->pdo->prepare("DELETE FROM company WHERE id = ?");
+        
+        $st->execute([$id]);
+    }
+    
+    /**
+     * Updates the informations of a specific company.
+     *
+     * @param int $id The ID of a valid company
+     * @param string $name The company name
+     * @param string $description The company short description
+     * @param string $profession The profession name
+     * @param string $presentation The company presentation
+     */
+    public function updateCompanyInformations($id, $name, $description, $profession, $presentation)
+    {
+        $st = $this->pdo->prepare(
+            "UPDATE company SET name = ?, description = ?, profession = ?, presentation = ? WHERE id = ?");
+        $st->execute([$name, $description, $profession, $presentation, $id]);
+    }
+    
+    /**
+     * Updates the permissions of a specific company.
+     *
+     * @param int $id The ID of a valid company
+     * @param bool $government TRUE if the company has government permissions, FALSE if not
+     * @param bool $bank TRUE if the company has bank permissions, FALSE if not
+     * @param bool $press TRUE if the company has press permissions, FALSE if not
+     * @param array $materials An array containing all materials that can be crafted by the company
+     */
+    public function updateCompanyPermissions($id, $government, $bank, $press, $materials)
+    {
+        $this->pdo->beginTransaction();
+        
+        $st = $this->pdo->prepare("UPDATE company SET government = ?, bank = ?, press = ? WHERE id = ?");
+        $st->execute([$government, $bank, $press, $id]);
+        
+        $st = $this->pdo->prepare("DELETE FROM craft WHERE company_id = ?");
+        $st->execute([$id]);
+        
+        $st = $this->pdo->prepare("INSERT INTO craft (company_id, material) VALUES(?, ?)");
+        foreach($materials as $material)
+            $st->execute([$id, $material]);
+        
+        $this->pdo->commit();
+    }
+    
+    /**
+     * Closes a company.
+     *
+     * @param int $id The ID of a valid company
+     */
+    public function closeCompany($id)
+    {
+        $st = $this->pdo->prepare("UPDATE company SET closed = UNIX_TIMESTAMP(NOW()) WHERE id = ?");
+        $st->execute([$id]);
+    }
+    
+    /**
+     * Returns all materials that can be crafted by a specific company.
+     *
+     * @param int $companyID The ID of a valid company
+     * @return array An array containing all craftable materials
+     */
+    public function materials($companyID)
+    {
+        $st = $this->pdo->prepare("SELECT material FROM craft WHERE company_id = ?");
+        $st->execute([$companyID]);
+        return $st->fetchAll(PDO::FETCH_COLUMN);
     }
 }

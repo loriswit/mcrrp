@@ -1,10 +1,9 @@
 <?php
 
-use Aptoma\Twig\Extension\MarkdownExtension;
 use Aptoma\Twig\Extension\MarkdownEngine;
+use Aptoma\Twig\Extension\MarkdownExtension;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Abstract class representing a web page.
@@ -88,6 +87,8 @@ abstract class Page
             $this->citizen = $this->db->citizenByUUID($_SESSION["uuid"]);
             if(empty($this->citizen))
                 header("Location: /logout");
+            
+            $this->citizen["governor"] = $this->db->isGovernor($this->citizen["id"]);
         }
     }
     
@@ -126,23 +127,13 @@ abstract class Page
             $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
             
-            if($this->db->isGovernor($this->citizen["id"]))
-            {
-                $this->citizen["governor"] = true;
-                $requestCount = $this->db->requestCount($state["id"]);
-            }
-            else
-            {
-                $this->citizen["governor"] = false;
-                $requestCount = 0;
-            }
-            
             $this->variables["citizen"] = $this->citizen;
             $this->variables["role"] = "n/a";
             $this->variables["state"] = $state;
             $this->variables["msg_count"] = $unreadMessages;
             $this->variables["transac_count"] = $unreadTransactions;
-            $this->variables["request_count"] = $requestCount;
+            if($this->citizen["governor"])
+                $this->variables["request_count"] = $this->db->requestCount($state["id"]);
             
             $this->variables["template"] = "user.html";
         }
@@ -189,16 +180,11 @@ abstract class Page
         preg_match_all("/:([a-zA-Z_]+\.?\d*):/", $str, $matches);
         if(count($matches) != 0)
         {
-            $itemNames = Yaml::parse(file_get_contents("../data/item/names.yml"));
-            
             foreach(array_unique($matches[1]) as $match)
             {
-                $args = explode(".", $match);
-                $material = strtoupper($args[0]);
-                $damage = (count($args) == 2 ? $args[1] : 0);
-                
-                if(isset($itemNames[$material][$damage]))
-                    $str = str_replace(":$match:", strtolower($itemNames[$material][$damage]), $str);
+                $itemName = Items::getName($match);
+                if($itemName !== false)
+                    $str = str_replace(":$match:", strtolower($itemName), $str);
             }
         }
         
