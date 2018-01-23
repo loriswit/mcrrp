@@ -113,3 +113,19 @@ form
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.leader-icon
+{
+    float: left;
+    padding-top: 6px;
+    margin-right: 12px;
+
+    color: orange;
+}
+
+.worker-card
+{
+    width: 100%;
+    max-width: 600px;
+    margin: 16px auto auto;
+}

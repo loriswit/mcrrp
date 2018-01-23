@@ -1,6 +1,7 @@
 {% extends template %}
 
 {% block style %}
+    <link rel="stylesheet" href="/res/style/table.css">
     <link rel="stylesheet" href="/res/style/company.css">
 {% endblock %}
 
@@ -46,8 +47,8 @@
                         {% endif %}
                     </div>
                 </div>
-
             </div>
+
             {% if company.request %}
                 <div class="mdl-card__actions mdl-card--border">
                     <div class="mdl-layout-spacer"></div>
@@ -62,11 +63,15 @@
                 </div>
             {% elseif (citizen.governor or citizen.leader) and not company.closed %}
                 <div class="mdl-card__actions mdl-card--border">
-                    <button id="open-edit-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect">
-                        Edit informations
-                    </button>
+                    {% if citizen.leader %}
+                        <button id="open-edit-dialog"
+                                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored">
+                            Edit informations
+                        </button>
+                    {% endif %}
                     {% if citizen.governor %}
-                        <button id="open-permission-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                        <button id="open-permission-dialog"
+                                class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored">
                             Edit permissions
                         </button>
                     {% endif %}
@@ -79,9 +84,87 @@
                 </div>
             {% endif %}
         </div>
+
+        {% if citizen.leader and not company.closed %}
+            <div class="worker-card mdl-card mdl-shadow--2dp">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Workers</h2>
+                    <div class="mdl-layout-spacer"></div>
+                    <button id="hire" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                        <i class="material-icons">person_add</i>
+                    </button>
+                    <div class="mdl-tooltip" data-mdl-for="hire">Hire someone</div>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                        {% for worker in workers %}
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric">
+                                    <div class="row-grid mdl-grid mdl-grid--no-spacing">
+                                        <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                            {% if worker.leader %}
+                                                <i class="material-icons leader-icon">star</i>
+                                            {% endif %}
+                                            <div class="contact">:{{ worker.citizen.code }}:</div>
+                                            <div class="date">since {{ worker.hired|date("j F Y") }}</div>
+                                        </div>
+                                        <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
+                                            <form method="post">
+                                                <label>Actions:</label>
+                                                {% if company.leaders|length == 1 and worker.leader %}
+                                                    {% set disabled = "disabled" %}
+                                                {% else %}
+                                                    {% set disabled = "" %}
+                                                {% endif %}
+                                                <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored"
+                                                        name="submit" type="submit" value="promote" {{ disabled }}>
+                                                    {{ worker.leader ? "Demote" : "Promote" }}
+                                                </button>
+                                                <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
+                                                        name="submit" type="submit" value="dismiss" {{ disabled }}>
+                                                    Dismiss
+                                                </button>
+                                                <input type="hidden" name="worker" value="{{ worker.id }}">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
-    {% if citizen.governor or citizen.leader %}
+    {% if citizen.leader and not company.closed %}
+        <dialog id="hire-dialog" class="mdl-dialog">
+            <h4 class="mdl-dialog__title">Hire someone</h4>
+            <form method="post">
+                <div class="mdl-dialog__content">
+                    {% include "util/contactfield.html" %}
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button class="mdl-button" name="submit" type="submit" value="hire">Hire</button>
+                    <button class="mdl-button close" type="button">Cancel</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script>
+            var hireDialog = document.querySelector("#hire-dialog");
+            var hireDialogButton = document.querySelector("#hire");
+            if(!hireDialog.showModal)
+                dialogPolyfill.registerDialog(hireDialog);
+
+            hireDialogButton.addEventListener("click", function() {
+                hireDialog.showModal();
+            });
+            hireDialog.querySelector(".close").addEventListener("click", function() {
+                hireDialog.close();
+            });
+        </script>
+
         <dialog id="edit-dialog" class="mdl-dialog large-dialog">
             <h4 class="mdl-dialog__title">Edit informations</h4>
             <form method="post">
@@ -129,7 +212,7 @@
         </script>
     {% endif %}
 
-    {% if citizen.governor %}
+    {% if citizen.governor and not company.closed %}
         <dialog id="permission-dialog" class="mdl-dialog large-dialog">
             <h4 class="mdl-dialog__title">Edit permissions</h4>
             <form method="post">

@@ -50,7 +50,7 @@
                                         <div class="row-grid mdl-grid mdl-grid--no-spacing">
                                             <div class="contact-cell mdl-cell mdl-cell--4-col">
                                                 <div class="contact">{{ company.name }}</div>
-                                                <div class="date">{{ company.founded|date("F Y") }}</div>
+                                                <div class="date">since {{ company.founded|date("F Y") }}</div>
                                             </div>
                                             <div class="message-cell mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet">
                                                 <div class="message-body">{{ company.description }}</div>

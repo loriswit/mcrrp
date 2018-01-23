@@ -565,7 +565,7 @@ class Database
     {
         $st = $this->pdo->prepare(
             "SELECT * FROM citizen WHERE id IN "
-            ."(SELECT citizen_id FROM worker WHERE company_id = ? AND leader = TRUE)");
+            ."(SELECT citizen_id FROM worker WHERE company_id = ? AND leader = TRUE AND dismissed = FALSE)");
         $st->execute([$companyID]);
         return $st->fetchAll();
     }
@@ -580,7 +580,8 @@ class Database
     public function isLeader($citizenID, $companyID)
     {
         $st = $this->pdo->prepare(
-            "SELECT COUNT(*) FROM worker WHERE leader = TRUE AND citizen_id = ? AND company_id = ?");
+            "SELECT COUNT(*) FROM worker "
+            ."WHERE leader = TRUE AND citizen_id = ? AND company_id = ? AND dismissed = FALSE");
         
         $st->execute([$citizenID, $companyID]);
         return $st->fetchColumn() > 0;
@@ -654,7 +655,7 @@ class Database
         
         $st = $this->pdo->prepare(
             "INSERT INTO worker (company_id, citizen_id, leader, hired) "
-            ."VALUES(LAST_INSERT_ID(), ?, TRUE, UNIX_TIMESTAMP(NOW()))");
+            ."VALUES(LAST_INSERT_ID(), ?, FALSE, UNIX_TIMESTAMP(NOW()))");
         $st->execute([$founder_id]);
         
         $this->pdo->commit();
@@ -668,12 +669,26 @@ class Database
      */
     public function acceptRequest($id, $accept)
     {
-        if($accept)
-            $st = $this->pdo->prepare("UPDATE company SET request = FALSE WHERE id = ?");
-        else
-            $st = $this->pdo->prepare("DELETE FROM company WHERE id = ?");
+        $this->pdo->beginTransaction();
         
-        $st->execute([$id]);
+        if($accept)
+        {
+            $st = $this->pdo->prepare("UPDATE company SET request = FALSE WHERE id = ?");
+            $st->execute([$id]);
+            
+            $st = $this->pdo->prepare("UPDATE worker SET leader = TRUE WHERE company_id = ?");
+            $st->execute([$id]);
+        }
+        else
+        {
+            $st = $this->pdo->prepare("DELETE FROM company WHERE id = ?");
+            $st->execute([$id]);
+            
+            $st = $this->pdo->prepare("DELETE FROM worker WHERE company_id = ?");
+            $st->execute([$id]);
+        }
+        
+        $this->pdo->commit();
     }
     
     /**
@@ -725,8 +740,15 @@ class Database
      */
     public function closeCompany($id)
     {
+        $this->pdo->beginTransaction();
+        
         $st = $this->pdo->prepare("UPDATE company SET closed = UNIX_TIMESTAMP(NOW()) WHERE id = ?");
         $st->execute([$id]);
+        
+        $st = $this->pdo->prepare("UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE company_id = ?");
+        $st->execute([$id]);
+        
+        $this->pdo->commit();
     }
     
     /**
@@ -740,5 +762,55 @@ class Database
         $st = $this->pdo->prepare("SELECT material FROM craft WHERE company_id = ?");
         $st->execute([$companyID]);
         return $st->fetchAll(PDO::FETCH_COLUMN);
+    }
+    
+    /**
+     * Returns all workers from a specific company.
+     *
+     * @param int $companyID The ID of a valid company
+     * @return array An array containing all workers
+     */
+    public function workers($companyID)
+    {
+        $st = $this->pdo->prepare("SELECT * FROM worker WHERE company_id = ? AND dismissed = FALSE");
+        $st->execute([$companyID]);
+        return $st->fetchAll();
+    }
+    
+    /**
+     * Hires a citizen in a specific company.
+     *
+     * @param int $company_id The ID of a valid company
+     * @param int $citizen_id The ID of a valid citizen
+     */
+    public function hire($company_id, $citizen_id)
+    {
+        $st = $this->pdo->prepare(
+            "INSERT INTO worker (company_id, citizen_id, hired) VALUES(?, ?, UNIX_TIMESTAMP(NOW()))");
+        $st->execute([$company_id, $citizen_id]);
+        
+    }
+    
+    /**
+     * Dismiss a worker from a specific company.
+     *
+     * @param int $id The ID of a valid worker
+     */
+    public function dismiss($id)
+    {
+        $st = $this->pdo->prepare("UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE id = ?");
+        $st->execute([$id]);
+    }
+    
+    /**
+     * Promotes or demotes a specific worker.
+     *
+     * @param int $id The ID of a valid worker
+     * @param boolean $leader TRUE to promote the worker, FALSE to demote
+     */
+    public function promote($id, $leader)
+    {
+        $st = $this->pdo->prepare("UPDATE worker SET leader = ? WHERE id = ?");
+        $st->execute([$leader, $id]);
     }
 }
