@@ -1,10 +1,14 @@
 package me.olybri.mcrrp.util;// Created by Loris Witschard on 6/11/2017.
 
 import me.olybri.mcrrp.MCRRP;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that provides static functions to connect and communicate with the MCRRP database.
@@ -260,6 +264,31 @@ public class Database
         PreparedStatement statement = conn.prepareStatement("UPDATE citizen SET player = 'dead' WHERE player = ?");
         statement.setString(1, player.getUniqueId().toString());
         statement.executeUpdate();
+    }
+    
+    /**
+     * Returns all items that can be crafted by a specific citizen.
+     *
+     * @param player The player associated to the citizen
+     * @return The list of all craftable items
+     */
+    public static List<ItemStack> materials(Player player) throws SQLException
+    {
+        PreparedStatement statement = conn.prepareStatement(
+            "SELECT material FROM craft WHERE company_id IN (SELECT company_id FROM worker WHERE citizen_id = ?)");
+        statement.setInt(1, citizen(player).getInt("id"));
+        ResultSet rs = statement.executeQuery();
+        
+        List<ItemStack> items = new ArrayList<>();
+        while(rs.next())
+        {
+            String[] pieces = rs.getString("material").split("\\.");
+            Material material = Material.getMaterial(pieces[0]);
+            short damage = Short.parseShort(pieces[1]);
+            items.add(new ItemStack(material, 1, damage));
+        }
+        
+        return items;
     }
     
     /**
