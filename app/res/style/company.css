@@ -17,12 +17,12 @@
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
-.mdl-list
+.company-cell .mdl-list
 {
     margin: 0;
 }
 
-.mdl-list__item
+.company-cell .mdl-list__item
 {
     padding: 8px;
 }
@@ -41,7 +41,7 @@
     margin-bottom: 0;
 }
 
-.company-cell h3
+.cell-title
 {
     text-align: center;
 
@@ -49,6 +49,8 @@
     line-height: normal;
     margin-top: 8px;
     margin-bottom: 8px;
+
+    color: black;
 }
 
 .bg-green
@@ -103,4 +105,11 @@ form
 #permission-dialog .mdl-checkbox
 {
     margin: 6px;
+}
+
+.mdl-button
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

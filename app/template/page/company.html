@@ -18,14 +18,14 @@
                 <h3>{{ company.description }}</h3>
                 <div class="mdl-grid">
                     <div class="company-cell mdl-cell mdl-cell--12-col">
-                        <h3>Presentation</h3>
-                        <p>{{ company.presentation|markdown }}</p>
+                        <h3 class="cell-title">Presentation</h3>
+                        {{ company.presentation|markdown }}
                     </div>
                     <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--top">
                         {% if company.leaders is empty %}
-                            <h3>No leaders</h3>
+                            <h3 class="cell-title">No leaders</h3>
                         {% else %}
-                            <h3>Leader(s)</h3>
+                            <h3 class="cell-title">Leader(s)</h3>
                             <ul class="mdl-list">
                                 {% for leader in company.leaders %}
                                     <li class="mdl-list__item">
@@ -39,7 +39,7 @@
                         {% endif %}
                     </div>
                     <div class="company-cell mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--order-8">
-                        <h3>Informations</h3>
+                        <h3 class="cell-title">Informations</h3>
                         <p>Founded on {{ company.founded|date("j F Y") }} by :{{ company.founder.code }}:.</p>
                         {% if company.closed %}
                             <p>Closed on {{ company.closed|date("j F Y") }}.</p>
@@ -109,7 +109,7 @@
                 </div>
                 <div class="mdl-dialog__actions">
                     <button class="mdl-button" name="submit" type="submit" value="edit">Save</button>
-                    <button class="mdl-button close">Cancel</button>
+                    <button class="mdl-button close" type="button">Cancel</button>
                 </div>
             </form>
         </dialog>
@@ -157,7 +157,7 @@
                 </div>
                 <div class="mdl-dialog__actions">
                     <button class="mdl-button" name="submit" type="submit" value="permission">Save</button>
-                    <button class="mdl-button close">Cancel</button>
+                    <button class="mdl-button close" type="button">Cancel</button>
                 </div>
             </form>
         </dialog>
