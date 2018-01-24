@@ -275,7 +275,8 @@ public class Database
     public static List<ItemStack> materials(Player player) throws SQLException
     {
         PreparedStatement statement = conn.prepareStatement(
-            "SELECT material FROM craft WHERE company_id IN (SELECT company_id FROM worker WHERE citizen_id = ?)");
+            "SELECT material FROM craft WHERE company_id IN "
+                + "(SELECT company_id FROM worker WHERE citizen_id = ? AND dismissed = FALSE)");
         statement.setInt(1, citizen(player).getInt("id"));
         ResultSet rs = statement.executeQuery();
         
