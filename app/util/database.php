@@ -496,7 +496,8 @@ class Database
     {
         return $this->pdo->query(
             "SELECT id, name, description, founded FROM company "
-            ."WHERE $type = TRUE AND request = FALSE ORDER BY name")->fetchAll();
+            ."WHERE $type = TRUE AND (request, closed) = (FALSE, FALSE) "
+            ."ORDER BY name")->fetchAll();
     }
     
     /**
@@ -538,7 +539,20 @@ class Database
     {
         return $this->pdo->query(
             "SELECT id, name, description, founded FROM company "
-            ."WHERE (government, bank, press) = (FALSE, FALSE, FALSE) AND request = FALSE "
+            ."WHERE (government, bank, press, request, closed) = (FALSE, FALSE, FALSE, FALSE, FALSE) "
+            ."ORDER BY name")->fetchAll();
+    }
+    
+    /**
+     * Returns all companies that have been closed.
+     *
+     * @return array An array containing all companies
+     */
+    public function closedCompanies()
+    {
+        return $this->pdo->query(
+            "SELECT id, name, description, founded FROM company "
+            ."WHERE request = FALSE AND closed != FALSE "
             ."ORDER BY name")->fetchAll();
     }
     

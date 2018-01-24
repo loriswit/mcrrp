@@ -18,7 +18,8 @@ class Employment extends Page
             "governments" => $this->db->governments(),
             "banks" => $this->db->banks(),
             "presses" => $this->db->presses(),
-            "other companies" => $this->db->otherCompanies()
+            "other companies" => $this->db->otherCompanies(),
+            "closed companies" => $this->db->closedCompanies()
         ];
         
         $this->set("employment", $employment);
