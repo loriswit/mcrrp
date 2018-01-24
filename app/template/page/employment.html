@@ -49,6 +49,12 @@
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <div class="row-grid mdl-grid mdl-grid--no-spacing">
                                             <div class="contact-cell mdl-cell mdl-cell--4-col">
+                                                {% if company.working %}
+                                                    <i class="material-icons working-icon">work</i>
+                                                {% endif %}
+                                                {% if company.leading %}
+                                                    <i class="material-icons working-icon leading-icon">star</i>
+                                                {% endif %}
                                                 <div class="contact">{{ company.name }}</div>
                                                 <div class="date">since {{ company.founded|date("F Y") }}</div>
                                             </div>

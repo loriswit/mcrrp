@@ -8,3 +8,16 @@
 {
     margin-top: 0;
 }
+
+.working-icon
+{
+    color: #5555bb;
+    float: right;
+    padding-top: 6px;
+}
+
+.leading-icon
+{
+    color: orange;
+    margin-right: 6px;
+}

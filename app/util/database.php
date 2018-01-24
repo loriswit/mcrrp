@@ -655,22 +655,22 @@ class Database
      * @param string $name The company name
      * @param string $description The company short description
      * @param string $presentation The company presentation
-     * @param int $state_id The ID of a valid state
-     * @param int $founder_id The ID of a valid citizen
+     * @param int $stateID The ID of a valid state
+     * @param int $founderID The ID of a valid citizen
      */
-    public function addRequest($name, $description, $presentation, $state_id, $founder_id)
+    public function addRequest($name, $description, $presentation, $stateID, $founderID)
     {
         $this->pdo->beginTransaction();
         
         $st = $this->pdo->prepare(
             "INSERT INTO company (name, description, profession, presentation, state_id, founder_id, request, founded) "
             ."VALUES (?, ?, 'worker', ?, ?, ?, TRUE, UNIX_TIMESTAMP(NOW()))");
-        $st->execute([$name, $description, $presentation, $state_id, $founder_id]);
+        $st->execute([$name, $description, $presentation, $stateID, $founderID]);
         
         $st = $this->pdo->prepare(
             "INSERT INTO worker (company_id, citizen_id, leader, hired) "
             ."VALUES(LAST_INSERT_ID(), ?, FALSE, UNIX_TIMESTAMP(NOW()))");
-        $st->execute([$founder_id]);
+        $st->execute([$founderID]);
         
         $this->pdo->commit();
     }
@@ -794,19 +794,19 @@ class Database
     /**
      * Hires a citizen in a specific company.
      *
-     * @param int $company_id The ID of a valid company
-     * @param int $citizen_id The ID of a valid citizen
+     * @param int $companyID The ID of a valid company
+     * @param int $citizenID The ID of a valid citizen
      */
-    public function hire($company_id, $citizen_id)
+    public function hire($companyID, $citizenID)
     {
         $st = $this->pdo->prepare(
             "INSERT INTO worker (company_id, citizen_id, hired) VALUES(?, ?, UNIX_TIMESTAMP(NOW()))");
-        $st->execute([$company_id, $citizen_id]);
+        $st->execute([$companyID, $citizenID]);
         
     }
     
     /**
-     * Dismiss a worker from a specific company.
+     * Dismisses a worker from a specific company.
      *
      * @param int $id The ID of a valid worker
      */
@@ -826,5 +826,21 @@ class Database
     {
         $st = $this->pdo->prepare("UPDATE worker SET leader = ? WHERE id = ?");
         $st->execute([$leader, $id]);
+    }
+    
+    /**
+     * Returns all jobs of a specific citizen.
+     *
+     * @param int $citizenID The ID of a valid citizen
+     * @return array An array containing all jobs
+     */
+    public function jobs($citizenID)
+    {
+        $st = $this->pdo->prepare(
+            "SELECT citizen_id, company_id, leader FROM worker "
+            ."WHERE citizen_id = ? AND dismissed = FALSE");
+        
+        $st->execute([$citizenID]);
+        return $st->fetchAll();
     }
 }

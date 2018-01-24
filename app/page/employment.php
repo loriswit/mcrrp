@@ -22,6 +22,23 @@ class Employment extends Page
             "closed companies" => $this->db->closedCompanies()
         ];
         
+        $jobs = $this->db->jobs($this->citizen["id"]);
+        foreach($employment as &$companies)
+            foreach($companies as &$company)
+            {
+                $index = array_search($company["id"], array_column($jobs, "company_id"));
+                if($index !== false)
+                {
+                    $company["working"] = true;
+                    $company["leading"] = $jobs[$index]["leader"];
+                }
+                else
+                {
+                    $company["working"] = false;
+                    $company["leading"] = false;
+                }
+            }
+        
         $this->set("employment", $employment);
     }
     

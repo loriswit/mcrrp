@@ -10,9 +10,13 @@
         <div class="company-card mdl-card mdl-shadow--2dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text">{{ company.name }}</h2>
+                <div class="mdl-layout-spacer"></div>
                 {% if company.closed %}
-                    <div class="mdl-layout-spacer"></div>
-                    <h2 class="mdl-card__title-text closed-tag">CLOSED</h2>
+                    <h2 class="mdl-card__title-text closed-tag">Closed</h2>
+                {% elseif citizen.leader %}
+                    <h2 class="mdl-card__title-text hired-tag">Leader</h2>
+                {% elseif citizen.worker %}
+                    <h2 class="mdl-card__title-text hired-tag">Hired</h2>
                 {% endif %}
             </div>
             <div class="mdl-card__supporting-text">

@@ -40,9 +40,11 @@ class Company extends Page
         foreach($workers as &$worker)
             $worker["citizen"] = $this->db->citizen($worker["citizen_id"]);
         
-        $this->citizen["leader"] = $this->db->isLeader($this->citizen["id"], $company["id"]);
-        
         $codes = $this->db->knownCodes($this->citizen["id"]);
+        
+        $jobs = $this->db->jobs($this->citizen["id"]);
+        $this->citizen["worker"] = in_array($company["id"], array_column($jobs, "company_id"));
+        $this->citizen["leader"] = $this->db->isLeader($this->citizen["id"], $company["id"]);
         
         $this->set("codes", $codes);
         $this->set("company", $company);
