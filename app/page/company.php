@@ -31,12 +31,20 @@ class Company extends Page
         $company["leaders"] = $this->db->leaders($company["id"]);
         $company["materials"] = $this->db->materials($company["id"]);
         
+        if($company["government"])
+            $company["closeable"] = count($this->db->governments()) > 1;
+        else
+            $company["closeable"] = true;
+        
         $workers = $this->db->workers($company["id"]);
         foreach($workers as &$worker)
             $worker["citizen"] = $this->db->citizen($worker["citizen_id"]);
         
         $this->citizen["leader"] = $this->db->isLeader($this->citizen["id"], $company["id"]);
         
+        $codes = $this->db->knownCodes($this->citizen["id"]);
+        
+        $this->set("codes", $codes);
         $this->set("company", $company);
         $this->set("workers", $workers);
         $this->set("citizen", $this->citizen);
@@ -78,6 +86,10 @@ class Company extends Page
                             $materials[] = $material;
                     }
                     
+                    // don't remove the last government
+                    if($company["government"] && count($this->db->governments()) == 1)
+                        $_POST["government"] = "on";
+                    
                     $this->db->updateCompanyPermissions(
                         $company["id"], isset($_POST["government"]), isset($_POST["bank"]),
                         isset($_POST["press"]), $materials);
@@ -87,16 +99,6 @@ class Company extends Page
         
         if($this->citizen["leader"])
         {
-            if($action == "promote")
-            {
-                $index = array_search($_POST["worker"], array_column($workers, "id"));
-                if($index !== false)
-                {
-                    $isLeader = $workers[$index]["leader"];
-                    $this->db->promote($_POST["worker"], !$isLeader);
-                }
-            }
-            
             if($action == "hire")
             {
                 $worker = $this->db->citizenByCode($_POST["code"]);
@@ -104,9 +106,23 @@ class Company extends Page
                     $this->db->hire($company["id"], $worker["id"]);
             }
             
-            if($action == "dismiss")
-                if(in_array($_POST["worker"], array_column($workers, "id")))
-                    $this->db->dismiss($_POST["worker"]);
+            if($action == "dismiss" || $action == "promote")
+            {
+                $index = array_search($_POST["worker"], array_column($workers, "id"));
+                if($index !== false)
+                {
+                    $isLeader = $workers[$index]["leader"];
+                    
+                    // don't dismiss or demote the last leader
+                    if(!$isLeader || count($this->db->leaders($company["id"])) > 1)
+                    {
+                        if($action == "dismiss")
+                            $this->db->dismiss($_POST["worker"]);
+                        if($action == "promote")
+                            $this->db->promote($_POST["worker"], !$isLeader);
+                    }
+                }
+            }
             
             if($action == "edit")
                 $this->db->updateCompanyInformations(
@@ -116,7 +132,16 @@ class Company extends Page
         
         if($this->citizen["leader"] || $this->citizen["governor"])
             if($action == "close" && !$company["closed"])
-                $this->db->closeCompany($company["id"]);
+            {
+                // don't close the last government
+                if($company["government"])
+                    $closable = count($this->db->governments()) > 1;
+                else
+                    $closable = true;
+                
+                if($closable)
+                    $this->db->closeCompany($company["id"]);
+            }
     }
 }
 

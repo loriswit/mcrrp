@@ -126,6 +126,8 @@ abstract class Page
             
             $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
+    
+            $this->citizen["governor"] = $this->db->isGovernor($this->citizen["id"]);
             
             $this->variables["citizen"] = $this->citizen;
             $this->variables["role"] = "n/a";

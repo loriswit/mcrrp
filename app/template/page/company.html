@@ -78,7 +78,8 @@
                     <div class="mdl-layout-spacer"></div>
                     <form method="post">
                         <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
-                                name="submit" type="submit" value="close">Close company
+                                name="submit" type="submit" value="close"
+                                {% if not company.closeable %}disabled{% endif %}>Close company
                         </button>
                     </form>
                 </div>
@@ -219,7 +220,8 @@
                 <div class="mdl-dialog__content">
                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="government">
                         <input type="checkbox" id="government" name="government" class="mdl-checkbox__input"
-                                {{ company.government ? "checked" : "" }}>
+                                {{ company.government ? "checked" : "" }}
+                                {% if not company.closeable %}disabled{% endif %}>
                         <span class="mdl-checkbox__label">Government</span>
                     </label>
                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="bank">

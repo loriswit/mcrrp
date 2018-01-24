@@ -598,7 +598,7 @@ class Database
         $st = $this->pdo->prepare(
             "SELECT citizen_id FROM worker WHERE company_id IN "
             ."(SELECT id FROM company WHERE government = TRUE) "
-            ."AND citizen_id = ?");
+            ."AND citizen_id = ? AND dismissed = FALSE");
         
         $st->execute([$citizenID]);
         return $st->fetchColumn() > 0;
