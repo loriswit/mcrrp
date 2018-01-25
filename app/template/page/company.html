@@ -65,7 +65,7 @@
                         </button>
                     </form>
                 </div>
-            {% elseif (citizen.governor or citizen.leader) and not company.closed %}
+            {% elseif (citizen.governor or citizen.worker) and not company.closed %}
                 <div class="mdl-card__actions mdl-card--border">
                     {% if citizen.leader %}
                         <button id="open-edit-dialog"
@@ -81,10 +81,18 @@
                     {% endif %}
                     <div class="mdl-layout-spacer"></div>
                     <form method="post">
-                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
-                                name="submit" type="submit" value="close"
-                                {% if not company.closeable %}disabled{% endif %}>Close company
-                        </button>
+                        {% if citizen.worker %}
+                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
+                                    name="submit" type="submit" value="resign"
+                                    {% if company.leaders|length == 1 and citizen.leader %}disabled{% endif %}>Resign
+                            </button>
+                        {% endif %}
+                        {% if citizen.governor or citizen.leader %}
+                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect bg-red"
+                                    name="submit" type="submit" value="close"
+                                    {% if not company.closeable %}disabled{% endif %}>Close company
+                            </button>
+                        {% endif %}
                     </form>
                 </div>
             {% endif %}

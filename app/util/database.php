@@ -759,7 +759,8 @@ class Database
         $st = $this->pdo->prepare("UPDATE company SET closed = UNIX_TIMESTAMP(NOW()) WHERE id = ?");
         $st->execute([$id]);
         
-        $st = $this->pdo->prepare("UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE company_id = ?");
+        $st = $this->pdo->prepare(
+            "UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE company_id = ? AND dismissed = FALSE");
         $st->execute([$id]);
         
         $this->pdo->commit();
@@ -794,25 +795,25 @@ class Database
     /**
      * Hires a citizen in a specific company.
      *
-     * @param int $companyID The ID of a valid company
      * @param int $citizenID The ID of a valid citizen
+     * @param int $companyID The ID of a valid company
      */
-    public function hire($companyID, $citizenID)
+    public function hire($citizenID, $companyID)
     {
         $st = $this->pdo->prepare(
             "INSERT INTO worker (company_id, citizen_id, hired) VALUES(?, ?, UNIX_TIMESTAMP(NOW()))");
         $st->execute([$companyID, $citizenID]);
-        
     }
     
     /**
-     * Dismisses a worker from a specific company.
+     * Dismisses a worker.
      *
      * @param int $id The ID of a valid worker
      */
     public function dismiss($id)
     {
-        $st = $this->pdo->prepare("UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE id = ?");
+        $st = $this->pdo->prepare(
+            "UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) WHERE id = ? AND dismissed = FALSE");
         $st->execute([$id]);
     }
     
@@ -824,7 +825,7 @@ class Database
      */
     public function promote($id, $leader)
     {
-        $st = $this->pdo->prepare("UPDATE worker SET leader = ? WHERE id = ?");
+        $st = $this->pdo->prepare("UPDATE worker SET leader = ? WHERE id = ? AND dismissed = FALSE");
         $st->execute([$leader, $id]);
     }
     
@@ -842,5 +843,19 @@ class Database
         
         $st->execute([$citizenID]);
         return $st->fetchAll();
+    }
+    
+    /**
+     * Dismisses a citizen from a specific company.
+     *
+     * @param int $citizenID The ID of a valid citizen
+     * @param int $companyID The ID of a valid company
+     */
+    public function resign($citizenID, $companyID)
+    {
+        $st = $this->pdo->prepare(
+            "UPDATE worker SET dismissed = UNIX_TIMESTAMP(NOW()) "
+            ."WHERE company_id = ? AND citizen_id = ? AND dismissed = FALSE");
+        $st->execute([$companyID, $citizenID]);
     }
 }

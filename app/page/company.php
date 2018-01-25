@@ -103,9 +103,9 @@ class Company extends Page
         {
             if($action == "hire")
             {
-                $worker = $this->db->citizenByCode($_POST["code"]);
-                if(!in_array($worker["id"], array_column($workers, "citizen_id")))
-                    $this->db->hire($company["id"], $worker["id"]);
+                $hiredCitizen = $this->db->citizenByCode($_POST["code"]);
+                if(!in_array($hiredCitizen["id"], array_column($workers, "citizen_id")))
+                    $this->db->hire($hiredCitizen["id"], $company["id"]);
             }
             
             if($action == "dismiss" || $action == "promote")
@@ -144,6 +144,12 @@ class Company extends Page
                 if($closable)
                     $this->db->closeCompany($company["id"]);
             }
+        
+        if($action == "resign")
+        {
+            $isLeader = $this->db->isLeader($this->citizen["id"], $company["id"]);
+            if(!$isLeader || count($this->db->leaders($company["id"])) > 1)
+                $this->db->resign($this->citizen["id"], $company["id"]);
+        }
     }
 }
-
