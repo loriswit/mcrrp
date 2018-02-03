@@ -130,3 +130,8 @@ blockquote
     min-width: 300px;
     margin: auto;
 }
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link
+{
+    color: #076;
+}
