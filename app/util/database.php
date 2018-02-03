@@ -605,14 +605,16 @@ class Database
      * Tells if a specific citizen has governor permissions.
      *
      * @param int $citizenID The ID of a valid citizen
+     * @param bool $isLeader TRUE if the citizen must also be the leader, FALSE if not
      * @return bool TRUE if the citizen is a governor, FALSE if not
      */
-    public function isGovernor($citizenID)
+    public function isGovernor($citizenID, $isLeader = false)
     {
         $st = $this->pdo->prepare(
             "SELECT citizen_id FROM worker WHERE company_id IN "
             ."(SELECT id FROM company WHERE government = TRUE) "
-            ."AND citizen_id = ? AND dismissed = FALSE");
+            ."AND citizen_id = ? AND dismissed = FALSE"
+            .($isLeader ? " AND leader = TRUE" : ""));
         
         $st->execute([$citizenID]);
         return $st->fetchColumn() > 0;

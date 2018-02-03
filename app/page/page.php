@@ -126,7 +126,7 @@ abstract class Page
             
             $unreadMessages = $this->db->unreadMessageCount($this->citizen["id"]);
             $unreadTransactions = $this->db->unreadTransactionCount($this->citizen["id"], false);
-    
+            
             $this->citizen["governor"] = $this->db->isGovernor($this->citizen["id"]);
             
             $this->variables["citizen"] = $this->citizen;
@@ -135,7 +135,11 @@ abstract class Page
             $this->variables["msg_count"] = $unreadMessages;
             $this->variables["transac_count"] = $unreadTransactions;
             if($this->citizen["governor"])
+            {
+                $unreadStateTransactions = $this->db->unreadTransactionCount($this->citizen["state_id"], true);
+                $this->variables["state_transac_count"] = $unreadStateTransactions;
                 $this->variables["request_count"] = $this->db->requestCount($state["id"]);
+            }
             
             $this->variables["template"] = "user.html";
         }

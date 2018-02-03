@@ -30,15 +30,27 @@
                 ">attach_money</i> Transactions</a>
             <a class="mdl-navigation__link" href="/lock"><i class="material-icons">lock</i> Locks</a>
             <a class="mdl-navigation__link" href="/employment"><i class="material-icons">work</i> Employment</a>
-            {% if citizen.governor %}
+        </nav>
+
+        {% if citizen.governor %}
+            <div class="mdl-layout-spacer"></div>
+            <span class="mdl-layout-title">State</span>
+
+            <nav class="mdl-navigation">
+                <a class=" mdl-navigation__link" href="/state">
+                    <i class="material-icons
+                    {% if state_transac_count > 0 %}
+                        mdl-badge mdl-badge--overlap" data-badge="{{ state_transac_count }}
+                    {% endif %}
+                ">attach_money</i> Transactions</a>
                 <a class="mdl-navigation__link" href="/request">
                     <i class="material-icons
                     {% if request_count > 0 %}
                         mdl-badge mdl-badge--overlap" data-badge="{{ request_count }}
                     {% endif %}
                 ">verified_user</i> Requests</a>
-            {% endif %}
-        </nav>
+            </nav>
+        {% endif %}
 
         <div class="mdl-layout-spacer"></div>
 

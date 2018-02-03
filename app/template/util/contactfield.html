@@ -32,7 +32,8 @@
                     if(this.readyState === 4 && this.status === 200)
                     {
                         var field = document.getElementById("{{ id }}-field");
-                        if(this.responseText === "1")
+                        var oneself = input.value.toUpperCase() === "{{ citizen.code }}";
+                        if(this.responseText === "1"{% if not is_state %} && !oneself{% endif %})
                         {
                             field.classList.remove("is-invalid");
                             input.setCustomValidity("");

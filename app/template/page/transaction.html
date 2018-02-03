@@ -30,7 +30,7 @@
 
                 <div class="mdl-textfield mdl-js-textfield">
                     <input class="mdl-textfield__input" name="amount" type="number" step=1
-                           min=1 max={{ citizen.balance }} id="amount" required>
+                           min=1 max={{ is_state ? state.balance : citizen.balance }} id="amount" required>
                     <label class="mdl-textfield__label" for="amount">Amount</label>
                 </div>
 
@@ -48,7 +48,9 @@
     </dialog>
 
     <div class="table-grid mdl-grid">
-        {% include "util/addbutton.html" with {"tooltip": "New transaction"} %}
+        {% if not readonly %}
+            {% include "util/addbutton.html" with {"tooltip": "New transaction"} %}
+        {% endif %}
 
         <div class="mdl-cell mdl-cell--12-col">
             {% if transactions is empty %}

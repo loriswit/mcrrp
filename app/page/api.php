@@ -30,7 +30,7 @@ class Api extends Page
                 exit;
             
             case "code":
-                if(!LOGGED || $value == $this->citizen["code"])
+                if(!LOGGED)
                     echo 0;
                 else
                     echo $this->db->citizenExists($this->args[1]) ? 1 : 0;
